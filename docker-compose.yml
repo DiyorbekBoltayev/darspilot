@@ -1,0 +1,78 @@
+name: darspilot
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: darspilot
+      POSTGRES_USER: darspilot
+      POSTGRES_PASSWORD: darspilot
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U darspilot -d darspilot"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  minio:
+    image: quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: darspilot
+      MINIO_ROOT_PASSWORD: darspilot-secret
+    ports:
+      - "${MINIO_CONSOLE_PORT:-9101}:9001"   # MinIO konsoli: http://localhost:9101
+    volumes:
+      - miniodata:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  minio-init:
+    image: quay.io/minio/mc:RELEASE.2025-08-13T08-35-41Z
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 darspilot darspilot-secret &&
+      mc mb --ignore-existing local/darspilot &&
+      echo 'bucket tayyor'
+      "
+    restart: "no"
+
+  api:
+    build: .
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      DATABASE_URL: postgresql+psycopg://darspilot:darspilot@db:5432/darspilot
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ACCESS_KEY: darspilot
+      MINIO_SECRET_KEY: darspilot-secret
+      MINIO_BUCKET: darspilot
+    depends_on:
+      db:
+        condition: service_healthy
+      minio-init:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  web:
+    build: ./web
+    ports:
+      - "${WEB_PORT:-8080}:80"   # Ilova: http://localhost:8080
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  miniodata:

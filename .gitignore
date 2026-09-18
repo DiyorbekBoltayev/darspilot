@@ -1,0 +1,18 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+data/
+.idea/
+.vscode/
+*.log
+~$*
+.pytest_cache/
+web/node_modules/
+web/dist/
+
+# Darsliklar: mualliflik huquqi bilan himoyalangan PDF fayllar (lokal ishlatiladi, repozitoriyga tushmaydi)
+darslik/*.pdf
+# vaqtinchalik render fayllari
+data/_*.png
+data/_*.pdf
