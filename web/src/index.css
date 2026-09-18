@@ -1,0 +1,92 @@
+@import "@fontsource-variable/onest";
+@import "@fontsource-variable/unbounded";
+@import "tailwindcss";
+
+/* DarsPilot brend kodi — "Xiva ko'k": Ichan Qal'a majolikasi ranglari, sakkiz qirrali yulduz (xotam) naqshi. */
+@theme {
+  --font-sans: "Onest Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Unbounded Variable", "Onest Variable", ui-sans-serif, sans-serif;
+
+  --color-paper: #fafbfb;
+  --color-surface: #ffffff;
+  --color-sunken: #f2f6f6;
+  --color-line: #e2e9ea;
+  --color-line-strong: #cbd8da;
+  --color-ink: #13202b;
+  --color-ink-2: #3a4a55;
+  --color-mute: #66767e;
+  --color-faint: #97a5ab;
+
+  --color-firuza-50: #eaf6f6;
+  --color-firuza-100: #d2ecec;
+  --color-firuza-200: #a9d9da;
+  --color-firuza-300: #74c0c3;
+  --color-firuza-500: #0a8a91;
+  --color-firuza-600: #087a80;
+  --color-firuza-700: #06646a;
+
+  --color-indigo-50: #eef0f9;
+  --color-indigo-100: #dadff2;
+  --color-indigo-300: #8e99d2;
+  --color-indigo-500: #3444a8;
+  --color-indigo-600: #23328c;
+  --color-indigo-700: #1b2770;
+  --color-indigo-800: #151f5a;
+
+  --color-terra-50: #fbf0eb;
+  --color-terra-100: #f6ddd2;
+  --color-terra-300: #e3a184;
+  --color-terra-500: #c4572e;
+  --color-terra-600: #a8471f;
+
+  --color-oltin-50: #fbf5e3;
+  --color-oltin-100: #f6e8bd;
+  --color-oltin-500: #d9a21b;
+  --color-oltin-600: #b0820d;
+
+  --shadow-card: 0 1px 2px rgb(19 32 43 / 0.05), 0 1px 1px rgb(19 32 43 / 0.03);
+  --shadow-lift: 0 10px 30px -12px rgb(19 32 43 / 0.18), 0 2px 6px rgb(19 32 43 / 0.05);
+
+  --animate-shimmer: shimmer 1.8s linear infinite;
+}
+
+@keyframes shimmer {
+  from { background-position: -200% 0; }
+  to { background-position: 200% 0; }
+}
+
+@layer base {
+  html, body, #root { min-height: 100%; }
+  body {
+    @apply bg-paper text-ink font-sans antialiased;
+    font-feature-settings: "ss01", "cv11";
+  }
+  ::selection { background: var(--color-firuza-100); }
+  * { scrollbar-width: thin; scrollbar-color: var(--color-line-strong) transparent; }
+  h1, h2, h3 { text-wrap: balance; }
+}
+
+@layer components {
+  .card {
+    @apply rounded-2xl border border-line bg-surface shadow-card;
+  }
+  .girih {
+    background-image: url("/girih-light.svg");
+    background-size: 64px 64px;
+  }
+  .girih-dark {
+    background-image: url("/girih-dark.svg");
+    background-size: 64px 64px;
+  }
+  .skeleton {
+    background: linear-gradient(90deg, var(--color-sunken), #e8eff0, var(--color-sunken));
+    background-size: 200% 100%;
+    @apply animate-shimmer rounded-xl;
+  }
+  .num {
+    @apply font-display tabular-nums tracking-tight;
+  }
+  .eyebrow {
+    @apply text-[11px] font-semibold tracking-[0.14em] uppercase text-firuza-600;
+  }
+}
