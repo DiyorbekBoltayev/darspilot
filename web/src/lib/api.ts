@@ -1,5 +1,5 @@
 import type {
-  AiLog, AttentionView, ClassInfo, Curriculum, CurriculumTopic, DiagnosticDetail, DirectorPanel, HeardNames, LessonBrief, LessonDetail, LessonPlan,
+  AiLog, AttentionView, ClassInfo, Curriculum, CurriculumTopic, DiagnosticDetail, DirectorPanel, HeardNames, LessonBrief, LessonDebrief, LessonDetail, LessonPlan,
   GradesView, HomeworkTask, HomeworkView, ImpactStats, Method, MethodCard, Overview, ParentLink, ParentPortal, ParentReport, Results,
   Stage, StudentDetail, TodayView, WeeklyReport,
 } from './types'
@@ -71,6 +71,11 @@ export const api = {
   attentionVoice: (id: number, audio: Blob, name: string) => upload<HeardNames>(`/api/lessons/${id}/attention/voice`, audio, name),
   toggleAttention: (code: string, on: boolean, lesson_id: number) => request<{ ok: boolean }>('/api/attention/toggle', json('POST', { code, on, lesson_id })),
 
+  // ovozli dars tahlili
+  debriefVoice: (id: number, audio: Blob, name: string) => upload<LessonDebrief>(`/api/lessons/${id}/debrief/voice`, audio, name),
+  debriefText: (id: number, text: string) => request<LessonDebrief>(`/api/lessons/${id}/debrief/text`, json('POST', { text })),
+  clearDebrief: (id: number) => request<{ ok: boolean }>(`/api/lessons/${id}/debrief`, { method: 'DELETE' }),
+
   // ssenariy
   plan: (id: number) => request<LessonPlan>(`/api/plans/${id}`),
   editPlan: (id: number, body: PlanEditBody) => request<LessonPlan>(`/api/plans/${id}`, json('PUT', body)),
@@ -96,6 +101,15 @@ export const api = {
     `/api/diagnostics/${id}/demo-photo`, json('POST')),
   saveResponse: (id: number, sid: number, marks: Record<string, string | null>) =>
     request<{ ok: boolean }>(`/api/diagnostics/${id}/responses/${sid}`, json('PUT', marks)),
+  uploadPhotos: (id: number, files: File[]) => {
+    const fd = new FormData()
+    files.forEach((f) => fd.append('files', f, f.name))
+    return request<DiagnosticDetail>(`/api/diagnostics/${id}/photos`, { method: 'POST', body: fd })
+  },
+  scanPending: (id: number) =>
+    request<{ photos: number; found: number; matched: number; flagged: number; unknown: number[]; errors: string[] }>(
+      `/api/diagnostics/${id}/scan-pending`, json('POST')),
+  deleteScan: (did: number, scanId: number) => request<DiagnosticDetail>(`/api/diagnostics/${did}/scans/${scanId}`, { method: 'DELETE' }),
   confirmResponse: (did: number, sid: number) => request<{ ok: boolean }>(`/api/diagnostics/${did}/responses/${sid}/confirm`, json('POST')),
   grade: (id: number) => request<{ graded: number; feedback_source: string; summary_source: string }>(`/api/diagnostics/${id}/grade`, json('POST')),
   results: (id: number) => request<Results>(`/api/diagnostics/${id}/results`),

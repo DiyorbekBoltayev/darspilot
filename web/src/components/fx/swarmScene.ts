@@ -4,7 +4,7 @@
 import * as THREE from 'three'
 import { COLORS, createRenderer, disposeScene, drift, observeSize, rng } from './common'
 
-export type SwarmKind = 'create' | 'scan' | 'demo' | 'grade' | 'lesson' | 'report' | 'homework'
+export type SwarmKind = 'create' | 'scan' | 'demo' | 'grade' | 'lesson' | 'report' | 'homework' | 'debrief'
 
 type Pt = [number, number, number[]]
 

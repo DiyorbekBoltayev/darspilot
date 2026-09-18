@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { motion } from 'motion/react'
 import { ArrowLeft, ArrowRight, Brain, ChartNoAxesColumn, Clock, FileSpreadsheet, Hand, Sparkles, Timer, TrendingUp, TriangleAlert, Users, Zap } from 'lucide-react'
@@ -6,6 +7,7 @@ import type { LessonDetail } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { useAi } from '@/components/ai-context'
 import { Bar, Button, Card, CardHeader, Empty, LinkButton, PageSkeleton, Stat } from '@/components/ui'
+import VoiceDebrief from './VoiceDebrief'
 import { useLessonRefresh } from './use-refresh'
 
 export default function AnalysisStep({ lesson, onNext, onBack }: { lesson: LessonDetail; onNext: () => void; onBack: () => void }) {
@@ -16,9 +18,12 @@ export default function AnalysisStep({ lesson, onNext, onBack }: { lesson: Lesso
     onSuccess: (r) => { refresh(); ai.toast(`${r.graded} o'quvchi baholandi, feedback tayyor`) },
   })
 
+  const debrief = <VoiceDebrief lessonId={lesson.id} saved={lesson.debrief} onSaved={refresh} />
+
   if (lesson.diagnostic_day) {
     if (!lesson.graded) {
       return (
+        <div className="space-y-6">
         <Card>
           <Empty icon={Brain} title={lesson.responses ? `${lesson.responses} ta javob baholashni kutmoqda` : "Hali javoblar yo'q"}
             text={lesson.responses ? "AI har o'quvchining bosqichli tashxisini qo'yadi va o'quvchi, ota-ona, o'qituvchi uchun feedback yozadi." : "Avval «Tekshirish» qadamida javob chiziqlarini skanerlang."}
@@ -26,18 +31,25 @@ export default function AnalysisStep({ lesson, onNext, onBack }: { lesson: Lesso
               ? <Button variant="primary" icon={Sparkles} loading={grade.isPending} onClick={() => grade.mutate()}>AI bilan baholash</Button>
               : <Button variant="primary" icon={ArrowLeft} onClick={onBack}>Skanerga qaytish</Button>} />
         </Card>
+        {debrief}
+        </div>
       )
     }
-    return <DiagnosticSummary did={lesson.diagnostic_id!} onNext={onNext} />
+    return <DiagnosticSummary did={lesson.diagnostic_id!} onNext={onNext} extra={debrief} />
   }
   if (!lesson.quick_check) {
-    return <Card><Empty icon={Zap} title="Tezkor tekshiruv kiritilmagan" text="Svetofor natijasini kiriting — tahlil va keyingi ssenariy shundan tuziladi."
-      action={<Button variant="primary" icon={ArrowLeft} onClick={onBack}>Tekshirishga qaytish</Button>} /></Card>
+    return (
+      <div className="space-y-6">
+        <Card><Empty icon={Zap} title="Tezkor tekshiruv kiritilmagan" text="Svetofor natijasini kiriting — tahlil va keyingi ssenariy shundan tuziladi."
+          action={<Button variant="primary" icon={ArrowLeft} onClick={onBack}>Tekshirishga qaytish</Button>} /></Card>
+        {debrief}
+      </div>
+    )
   }
-  return <QuickSummary lesson={lesson} onNext={onNext} />
+  return <QuickSummary lesson={lesson} onNext={onNext} extra={debrief} />
 }
 
-function DiagnosticSummary({ did, onNext }: { did: number; onNext: () => void }) {
+function DiagnosticSummary({ did, onNext, extra }: { did: number; onNext: () => void; extra: ReactNode }) {
   const { data } = useQuery({ queryKey: ['results', did], queryFn: () => api.results(did) })
   if (!data) return <PageSkeleton />
   const maxErr = Math.max(1, ...data.errors.map((e) => e.count))
@@ -89,12 +101,13 @@ function DiagnosticSummary({ did, onNext }: { did: number; onNext: () => void })
           ))}
         </div>
       </Card>
+      {extra}
       <div className="flex justify-end"><Button variant="primary" onClick={onNext}>Keyingi darsga <ArrowRight className="size-4" /></Button></div>
     </div>
   )
 }
 
-function QuickSummary({ lesson, onNext }: { lesson: LessonDetail; onNext: () => void }) {
+function QuickSummary({ lesson, onNext, extra }: { lesson: LessonDetail; onNext: () => void; extra: ReactNode }) {
   const qc = lesson.quick_check!
   const roster = useQuery({ queryKey: ['attention', lesson.id], queryFn: () => api.lessonAttention(lesson.id) })
   const total = Math.max(1, qc.green + qc.yellow + qc.red)
@@ -157,6 +170,7 @@ function QuickSummary({ lesson, onNext }: { lesson: LessonDetail; onNext: () => 
           </Card>
         </div>
       </div>
+      {extra}
       <div className="flex justify-end"><Button variant="primary" onClick={onNext}>Keyingi darsga <ArrowRight className="size-4" /></Button></div>
     </div>
   )

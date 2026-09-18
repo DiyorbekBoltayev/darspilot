@@ -319,11 +319,12 @@ def lesson_detail(lid: int):
             group_age = "saqlangan guruhlar" if row else "yangi guruhlar tuziladi"
         nxt = _next_lesson(s, lesson)
         next_info = brief(s, nxt, cls) if nxt else None
+        debrief = lesson.debrief
     plan = service.lesson_plan(info["plan_id"]) if info["plan_id"] else None
     diag = service.diagnostic_detail(info["diagnostic_id"]) if info["diagnostic_id"] else None
     return {**info, "plan": plan, "diagnostic": diag and {k: diag[k] for k in ("id", "status", "responses", "flagged", "graded", "pdf", "title")},
             "attended": [{"id": i, "code": c} for i, c in marked], "groups_note": group_age, "next": next_info,
-            "gap_alert": service.gap_alert()}
+            "debrief": debrief, "gap_alert": service.gap_alert()}
 
 
 # ------------------------------------------------------------------ amallar
@@ -486,3 +487,78 @@ def attention_from_voice(lid: int, audio: bytes, filename: str) -> dict:
     if not text:
         raise ValueError("Ovozni matnga aylantirib bo'lmadi — ismlarni matn bilan kiriting")
     return {"transcript": text, **match_names(text, roster)}
+
+
+# ------------------------------------------------------------------ ovozli dars tahlili ("tahlil" qadami)
+
+def _debrief_context(lid: int) -> tuple:
+    """LLM uchun anonim kontekst (ism yo'q) va sinf ro'yxati."""
+    with db.session() as s:
+        lesson = s.get(Lesson, lid)
+        if not lesson:
+            raise NotFound
+        cls = s.get(SchoolClass, lesson.class_id)
+        info = brief(s, lesson, cls)
+        roster = [service.student_brief(x) for x in service.class_students(s, cls.id)]
+        attended = s.scalar(select(func.count()).select_from(Attention)
+                            .where(Attention.lesson_id == lid, Attention.kind == "ishladim")) or 0
+    ctx = {
+        "mavzu": lesson.topic or "", "sana": info.get("date"), "sinf": cls.name,
+        "oquvchilar_soni": len(roster), "etibor_berilgan": attended,
+        "diagnostika_kuni": bool(lesson.diagnostic_day), "guruh_ishi": bool(lesson.group_work),
+    }
+    did = info.get("diagnostic_id")
+    if did and info.get("graded"):
+        res = service.diagnostic_results(did)
+        steps = res.get("steps") or []
+        ctx["diagnostika"] = {
+            "ortacha_foiz": res.get("avg_pct"), "baholangan": res.get("graded"),
+            "bosqichlar": [{"nom": x["name"], "foiz": x["pct"]} for x in steps],
+            "eng_zaif_bosqich": min(steps, key=lambda x: x["pct"])["name"] if steps else None,
+            "kop_uchragan_xatolar": [e["name"] for e in (res.get("errors") or [])[:3]],
+        }
+    elif lesson.quick_check:
+        ctx["tezkor_tekshiruv"] = lesson.quick_check
+    return ctx, roster
+
+
+def _save_debrief(lid: int, payload: dict) -> dict:
+    with db.session() as s:
+        lesson = s.get(Lesson, lid)
+        if not lesson:
+            raise NotFound
+        lesson.debrief = payload
+    return payload
+
+
+def debrief_from_text(lid: int, text: str, source: str = "matn") -> dict:
+    """Erkin matnni tuzilgan dars xulosasiga aylantiradi va darsga saqlaydi."""
+    text = (text or "").strip()
+    if not text:
+        raise ValueError("Matn bo'sh — dars qanday o'tganini ayting yoki yozing")
+    ctx, roster = _debrief_context(lid)
+    data, origin = llm.lesson_debrief(text, ctx)
+    named = match_names(" ".join(p["ism"] for p in data["oquvchilar"]) or text, roster)
+    by_first = {m["heard"]: m for m in named["matches"]}
+    for p in data["oquvchilar"]:                       # aytilgan ismni ro'yxatdagi o'quvchiga bog'lash
+        hit = next((m for k, m in by_first.items() if k and k in p["ism"].lower()), None)
+        hit = hit or next((m for m in named["matches"] if m["name"].lower().startswith(p["ism"].lower()[:4])), None)
+        if hit:
+            p["student_id"], p["code"], p["ism"] = hit["id"], hit["code"], hit["name"]
+    payload = {**data, "transcript": text, "manba": origin, "source": source,
+               "created_at": datetime.now().strftime("%d.%m.%Y %H:%M")}
+    return _save_debrief(lid, payload)
+
+
+def debrief_from_voice(lid: int, audio: bytes, filename: str) -> dict:
+    ctx, roster = _debrief_context(lid)
+    firsts = sorted({r["name"].split()[0] for r in roster})
+    text = llm.transcribe(audio, filename, firsts, mavzu=ctx.get("mavzu", ""), purpose="ovozli_tahlil")
+    if not text:
+        raise ValueError("Ovozni matnga aylantirib bo'lmadi — tahlilni matn bilan yozing")
+    return debrief_from_text(lid, text, source="ovoz")
+
+
+def clear_debrief(lid: int) -> dict:
+    _save_debrief(lid, None)
+    return {"ok": True}

@@ -448,28 +448,104 @@ def split_curriculum(text: str, skills: list) -> list | None:
 
 # ------------------------------------------------------------------ 8. Ovozli e'tibor jurnali (docx 9.4)
 
-def transcribe(audio: bytes, filename: str, names_hint: list) -> str | None:
+def transcribe(audio: bytes, filename: str, names_hint: list, mavzu: str = "", purpose: str = "ovozli_etibor") -> str | None:
     """O'qituvchining ovozli xabarini matnga aylantiradi. Ismlar ro'yxati tanib olishni yaxshilash uchun prompt sifatida beriladi."""
     if not enabled() or not audio:
         return None
     t0 = time.time()
     model = config.OPENAI_TRANSCRIBE_MODEL
+    # transkripsiya API "uz" kodini qabul qilmaydi — til va kontekst prompt orqali beriladi
+    hint = "O'zbek tilida (lotin yozuvida) yozing. "
+    hint += ("O'qituvchi endi o'tgan darsi haqida gapiradi: nima yaxshi ketdi, kim qiynaldi, keyingi darsga nima kerak. "
+             if purpose == "ovozli_tahlil" else
+             "O'qituvchi bugun qaysi o'quvchilar bilan ishlaganini aytadi. ")
+    if mavzu:
+        hint += f"Dars mavzusi: {mavzu}. "
+    hint += "Sinfdagi ismlar: " + ", ".join(names_hint[:80]) + "."
     try:
         resp = _get_client().audio.transcriptions.create(
             model=model,
             file=(filename or "ovoz.webm", audio),
-            # transkripsiya API "uz" kodini qabul qilmaydi — til prompt orqali beriladi
-            prompt="O'zbek tilida (lotin yozuvida) yozing. O'qituvchi bugun qaysi o'quvchilar bilan ishlaganini aytadi. "
-                   "Sinfdagi ismlar: " + ", ".join(names_hint[:80]) + ".",
+            prompt=hint,
         )
         text = getattr(resp, "text", None) or ""
-        _log({"purpose": "ovozli_etibor", "model": model, "ok": True, "seconds": round(time.time() - t0, 2)})
+        _log({"purpose": purpose, "model": model, "ok": True, "seconds": round(time.time() - t0, 2)})
         return text.strip()
     except Exception as e:
         global last_error
         last_error = f"{type(e).__name__}: {e}"[:300]
-        _log({"purpose": "ovozli_etibor", "model": model, "ok": False, "seconds": round(time.time() - t0, 2), "error": last_error})
+        _log({"purpose": purpose, "model": model, "ok": False, "seconds": round(time.time() - t0, 2), "error": last_error})
         return None
+
+
+# --------------------------------------------------------- 8b. Ovozli dars tahlili ("dars qanday o'tdi" → tuzilgan xulosa)
+
+DEBRIEF_SYSTEM = (
+    "Sen maktab metodistisan. O'qituvchi dars tugagach o'z taassurotini erkin, og'zaki aytadi — sen uni tartibli "
+    "xulosaga aylantirasan. Faqat o'qituvchi aytgan narsaga va berilgan statistikaga tayan, o'zingdan voqea to'qima. "
+    "O'qituvchi aytmagan o'quvchi ismini yozma. Til — o'zbek (lotin), jumlalar qisqa va amaliy. Javobni faqat JSON qaytar."
+)
+
+DEBRIEF_TAGS = ("kuchaydi", "qiynaldi", "e'tibor")
+
+
+def lesson_debrief(text: str, context: dict) -> tuple:
+    """O'qituvchining og'zaki tahlilini tuzilgan xulosaga aylantiradi. Qaytaradi: (dict, manba)."""
+    fallback = {
+        "xulosa": text.strip()[:400],
+        "yaxshi": [],
+        "qiyinchilik": [],
+        "oquvchilar": [],
+        "keyingi_dars": [],
+        "uy_vazifasi": None,
+    }
+    if not enabled() or not text.strip():
+        return fallback, "shablon"
+    user = {
+        "oqituvchi_gapi": text,
+        "dars": context,
+        "qoidalar": [
+            "xulosa: 1–2 jumla — dars umuman qanday o'tdi.",
+            "yaxshi va qiyinchilik: har biri 0–3 ta qisqa band; o'qituvchi aytmagan bo'lsa bo'sh ro'yxat qoldir.",
+            "oquvchilar: faqat o'qituvchi ismini aytgan o'quvchilar. 'ism' — aynan aytilgan ism, "
+            f"'holat' — {', '.join(DEBRIEF_TAGS)} dan biri, 'izoh' — 3–7 so'z.",
+            "keyingi_dars: 2–3 ta amaliy tavsiya; iloji bo'lsa statistikadagi zaif bosqichga bog'la.",
+            "uy_vazifasi: o'qituvchi uy vazifasini aytgan bo'lsa qisqa matn, aytmagan bo'lsa null.",
+            "Raqamlarni o'ylab topma — faqat statistikadagi sonlardan foydalan.",
+        ],
+        "javob_formati": {
+            "xulosa": "...", "yaxshi": ["..."], "qiyinchilik": ["..."],
+            "oquvchilar": [{"ism": "...", "holat": "qiynaldi", "izoh": "..."}],
+            "keyingi_dars": ["..."], "uy_vazifasi": None,
+        },
+    }
+    data = call_json(DEBRIEF_SYSTEM, user, "ovozli_tahlil")
+    if not isinstance(data, dict) or not str(data.get("xulosa", "")).strip():
+        return fallback, "shablon"
+
+    def _list(key, limit):
+        items = data.get(key)
+        return [str(x).strip() for x in items if str(x).strip()][:limit] if isinstance(items, list) else []
+
+    pupils = []
+    for p in (data.get("oquvchilar") or []) if isinstance(data.get("oquvchilar"), list) else []:
+        if not isinstance(p, dict) or not str(p.get("ism", "")).strip():
+            continue
+        tag = str(p.get("holat", "")).strip()
+        pupils.append({
+            "ism": str(p["ism"]).strip()[:60],
+            "holat": tag if tag in DEBRIEF_TAGS else "e'tibor",
+            "izoh": str(p.get("izoh", "")).strip()[:120],
+        })
+    uy = data.get("uy_vazifasi")
+    return {
+        "xulosa": str(data["xulosa"]).strip()[:400],
+        "yaxshi": _list("yaxshi", 3),
+        "qiyinchilik": _list("qiyinchilik", 3),
+        "oquvchilar": pupils[:12],
+        "keyingi_dars": _list("keyingi_dars", 3),
+        "uy_vazifasi": str(uy).strip()[:200] if isinstance(uy, str) and uy.strip() else None,
+    }, "gpt"
 
 
 # ------------------------------------------------------------------ 8. Vizual baholash: qo'lyozma yechim (rubrika)
@@ -548,10 +624,16 @@ def grade_solutions(items: list) -> tuple:
 # ------------------------------------------------------------------ 9. Vizual baholash: uy vazifasi (mashq daftari)
 
 HOMEWORK_SYSTEM = (
-    "Sen 5-sinf matematika o'qituvchisisan. Suratda o'quvchining mashq daftari sahifasi bor. "
+    "Sen 5-sinf matematika o'qituvchisisan va o'quvchining UY VAZIFASI suratini tekshirasan. "
+    "AVVAL suratning turini aniqla:\n"
+    "  'daftar' — o'quvchining daftari yoki mashq daftari sahifasi: qo'lda yozilgan yechimlar va mashq raqamlari bor;\n"
+    "  'kartochka' — bosma test varaqasi, javob doirachalari yoki kvadrat markerlar ko'rinib turibdi;\n"
+    "  'darslik' — bosma kitob sahifasi, qo'lda yozilgan ish yo'q;\n"
+    "  'boshqa' — stol, devor, odam, qorong'i yoki o'qib bo'lmaydigan surat.\n"
+    "Faqat 'daftar' bo'lgandagina mashqlarni tekshir. Boshqa hollarda masalalar ro'yxatini BO'SH qoldir. "
     "Har bir bajarilgan mashqni raqami bo'yicha ajrat va to'g'ri/xato ekanini aniqla; xato bo'lsa sababini ayt "
-    "(masalan: amallar tartibi, hisob xatosi, shartni noto'g'ri tushunish). Faqat suratda ko'ringaniga tayan. "
-    "O'zbek tilida (lotin), qisqa. Javobni faqat JSON qaytar."
+    "(masalan: amallar tartibi, hisob xatosi, shartni noto'g'ri tushunish). Hisoblarni o'zing qayta bajarib tekshir. "
+    "Faqat suratda ko'ringaniga tayan, o'zingdan mashq to'qima. O'zbek tilida (lotin), qisqa. Javobni faqat JSON qaytar."
 )
 
 
@@ -560,15 +642,23 @@ def check_homework(image: bytes, context: dict) -> dict | None:
     user = {
         "kontekst": context,
         "qoidalar": [
+            "Avval 'sahifa' maydonini to'ldir: daftar | kartochka | darslik | boshqa.",
+            "'daftar' bo'lmasa — masalalar ro'yxati bo'sh bo'lsin va izohda nima ko'rinayotganini ayt.",
             "Har mashq uchun: nom (raqami), togri (true/false), xato (qisqa tur nomi yoki null), izoh (1 gap).",
-            "O'qib bo'lmaydigan mashqni ro'yxatga qo'shma.",
+            "Mashq raqami ko'rinmasa yoki yozuv o'qilmasa — uni ro'yxatga qo'shma.",
+            "mavzuga_mos: mashqlar berilgan mavzuga mos keladimi (true/false).",
             "izoh (umumiy): o'qituvchiga 1 gap - nimaga e'tibor berish kerak.",
         ],
-        "javob_formati": {"masalalar": [{"nom": "12", "togri": True, "xato": None, "izoh": "..."}], "izoh": "..."},
+        "javob_formati": {"sahifa": "daftar", "mavzuga_mos": True,
+                          "masalalar": [{"nom": "12", "togri": True, "xato": None, "izoh": "..."}], "izoh": "..."},
     }
     data = call_json_vision(HOMEWORK_SYSTEM, user, [image], "uy_vazifasi")
     if not isinstance(data, dict) or not isinstance(data.get("masalalar"), list):
         return None
+    page = str(data.get("sahifa", "")).strip().lower()
+    if page and page != "daftar":
+        return {"sahifa": page, "masalalar": [], "correct": 0, "total": 0,
+                "izoh": str(data.get("izoh", ""))[:300] or "Suratda o'quvchi daftari ko'rinmadi."}
     tasks = []
     for t in data["masalalar"][:20]:
         if not isinstance(t, dict) or not str(t.get("nom", "")).strip():
@@ -576,6 +666,8 @@ def check_homework(image: bytes, context: dict) -> dict | None:
         tasks.append({"nom": str(t["nom"])[:10], "togri": bool(t.get("togri")),
                       "xato": (str(t["xato"])[:60] if t.get("xato") else None), "izoh": str(t.get("izoh", ""))[:160]})
     if not tasks:
-        return None
-    return {"masalalar": tasks, "correct": sum(1 for t in tasks if t["togri"]), "total": len(tasks),
+        return {"sahifa": page or "boshqa", "masalalar": [], "correct": 0, "total": 0,
+                "izoh": str(data.get("izoh", ""))[:300] or "Bajarilgan mashq topilmadi."}
+    return {"sahifa": "daftar", "mavzuga_mos": bool(data.get("mavzuga_mos", True)),
+            "masalalar": tasks, "correct": sum(1 for t in tasks if t["togri"]), "total": len(tasks),
             "izoh": str(data.get("izoh", ""))[:300]}

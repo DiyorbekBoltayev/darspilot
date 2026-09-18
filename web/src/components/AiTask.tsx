@@ -13,6 +13,7 @@ const MESSAGES: Record<SwarmKind, string[]> = {
   grade: ["Har bir o'quvchiga bosqichli tashxis qo'yilmoqda…", "O'quvchi, ota-ona va o'qituvchi uchun feedback yozilmoqda…", 'Sinf xulosasi tayyorlanmoqda…'],
   report: ["Haftaning diagnostikalari va e'tibor jurnali yig'ilmoqda…", "Tizimli xatolar va ilg'or guruh aniqlanmoqda…", 'Haftalik xulosa yozilmoqda…'],
   homework: ["Daftar sahifasi tekislanmoqda…", "Har bir mashq raqami bo'yicha ajratilmoqda…", "To'g'ri-xato va xato turi aniqlanmoqda…"],
+  debrief: ['Ovoz matnga aylantirilmoqda…', "Aytilgan ismlar sinf ro'yxati bilan solishtirilmoqda…", 'Dars xulosasi tuzilmoqda…'],
   lesson: ["Ustuvorlik bali hisoblanmoqda: kim bilan ishlash kerak…", 'Har bosqichga metod tanlanmoqda…', "Guruhlar va qismlar taqsimlanmoqda…", '45 daqiqalik ssenariy yig\'ilmoqda…'],
 }
 
@@ -24,6 +25,7 @@ const TITLES: Record<SwarmKind, string> = {
   lesson: 'Keyingi dars ssenariysi',
   report: 'Haftalik xulosa',
   homework: 'Uy vazifasi tekshirilmoqda',
+  debrief: 'Dars tahlili tayyorlanmoqda',
 }
 
 type Toast = { id: number; text: string; tone: 'good' | 'bad' }
@@ -74,7 +76,7 @@ export function AiProvider({ children }: { children: ReactNode }) {
     <AiContext.Provider value={value}>
       {children}
       <AnimatePresence>{kind && <Overlay key="ai" kind={kind} />}</AnimatePresence>
-      <div className="pointer-events-none fixed right-4 bottom-4 z-[70] flex w-[min(92vw,380px)] flex-col gap-2">
+      <div className="pointer-events-none fixed right-4 bottom-[calc(5.5rem+env(safe-area-inset-bottom))] z-[70] flex w-[min(92vw,380px)] flex-col gap-2 sm:bottom-[calc(1rem+env(safe-area-inset-bottom))]">
         <AnimatePresence initial={false}>
           {toasts.map((t) => (
             <motion.div
@@ -148,7 +150,7 @@ function Overlay({ kind }: { kind: SwarmKind }) {
           <span className="tabular-nums text-faint">{elapsed.toFixed(1)} s</span>
         </div>
         <h2 className="mt-4 font-display text-2xl font-semibold text-indigo-600 sm:text-3xl">{TITLES[kind]}</h2>
-        <div className="mt-3 h-6 overflow-hidden">
+        <div className="mt-3 min-h-14 px-2 sm:h-6 sm:min-h-0 sm:overflow-hidden">
           <AnimatePresence mode="wait">
             <motion.p
               key={mi}

@@ -305,12 +305,35 @@ def lesson_attention_text(lid: int, body: TextBody):
     return _wrap(conveyor.attention_from_text, lid, body.text)
 
 
-@app.post("/api/lessons/{lid}/attention/voice")
-async def lesson_attention_voice(lid: int, file: UploadFile = File(...)):
+async def _audio_bytes(file: UploadFile) -> bytes:
+    """Ovozli endpointlar uchun umumiy o'qish va hajm chegarasi."""
     data = await file.read()
     if len(data) > 15 * 1024 * 1024:
         raise HTTPException(413, "Audio juda katta (15 MB gacha)")
+    return data
+
+
+@app.post("/api/lessons/{lid}/attention/voice")
+async def lesson_attention_voice(lid: int, file: UploadFile = File(...)):
+    data = await _audio_bytes(file)
     return await _run(conveyor.attention_from_voice, lid, data, file.filename or "ovoz.webm")
+
+
+@app.post("/api/lessons/{lid}/debrief/voice")
+async def lesson_debrief_voice(lid: int, file: UploadFile = File(...)):
+    """«Dars qanday o'tdi» — o'qituvchining og'zaki tahlili tuzilgan xulosaga aylanadi."""
+    data = await _audio_bytes(file)
+    return await _run(conveyor.debrief_from_voice, lid, data, file.filename or "ovoz.webm")
+
+
+@app.post("/api/lessons/{lid}/debrief/text")
+async def lesson_debrief_text(lid: int, body: TextBody):
+    return await _run(conveyor.debrief_from_text, lid, body.text)
+
+
+@app.delete("/api/lessons/{lid}/debrief")
+def lesson_debrief_clear(lid: int):
+    return _wrap(conveyor.clear_debrief, lid)
 
 
 @app.post("/api/attention/toggle")
@@ -422,6 +445,33 @@ async def diagnostic_scan(did: int, files: List[UploadFile] = File(...)):
             out[k] += res[k]
         out["annotated"].append(res["annotated"])
     return out
+
+
+@app.delete("/api/diagnostics/{did}/scans/{scan_id}")
+def diagnostic_scan_delete(did: int, scan_id: int):
+    """Yuklangan suratni o'chirish (noto'g'ri yoki takroriy surat uchun)."""
+    return _wrap(service.delete_scan, did, scan_id)
+
+
+@app.post("/api/diagnostics/{did}/photos")
+async def diagnostic_photos(did: int, files: List[UploadFile] = File(...)):
+    """Suratlarni omborga yuklaydi (hali o'qilmaydi) — o'qituvchi bir nechtasini ketma-ket suratga oladi."""
+    out = None
+    errors = []
+    for f in files:
+        try:
+            out = await _run(service.store_photo, did, await f.read(), f.filename)
+        except HTTPException as e:
+            errors.append(str(e.detail))
+    if out is None:
+        raise HTTPException(400, "; ".join(errors) or "Surat yuklanmadi")
+    return out
+
+
+@app.post("/api/diagnostics/{did}/scan-pending")
+async def diagnostic_scan_pending(did: int):
+    """Navbatdagi barcha suratlarni birdan o'qiydi."""
+    return await _run(service.scan_pending, did)
 
 
 @app.post("/api/diagnostics/{did}/demo-photo")

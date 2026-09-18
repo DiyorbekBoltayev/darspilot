@@ -129,3 +129,26 @@ def test_director_and_parent(client):
     assert "code" in portal["student"] and portal["tip"]
     flipped = client.put(f"/api/parent/{token}/consent", json={"consent": not portal["consent"]}).json()
     assert flipped["consent"] is (not portal["consent"])
+
+
+def test_debrief_text_saves_and_clears(client):
+    """Ovozli dars tahlili: AI kalitsiz ham matn saqlanadi, darsga bog'lanadi va o'chiriladi."""
+    lesson = next(x for x in client.get("/api/today").json()["lessons"] if x["class_name"] == "5-V")
+    lid = lesson["id"]
+    roster = client.get(f"/api/lessons/{lid}/attention").json()["students"]
+    name = roster[0]["name"].split()[0]
+    text = f"Dars yaxshi o'tdi, {name} qavslarni tushunmadi, keyingi darsda takrorlash kerak"
+
+    d = client.post(f"/api/lessons/{lid}/debrief/text", json={"text": text}).json()
+    assert d["transcript"] == text and d["source"] == "matn"
+    assert d["manba"] in ("gpt", "shablon") and d["xulosa"]
+
+    saved = client.get(f"/api/lessons/{lid}").json()["debrief"]
+    assert saved and saved["transcript"] == text
+
+    assert client.post(f"/api/lessons/{lid}/debrief/text", json={"text": "  "}).status_code == 400
+    voice = client.post(f"/api/lessons/{lid}/debrief/voice", files={"file": ("ovoz.webm", b"\x1aE\xdf\xa3")})
+    assert voice.status_code == 400  # testda OpenAI kaliti yo'q
+
+    assert client.delete(f"/api/lessons/{lid}/debrief").json()["ok"]
+    assert client.get(f"/api/lessons/{lid}").json()["debrief"] is None

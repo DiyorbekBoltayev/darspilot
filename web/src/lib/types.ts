@@ -61,7 +61,22 @@ export interface LessonDetail extends LessonBrief {
   attended: { id: number; code: string }[]
   groups_note: string | null
   next: LessonBrief | null
+  debrief: LessonDebrief | null
   gap_alert: number
+}
+
+/** O'qituvchining ovozli (yoki yozma) dars tahlili — «tahlil» qadamida. */
+export interface LessonDebrief {
+  xulosa: string
+  yaxshi: string[]
+  qiyinchilik: string[]
+  oquvchilar: { ism: string; holat: 'kuchaydi' | 'qiynaldi' | "e'tibor"; izoh: string; student_id?: number; code?: string }[]
+  keyingi_dars: string[]
+  uy_vazifasi: string | null
+  transcript: string
+  manba: 'gpt' | 'shablon'
+  source: 'ovoz' | 'matn'
+  created_at: string
 }
 
 export interface UpcomingDiagnostic {
@@ -163,7 +178,16 @@ export interface DiagnosticDetail {
   responses: number
   flagged: number
   graded: number
-  scans: { id: number; url: string; original: string; strips: number }[]
+  pending: number
+  scans: {
+    id: number
+    status: string
+    url: string
+    original: string
+    strips: number
+    at: string
+    students: { journal_no: number; name: string; code: string; repeat: boolean; latest: boolean }[]
+  }[]
   pdf: { varaqlar: string; kalit: string }
   sheets: number
   kind: string
@@ -259,6 +283,7 @@ export interface HomeworkStudent {
   journal_no: number
   homework: null | {
     id: number
+    status: string
     correct: number
     total: number
     tasks: HomeworkTask[]
@@ -270,6 +295,7 @@ export interface HomeworkStudent {
 }
 
 export interface HomeworkView {
+  pending: number
   lesson_id: number
   class_id: number
   date: string
