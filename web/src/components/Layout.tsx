@@ -198,7 +198,7 @@ export default function Layout() {
   }, [location.pathname])
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-dvh">
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-[256px] lg:block"><Sidebar /></aside>
 
       <header className="sticky top-0 z-30 flex items-center gap-3 border-b border-line bg-surface/95 px-4 py-2.5 backdrop-blur lg:hidden">
@@ -212,13 +212,13 @@ export default function Layout() {
             <motion.div className="fixed inset-0 z-40 bg-ink/40 lg:hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setOpen(false)} />
             <motion.aside className="fixed inset-y-0 left-0 z-50 w-[280px] lg:hidden" initial={{ x: -290 }} animate={{ x: 0 }} exit={{ x: -290 }} transition={{ type: 'spring', bounce: 0, duration: 0.3 }}>
               <Sidebar onNavigate={() => setOpen(false)} />
-              <button onClick={() => setOpen(false)} className="absolute top-5 right-3 text-white/70" aria-label="Yopish"><X className="size-5" /></button>
+              <button onClick={() => setOpen(false)} className="absolute top-3 right-2 grid size-11 place-items-center rounded-lg text-white/70" aria-label="Yopish"><X className="size-5" /></button>
             </motion.aside>
           </>
         )}
       </AnimatePresence>
 
-      <main className="lg:pl-[256px]">
+      <main className="overflow-x-hidden lg:pl-[256px]">
         <motion.div
           key={location.pathname}
           initial={{ opacity: 0, y: 4 }}

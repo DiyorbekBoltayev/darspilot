@@ -42,8 +42,8 @@ export default function ClassStep({ lesson, onNext, onBack }: { lesson: LessonDe
   return (
     <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
       <div className="min-w-0 space-y-4">
-        <div className="card overflow-x-auto p-2">
-          <div className="grid min-w-[720px] grid-cols-8 gap-1">
+        <div className="card p-2 sm:overflow-x-auto">
+          <div className="grid grid-cols-4 gap-1 sm:min-w-[720px] sm:grid-cols-8">
             {plan.stages.map((s, i) => (
               <button key={s.key} onClick={() => setActive(i)} style={{ background: i === active ? STAGE_COLORS[i] : undefined }}
                 className={cn('min-w-0 rounded-lg px-2.5 py-2 text-left transition-colors', i === active ? 'text-white' : i < active ? 'bg-sunken text-mute' : 'text-ink-2 hover:bg-sunken')}>
@@ -123,7 +123,7 @@ export default function ClassStep({ lesson, onNext, onBack }: { lesson: LessonDe
             </div>
           )}
 
-          <div className="mt-6 flex items-center justify-between border-t border-line pt-4">
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-2 border-t border-line pt-4">
             <Button variant="ghost" icon={ArrowLeft} disabled={active === 0} onClick={() => setActive((a) => a - 1)}>Oldingi</Button>
             {active < plan.stages.length - 1
               ? <Button variant="indigo" onClick={() => setActive((a) => a + 1)}>Keyingi bosqich <ArrowRight className="size-4" /></Button>

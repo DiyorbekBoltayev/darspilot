@@ -53,7 +53,7 @@ export default function Lessons() {
             <p className="max-w-md text-[13px] leading-relaxed text-mute">Har darsda test — qog'oz va vaqt isrofi. 2–3 darsda bir marta bosqichli diagnostika chorakdagi kamida 4 ta formativ baholashni bemalol qoplaydi.</p>
           </div>
         </Card>
-        <div className="grid grid-cols-3 gap-3 lg:grid-cols-1">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 lg:grid-cols-1">
           <Mini icon={FileText} label="Qog'ozli diagnostika" value={paper} tone="text-indigo-600" />
           <Mini icon={Zap} label="Tezkor tekshiruv" value={data.lessons.length - paper} tone="text-firuza-600" />
           <Mini icon={Users} label="Guruh ishi" value={group} tone="text-oltin-600" />

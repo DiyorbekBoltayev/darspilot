@@ -34,7 +34,7 @@ export default function HeroScene() {
           ))}
         </div>
 
-        <div className="relative mt-5 h-[248px] sm:h-[268px]">
+        <div className="relative mt-5 h-auto min-h-[248px] sm:h-[268px]">
           <AnimatePresence mode="wait">
             {phase === 0 && <Sheet key="chop" />}
             {phase === 1 && <Scan key="surat" />}

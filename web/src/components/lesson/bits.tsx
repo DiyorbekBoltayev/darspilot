@@ -57,8 +57,8 @@ export function MiniStepper({ steps, current, className }: { steps: Step[]; curr
 /** Dars sahifasi tepasidagi katta konveyer: har qadam bosiladi. */
 export function Stepper({ steps, active, current, onSelect }: { steps: Step[]; active: StepKey; current: StepKey; onSelect: (k: StepKey) => void }) {
   return (
-    <div className="card overflow-x-auto p-2">
-      <ol className="grid min-w-[720px] grid-cols-5 gap-1.5">
+    <div className="card p-2 sm:overflow-x-auto">
+      <ol className="grid grid-cols-2 gap-1.5 sm:min-w-[720px] sm:grid-cols-5">
         {steps.map((s, i) => {
           const Icon = STEP_ICON[s.key]
           const isActive = s.key === active

@@ -105,7 +105,7 @@ export default function Auth() {
   }
 
   return (
-    <div className="flex min-h-screen w-full overflow-x-hidden bg-paper">
+    <div className="flex min-h-dvh w-full overflow-x-hidden bg-paper">
       {/* Brend paneli — faqat kattaroq ekranlarda */}
       <aside className="girih-dark relative hidden w-[44%] max-w-[560px] flex-col justify-between bg-indigo-700 p-10 lg:flex xl:p-12">
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-indigo-700/30 via-indigo-700/70 to-indigo-800" />

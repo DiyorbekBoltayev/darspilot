@@ -28,7 +28,7 @@ export default function ParentPortal() {
   const consent = useMutation({ mutationFn: (v: boolean) => api.parentConsent(token, v), onSuccess: (d) => { qc.setQueryData(['parent', token], d); qc.invalidateQueries({ queryKey: ['parents'] }) } })
 
   return (
-    <div className="min-h-screen bg-paper">
+    <div className="min-h-dvh bg-paper">
       <header className="sticky top-0 z-20 border-b border-line bg-surface/95 backdrop-blur">
         <div className="mx-auto flex max-w-2xl items-center gap-3 px-4 py-3">
           <StarLogo className="size-8" />

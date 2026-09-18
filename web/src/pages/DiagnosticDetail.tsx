@@ -93,10 +93,10 @@ export default function DiagnosticDetail() {
             { key: 'skaner', label: 'Skaner', icon: ScanLine },
             { key: 'javoblar', label: `Javoblar${data.flagged ? ` · ${data.flagged} tekshirish` : ''}`, icon: ListChecks },
           ]} />
-        <div className="flex items-center gap-1.5 text-[13px]">
+        <div className="flex flex-wrap items-center gap-1.5 text-[13px]">
           {[['Varaqlar', true], [`Javoblar ${data.responses}/${data.rows.length}`, data.responses > 0], [data.graded ? `Baholandi ${data.graded}` : 'Baholash', data.graded > 0]].map(([l, done], i) => (
             <div key={i} className="flex items-center gap-1.5">
-              {i > 0 && <span className={cn('h-px w-5', done ? 'bg-firuza-500' : 'bg-line-strong')} />}
+              {i > 0 && <span className={cn('hidden h-px w-5 sm:block', done ? 'bg-firuza-500' : 'bg-line-strong')} />}
               <span className={cn('flex items-center gap-1 rounded-lg px-2 py-1 font-medium ring-1', done ? 'bg-firuza-50 text-firuza-700 ring-firuza-200' : 'bg-surface text-mute ring-line')}>
                 {done ? <Check className="size-3.5" /> : <span className="size-1.5 rounded-full bg-faint" />}{l as string}
               </span>

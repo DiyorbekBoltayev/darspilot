@@ -189,7 +189,7 @@ function ImportPreview({ preview, classId, skills, onClose, onConfirm }: {
                 {t.skills.map((k) => <span key={k} className="rounded bg-firuza-50 px-1.5 py-0.5 text-firuza-700">{skillName[k]}</span>)}
               </div>
             </div>
-            <button onClick={() => setTopics((ts) => ts.filter((_, j) => j !== i))} className="rounded-lg px-2 py-1 text-xs text-terra-600 hover:bg-terra-50">olib tashlash</button>
+            <button onClick={() => setTopics((ts) => ts.filter((_, j) => j !== i))} className="min-h-10 shrink-0 rounded-lg px-3 py-2 text-xs text-terra-600 hover:bg-terra-50">olib tashlash</button>
           </div>
         ))}
       </div>

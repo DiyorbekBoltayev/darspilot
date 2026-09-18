@@ -12,7 +12,7 @@ export function CardHeader({ icon: Icon, title, hint, action, className }: {
   icon?: LucideIcon; title: ReactNode; hint?: ReactNode; action?: ReactNode; className?: string
 }) {
   return (
-    <div className={cn('flex items-start justify-between gap-3 px-5 pt-5', className)}>
+    <div className={cn('flex flex-col gap-3 px-5 pt-5 sm:flex-row sm:items-start sm:justify-between', className)}>
       <div className="flex min-w-0 items-start gap-3">
         {Icon && (
           <div className="grid size-9 shrink-0 place-items-center rounded-xl bg-firuza-50 text-firuza-600 ring-1 ring-firuza-100">
@@ -194,12 +194,12 @@ export function Bar({ value, className }: { value: number; className?: string })
 
 export function Modal({ title, subtitle, onClose, children, footer, wide }: { title: ReactNode; subtitle?: ReactNode; onClose: () => void; children: ReactNode; footer?: ReactNode; wide?: boolean }) {
   return (
-    <motion.div className="fixed inset-0 z-50 grid place-items-center bg-ink/40 p-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose}>
+    <motion.div className="fixed inset-0 z-50 grid place-items-end justify-items-center bg-ink/40 p-0 sm:place-items-center sm:p-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose}>
       <motion.div
         initial={{ opacity: 0, y: 16, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 8 }}
         transition={{ duration: 0.2 }}
         onClick={(e) => e.stopPropagation()}
-        className={cn('flex max-h-[90vh] w-full flex-col overflow-hidden rounded-2xl bg-surface shadow-lift ring-1 ring-line', wide ? 'max-w-3xl' : 'max-w-xl')}
+        className={cn('flex max-h-[92dvh] w-full flex-col overflow-hidden rounded-t-2xl bg-surface pb-[env(safe-area-inset-bottom)] shadow-lift ring-1 ring-line sm:max-h-[90dvh] sm:rounded-2xl sm:pb-0', wide ? 'sm:max-w-3xl' : 'sm:max-w-xl')}
       >
         <div className="flex items-start justify-between gap-4 border-b border-line px-6 py-4">
           <div>

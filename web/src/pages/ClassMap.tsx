@@ -70,9 +70,9 @@ export default function ClassMap() {
 
       <div className="mb-5 grid grid-cols-1 gap-5 xl:grid-cols-3">
         <section className="card relative flex flex-col overflow-hidden xl:col-span-2">
-          <div className="absolute top-4 left-5 z-10">
+          <div className="absolute inset-x-5 top-4 z-10">
             <div className="text-[13px] font-semibold text-ink">Sinf galaktikasi</div>
-            <div className="text-xs text-mute">Markazda o'qituvchi · qatlam = oxirgi e'tibordan beri darslar · rang = o'zlashtirish</div>
+            <div className="hidden text-xs text-mute sm:block">Markazda o'qituvchi · qatlam = oxirgi e'tibordan beri darslar · rang = o'zlashtirish</div>
           </div>
           <div className="flex-1 bg-[radial-gradient(ellipse_at_50%_60%,#FFFFFF_0%,#F1F8F8_70%)]">
             <Suspense fallback={<div className="skeleton h-[400px] rounded-none" />}>

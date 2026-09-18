@@ -22,7 +22,7 @@ export default function KnowledgeFlow({ steps }: { steps: { name: string; pct: n
       <div ref={hostRef} className="relative h-56 w-full sm:h-64">
         {supported && <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />}
       </div>
-      <div className="relative mt-1 h-14">
+      <div className="relative mt-1 h-20 sm:h-14">
         {steps.map((s, i) => (
           <div
             key={s.name}

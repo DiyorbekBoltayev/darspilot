@@ -85,7 +85,7 @@ export default function PlanEditor({ plan: data, lessonId, onRebuild, rebuilding
           </div>
         </div>
 
-        <div className="mt-4 flex h-12 gap-1 overflow-hidden rounded-xl">
+        <div className="mt-4 hidden h-12 gap-1 overflow-hidden rounded-xl sm:flex">
           {view.map((s, i) => (
             <a key={s.key} href={`#stage-${s.key}`} title={`${s.name} · ${s.minutes} daq`} style={{ flex: s.minutes, background: STAGE_COLORS[i] }}
               className="flex min-w-0 flex-col justify-center rounded-lg px-2 text-white transition-[flex] duration-300 hover:brightness-110">
@@ -155,7 +155,7 @@ export default function PlanEditor({ plan: data, lessonId, onRebuild, rebuilding
           const d = draft?.[s.key]
           const original = data.stages[i]
           return (
-            <div key={s.key} id={`stage-${s.key}`} className="relative scroll-mt-24 pl-11">
+            <div key={s.key} id={`stage-${s.key}`} className="relative scroll-mt-24 pl-0 sm:pl-11">
               <div className="absolute top-0 bottom-0 left-[16px] w-px bg-line-strong" />
               <div className="num absolute top-4 left-0 grid size-8 place-items-center rounded-lg text-xs font-semibold text-white" style={{ background: STAGE_COLORS[i] }}>{i + 1}</div>
               <Card className={cn('p-5', editing && 'ring-1 ring-indigo-100')}>
@@ -232,11 +232,11 @@ export default function PlanEditor({ plan: data, lessonId, onRebuild, rebuilding
       )}
 
       {editing && (
-        <div className="sticky bottom-4 z-20 mx-auto flex w-fit items-center gap-2 rounded-2xl bg-surface p-2 shadow-lift ring-1 ring-line">
+        <div className="sticky bottom-3 z-20 mx-auto flex w-full flex-wrap items-center justify-center gap-2 rounded-2xl bg-surface p-2 shadow-lift ring-1 ring-line sm:w-fit sm:flex-nowrap">
           <span className="px-2 text-sm text-ink-2">Jami: <b className={cn('num', total !== 45 ? 'text-terra-500' : 'text-ink')}>{total}′</b></span>
           <Button variant="ghost" icon={Undo2} onClick={() => setDraft(null)}>Bekor qilish</Button>
           <Button variant="primary" icon={Save} loading={save.isPending} onClick={() => submit()}>Saqlash</Button>
-          <Link to="/metodlar" className="px-2 text-[13px] text-firuza-700 hover:underline">O'z metodimni qo'shish</Link>
+          <Link to="/metodlar" className="hidden px-2 text-[13px] text-firuza-700 hover:underline sm:inline">O'z metodimni qo'shish</Link>
         </div>
       )}
     </div>
@@ -262,9 +262,9 @@ function GroupsCard({ data, showKey, onToggleKey, onRegroup, rebuilding }: { dat
     <Card>
       <CardHeader icon={Users} title="Guruh ishi: qiyin masalani qismlarga bo'lish"
         hint={data.groups_formed ? `Guruhlar ${data.groups_formed} da tuzildi va 2 hafta saqlanadi — har darsda qayta bo'linmaydi.` : "Saqlangan guruhlar ishlatildi — o'quvchilar o'z guruhini biladi, vaqt ketmaydi."}
-        action={<div className="flex gap-1">
-          <Button variant="ghost" icon={showKey ? EyeOff : Eye} onClick={onToggleKey} className="h-8 text-[13px]">{showKey ? 'Kalitni yashirish' : 'Kalit'}</Button>
-          <Button variant="ghost" icon={RefreshCw} loading={rebuilding} onClick={onRegroup} className="h-8 text-[13px]">Guruhlarni yangilash</Button>
+        action={<div className="flex flex-wrap gap-1">
+          <Button variant="ghost" icon={showKey ? EyeOff : Eye} onClick={onToggleKey} className="h-8 text-[13px]"><span className="hidden sm:inline">{showKey ? 'Kalitni yashirish' : 'Kalit'}</span><span className="sm:hidden">Kalit</span></Button>
+          <Button variant="ghost" icon={RefreshCw} loading={rebuilding} onClick={onRegroup} className="h-8 text-[13px]"><span className="hidden sm:inline">Guruhlarni yangilash</span><span className="sm:hidden">Yangilash</span></Button>
         </div>} />
       <div className="grid grid-cols-1 gap-5 p-5 xl:grid-cols-5">
         <div className="xl:col-span-2">

@@ -104,7 +104,7 @@ export default function Grades() {
                           onChange={(e) => setDraft((d) => ({ ...d, [`${l.lesson_id}:${s.id}`]: e.target.value.replace(/[^\d.,]/g, '') }))}
                           inputMode="decimal"
                           title={cell?.source === 'diagnostika' ? 'Diagnostikadan avtomatik' : undefined}
-                          className={cn('num h-8 w-12 rounded-lg text-center text-[13px] outline-none ring-1 ring-transparent focus:ring-firuza-400',
+                          className={cn('num h-11 w-12 rounded-lg text-center sm:h-8 text-[13px] outline-none ring-1 ring-transparent focus:ring-firuza-400',
                             pct == null ? 'bg-sunken/60 text-faint' : cellTone(pct),
                             cell?.source === 'diagnostika' && 'font-semibold')}
                         />
