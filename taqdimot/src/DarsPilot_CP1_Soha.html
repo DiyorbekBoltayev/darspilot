@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<title>DarsPilot — Soha mentori uchun (CP1)</title>
+<link rel="stylesheet" href="deck.css">
+<style>
+  .day { display: grid; grid-template-columns: 110px 1fr; gap: 0 16px; margin-top: 4px; }
+  .day .t { font-family: 'Unbounded', sans-serif; font-size: 14px; color: var(--indigo); padding: 9px 0; }
+  .day .e { font-size: 15px; color: var(--ink-2); padding: 9px 0; border-bottom: 1px solid var(--line); }
+  .stage { display: flex; gap: 8px; margin-top: 16px; }
+  .stage div { flex: 1; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 10px; text-align: center; }
+  .stage div b { display: block; font-family: 'Unbounded', sans-serif; font-size: 13.5px; }
+  .stage div span { font-size: 12px; color: var(--mute); display: block; margin-top: 4px; line-height: 1.35; }
+</style>
+</head>
+<body>
+
+<!-- 1. MUQOVA -->
+<section class="slide cover">
+  <div class="kicker">Umummilliy AI Xakaton · Xorazm · Ta'lim treki · 2-ustuvor mavzu</div>
+  <h1>DarsPilot</h1>
+  <div class="sub">AI yordamida o'quvchilar bilimini avtomatik baholash va shaxsiylashtirilgan fikr-mulohaza —
+    haqiqiy taqvim-mavzu reja, PISA formatidagi savollar va o'qituvchining kundalik ish tartibi bilan.</div>
+  <div class="meta">
+    <div><b>Checkpoint 1</b>18-sentabr, 2026</div>
+    <div><b>Soha mentori sessiyasi</b>10 daqiqa</div>
+    <div><b>Jamoa</b>Fractal · 2 amaldagi o'qituvchi + dasturchi</div>
+  </div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>Soha mentori · CP1</span></div>
+</section>
+
+<!-- 2. INTRO -->
+<section class="slide">
+  <div class="eyebrow">Bir qarashda</div>
+  <h1>AI o'qituvchini almashtirmaydi — uning tekshiruv ishini oladi</h1>
+  <p class="lead">Asosiy ustunligimiz: AI o'qituvchining kundalik tartibiga kirib boradi. Baho — o'qituvchiniki,
+    qaror — o'qituvchiniki; AI esa vaqt talab qiladigan mexanik ishni bajaradi va hech kim yozib bormaydigan
+    narsani eslab qoladi: kim qaysi bosqichda adashyapti.</p>
+  <div class="grid g3">
+    <div class="card tint">
+      <div class="tag">Sinfda ishlaydi</div>
+      <h3>Qurilma talab qilmaydi</h3>
+      <p>O'quvchida telefon, planshet yoki akkaunt kerak emas. Faqat qog'oz kartochka va o'qituvchining telefoni —
+        ikki smenali, jihozi kam maktab uchun ham mos.</p>
+    </div>
+    <div class="card ind">
+      <div class="tag" style="color:var(--indigo)">Metodikaga mos</div>
+      <h3>PISA va Singapur yondashuvi</h3>
+      <p>Savollar "muammoni aniqlash → modellashtirish → yechish → talqin" bosqichlari bo'yicha tuziladi —
+        yangi darsliklardagi aniq → tasviriy → abstrakt yo'li bilan bir xil mantiq.</p>
+    </div>
+    <div class="card gold">
+      <div class="tag" style="color:#9a7212">Hujjatga mos</div>
+      <h3>Milliy reja va baholash</h3>
+      <p>170 darslik taqvim-mavzu reja, BSB/ChSB sanalari, formativ ball (0–10) va 100 ballik tizim —
+        o'qituvchi hech narsani qayta yozmaydi.</p>
+    </div>
+  </div>
+  <div class="grid g4 mt">
+    <div class="card"><div class="big fz-fir">7,2 soat</div><div class="cap">chorakda tejalgan tekshiruv vaqti</div></div>
+    <div class="card"><div class="big fz-ind">100%</div><div class="cap">o'quvchi qamrovi: kim e'tibordan chetda qolgani ko'rinadi</div></div>
+    <div class="card"><div class="big fz-ter">254</div><div class="cap">chorakda tejalgan varaq (38 ta ishlatildi)</div></div>
+    <div class="card"><div class="big fz-gld">2 daq</div><div class="cap">bir sinfning ishini suratga olib yuborish</div></div>
+  </div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>2 / 12</span></div>
+</section>
+
+<!-- 3. 2-MAVZUGA MOSLIK -->
+<section class="slide">
+  <div class="eyebrow">Yo'nalishga moslik</div>
+  <h1 class="sm">2-ustuvor mavzu: "AI yordamida avtomatik baholash va feedback"</h1>
+  <table>
+    <tr><th style="width:34%">Mavzu nimani talab qiladi</th><th>DarsPilotda qanday bajarilgan</th></tr>
+    <tr><td><b>Bilimni avtomatik baholash</b></td>
+      <td>Yopiq javoblar telefon suratidan kompyuter ko'rish bilan o'qiladi (99,5% aniqlik);
+        qo'lda yozilgan yechim vizual AI tomonidan rubrika bo'yicha baholanadi</td></tr>
+    <tr><td><b>Shaxsiylashtirilgan fikr-mulohaza</b></td>
+      <td>Har o'quvchiga uch xil matn: o'quvchiga (keyingi kartochkasiga bosiladi), ota-onaga (uydagi 5 daqiqalik ish),
+        o'qituvchiga (darsda nima qilish)</td></tr>
+    <tr><td><b>Faqat ball emas — sabab</b></td>
+      <td>Har noto'g'ri variant aniq xato turiga bog'langan: "amallar tartibini buzyapti", "oraliq natijani javob deb yozyapti"</td></tr>
+    <tr><td><b>O'qituvchi nazorati</b></td>
+      <td>Har AI bahosi tasdiqlanadi yoki tuzatiladi; tuzatishlar soni o'lchanadi va ko'rsatiladi</td></tr>
+    <tr><td><b>Amaliy joriy etish</b></td>
+      <td>Uy vazifasi, joriy diagnostika va BSB/ChSB — uchalasi bitta tizimda; natija jurnalga o'zi tushadi</td></tr>
+  </table>
+  <div class="row mt">
+    <span class="pill">Mavzu bo'yicha qo'shimcha ball</span>
+    <span style="font-size:15.5px;color:var(--mute)">Biz mavzuni "qo'shimcha funksiya" sifatida emas, mahsulotning
+      o'zagi sifatida oldik: tizimning butun mantiqi baholash va feedback atrofida qurilgan.</span>
+  </div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>3 / 12</span></div>
+</section>
+
+<!-- 4. O'QITUVCHINING KUNI -->
+<section class="slide">
+  <div class="eyebrow">Muammoning dolzarbligi</div>
+  <h1 class="sm">O'qituvchining kuni: nima o'zgaradi</h1>
+  <div class="split">
+    <div>
+      <div class="card warn" style="padding:18px 20px">
+        <div class="tag" style="color:var(--terra)">Hozir</div>
+        <div class="day" style="margin-top:8px">
+          <div class="t">08:00–14:00</div><div class="e">4–6 dars, 150+ o'quvchi</div>
+          <div class="t">14:00–15:00</div><div class="e">Daftarlarni yig'ish, tanlab tekshirish</div>
+          <div class="t">Kechqurun</div><div class="e">Nazorat ishlarini tekshirish: 1,5–2 soat</div>
+          <div class="t">Yakshanba</div><div class="e">Hujjat, jurnal, keyingi hafta rejasi</div>
+          <div class="t">Natija</div><div class="e" style="border:none"><b>Haftasiga 3–5 soat</b> tekshiruv; kim qayerda
+            adashgani hech qayerda yozilmaydi</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card tint" style="padding:18px 20px">
+        <div class="tag">DarsPilot bilan</div>
+        <div class="day" style="margin-top:8px">
+          <div class="t">Dars oldidan</div><div class="e">Ssenariy tayyor: kim bilan ishlash kerakligi ko'rsatilgan</div>
+          <div class="t">Dars oxiri</div><div class="e">Kartochkalar yig'iladi, 2 daqiqada suratga olinadi</div>
+          <div class="t">10 daqiqa</div><div class="e">AI baholaydi; o'qituvchi shubhalilarini tasdiqlaydi</div>
+          <div class="t">Avtomatik</div><div class="e">Jurnalga ball, feedback, keyingi dars ssenariysi</div>
+          <div class="t">Natija</div><div class="e" style="border:none"><b>Haftasiga ~1 soat</b>; har o'quvchining
+            xato tarixi saqlanadi</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="lead" style="font-size:16px;margin-top:16px">Muammo faqat vaqtda emas: 30 kishilik sinfda o'qituvchi
+    ba'zi bolalar bilan haftalab shaxsan ishlamay qolishi mumkin va buni o'zi ham sezmaydi.
+    Tizim har dars oldidan "kim bilan necha darsdan beri ishlanmagan"ini ko'rsatadi.</p>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>4 / 12</span></div>
+</section>
+
+<!-- 5. DARS KONVEYERI -->
+<section class="slide">
+  <div class="eyebrow">Amaliy qo'llash</div>
+  <h1 class="sm">Dars konveyeri: o'qituvchi ish tartibini o'zgartirmaydi</h1>
+  <div class="stepline">
+    <div class="step"><div class="no">1-qadam</div><h4>Tayyorlash</h4><p>45 daqiqalik ssenariy: bosqichlar, metodlar, kim bilan alohida ishlash. Kerak bo'lsa — kartochkalar PDF.</p></div>
+    <div class="step"><div class="no">2-qadam</div><h4>Darsda</h4><p>E'tibor jurnali: kim bilan ishlandi. Ovoz bilan aytish mumkin — tizim ismlarni tanib belgilaydi.</p></div>
+    <div class="step"><div class="no">3-qadam</div><h4>Tekshirish</h4><p>Qog'ozli diagnostika (surat) yoki qog'ozsiz svetofor. Uy vazifasi daftari ham shu yerda.</p></div>
+    <div class="step"><div class="no">4-qadam</div><h4>Tahlil</h4><p>Kim qaysi bosqichda adashgan, sinf bo'yicha xulosa va har o'quvchiga feedback.</p></div>
+    <div class="step"><div class="no">5-qadam</div><h4>Keyingi dars</h4><p>Natijalar keyingi ssenariyga o'tadi: takrorlash bosqichi, guruhlar, nomli topshiriqlar.</p></div>
+  </div>
+  <div class="grid g3 mt">
+    <div class="card tint">
+      <h3>Qog'oz har darsda emas</h3>
+      <p>Qog'ozli diagnostika — mavzu oxirida yoki har 3-darsda. Qolgan darslarda qog'ozsiz tezkor tekshiruv
+        (svetofor). Shuning uchun chorakda 38 varaq, 292 emas.</p>
+    </div>
+    <div class="card ind">
+      <h3>Guruh ishi ham har darsda emas</h3>
+      <p>Guruhlar 2 haftaga saqlanadi: har darsda qayta bo'lish o'qituvchining vaqtini yeydi.
+        Tizim tarkibni eslab qoladi va aralashmaganlarni birlashtiradi.</p>
+    </div>
+    <div class="card gold">
+      <h3>Hech narsa yirtilmaydi</h3>
+      <p>Kartochka butunligicha yig'ib olinadi — o'quvchi javob chizig'ini yirtmaydi, o'qituvchi esa
+        faqat orqa tomonini suratga oladi.</p>
+    </div>
+  </div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>5 / 12</span></div>
+</section>
+
+<!-- 6. METODIKA: PISA + SINGAPUR -->
+<section class="slide">
+  <div class="eyebrow">Sohani chuqur tushunish</div>
+  <h1 class="sm">Savollar PISA formatida va Singapur yondashuviga mos tuziladi</h1>
+  <div class="stage">
+    <div><b>1–2</b><span>Muammoni aniqlash: nima so'ralyapti, qaysi ma'lumot berilgan</span></div>
+    <div><b>3</b><span>Modellashtirish: qaysi ifoda masalani to'g'ri ifodalaydi</span></div>
+    <div><b>4–5</b><span>Yechish: oraliq hisob va yakuniy javob (son panjarasi)</span></div>
+    <div><b>6</b><span>Talqin: javob mantiqiymi, qanday tekshiriladi</span></div>
+    <div><b>7</b><span>Tayanch bilim: oldingi mavzudagi bo'shliqni aniqlash</span></div>
+  </div>
+  <div class="grid g2 mt">
+    <div class="card ind">
+      <h3>Nega bu PISA bilan bir xil mantiq</h3>
+      <p>PISA bilimni emas, <b>bilimni yangi vaziyatda qo'llashni</b> o'lchaydi: hayotiy kontekstli matn,
+        ma'lumotni ajratish, modellashtirish va natijani talqin qilish. Bizning har bir diagnostikamiz —
+        aynan shu zanjir bo'yicha qurilgan kichik topshiriq to'plami.</p>
+    </div>
+    <div class="card tint">
+      <h3>Nega Singapur darsliklariga mos</h3>
+      <p>Yangi "AHA!" darsliklari aniq → tasviriy → abstrakt (CPA) yo'lida qurilgan. Biz ham shu tartibni
+        saqlaymiz: masala hayotiy vaziyatdan boshlanadi, keyin ifoda (model), keyin hisob.
+        Guruh ishi va takrorlash metodlari ham shu yondashuvdan olingan.</p>
+    </div>
+  </div>
+  <div class="card gold mt">
+    <h3>Eng muhimi: xato tasodifiy emas</h3>
+    <p>Har bir noto'g'ri variant ma'lum bir tushuncha xatosiga bog'langan (Nyuman xatolar tahlili mantiqi).
+      Shuning uchun o'qituvchi "5/7" degan raqam emas, <b>"amallar tartibini buzyapti — qavs qo'ymayapti"</b> degan
+      tashxis oladi va keyingi dars shunga moslanadi.</p>
+  </div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>6 / 12</span></div>
+</section>
+
+<!-- 7. BAHOLASH VA HUJJAT -->
+<section class="slide">
+  <div class="eyebrow">Amaliy qo'llash</div>
+  <h1 class="sm">Baholash va hujjat: o'qituvchi ikki marta yozmaydi</h1>
+  <div class="grid g2 mt-s">
+    <div class="card">
+      <h3>Formativ baholash (0–10)</h3>
+      <p>Diagnostika baholangach, har o'quvchining bali jurnalga o'zi tushadi. Yopiq javoblar va qo'lda yozilgan
+        yechim birga hisoblanadi — ball faqat "belgilangan doiracha"dan emas, yechim bosqichlaridan ham chiqadi.</p>
+    </div>
+    <div class="card">
+      <h3>BSB va ChSB</h3>
+      <p>Summativ ish ham shu tizim orqali: har o'quvchiga o'z varianti chiqadi, natija rejadagi maksimal
+        ballga (15/20/25/40) nisbatan hisoblanadi va jurnalga yoziladi.</p>
+    </div>
+    <div class="card">
+      <h3>Uy vazifasi</h3>
+      <p>Mashq daftarining sahifasi suratga olinadi — AI har mashqni raqami bo'yicha tekshiradi va xato turini
+        aytadi. Natija keyingi darsdagi takrorlash bosqichiga tushadi.</p>
+    </div>
+    <div class="card">
+      <h3>Hisobot va eksport</h3>
+      <p>Baholar jurnali Excelga chiqariladi (eMaktabga ko'chirish uchun), direktor uchun sinflar kesimi,
+        ota-ona uchun qisqa xabar.</p>
+    </div>
+  </div>
+  <div class="card tint mt">
+    <p><b>Eng kichik amaliy detal ham hisobga olingan:</b> bitta A4 = 4 kartochka, ikkala tomoni ishlatiladi;
+      har tomonda 8 mm bo'sh joy qoldirilgan, shuning uchun qirqishda yozuv kesilmaydi; kartochkada o'quvchining
+      ismi bosilgan, chunki kod bilan tarqatish sinfda chalkashlik keltirib chiqaradi.</p>
+  </div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>7 / 12</span></div>
+</section>
+
+<!-- 8. QONUNCHILIK -->
+<section class="slide">
+  <div class="eyebrow">Qonunchilikka muvofiqlik</div>
+  <h1 class="sm">Maktab talab qiladigan uchta shart</h1>
+  <div class="grid g3">
+    <div class="card ind">
+      <div class="tag" style="color:var(--indigo)">1 — Dastur</div>
+      <h3>Milliy o'quv dasturiga mos</h3>
+      <p>Darslar rasmiy yillik ish reja bo'yicha: 170 dars, haftasiga 5 soat, chorak va ta'til sanalari
+        (VM qarori asosida hisoblanadi), BSB/ChSB kunlari. Darslik va mashq daftari betlari har darsga biriktirilgan.</p>
+    </div>
+    <div class="card tint">
+      <div class="tag">2 — Baholash</div>
+      <h3>Amaldagi baholash tartibi</h3>
+      <p>Formativ 0–10 va summativ ballar joriy tizimga mos. Yakuniy qaror — o'qituvchida: AI faqat taklif qiladi,
+        o'qituvchi tasdiqlaydi, har tasdiq va tuzatish saqlanadi.</p>
+    </div>
+    <div class="card gold">
+      <div class="tag" style="color:#9a7212">3 — Shaxsiy ma'lumot</div>
+      <h3>Bolalar ma'lumoti himoyalangan</h3>
+      <p>Tashqi AI xizmatiga ism yuborilmaydi — faqat kod (5B-17). Ota-ona elektron rozilik beradi;
+        direktor faqat ismsiz agregatni ko'radi. Tizim mahalliy serverda ham ishlaydi.</p>
+    </div>
+  </div>
+  <div class="card mt">
+    <h3>Nega bu muhim</h3>
+    <p>Maktabga yangi vosita kirishida birinchi savol — "bu hujjatga to'g'ri keladimi?" DarsPilot mavjud tartibni
+      almashtirmaydi: u o'qituvchi baribir bajaradigan ishni (masala tuzish, tekshirish, jurnal, hisobot)
+      tezlashtiradi va hujjat shaklini saqlaydi.</p>
+  </div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>8 / 12</span></div>
+</section>
+
+<!-- 9. TA'SIR KO'LAMI -->
+<section class="slide">
+  <div class="eyebrow">Ta'sir ko'lami</div>
+  <h1 class="sm">Bitta o'qituvchidan viloyatgacha</h1>
+  <table>
+    <tr><th>Daraja</th><th>Qamrov</th><th class="num">Yiliga tejaladigan vaqt</th><th class="num">Qog'oz</th><th>Qo'shimcha natija</th></tr>
+    <tr><td><b>1 o'qituvchi</b></td><td>5 sinf, ~150 o'quvchi</td><td class="num">~100 soat</td><td class="num">~1 000 varaq</td><td>Har o'quvchi bo'yicha xato tarixi</td></tr>
+    <tr><td><b>1 maktab</b></td><td>8 matematika o'qituvchisi, ~1 200 o'quvchi</td><td class="num">~800 soat</td><td class="num">~8 000 varaq</td><td>Direktor uchun parallellar kesimi</td></tr>
+    <tr><td><b>1 tuman</b></td><td>~30 maktab</td><td class="num">~24 000 soat</td><td class="num">~240 000 varaq</td><td>Anonim hudud analitikasi: qaysi mavzu qayerda qiynaydi</td></tr>
+    <tr><td><b>Xorazm viloyati</b></td><td>~500 maktab</td><td class="num">~400 000 soat</td><td class="num">~4 mln varaq</td><td>Malaka oshirish uchun real ma'lumot</td></tr>
+  </table>
+  <div class="grid g2 mt">
+    <div class="card tint">
+      <h3>Ta'sir faqat vaqtda emas</h3>
+      <p>Tizim har darsda "kim e'tibordan chetda qolgan"ini ko'rsatadi. Bu 30 kishilik sinfda eng jim o'quvchini
+        ko'rinadigan qiladi — pedagogik jihatdan eng qimmatli o'zgarish shu.</p>
+    </div>
+    <div class="card ind">
+      <h3>Boshqa fanlarga kengayish</h3>
+      <p>Dvigatel fan bilan bog'liq emas: masalalar banki va reja almashtirilsa, fizika va kimyo uchun ham
+        ishlaydi. Birinchi bosqichda faqat matematikaga chuqur kiramiz.</p>
+    </div>
+  </div>
+  <p class="lead" style="font-size:14.5px;margin-top:10px">Hisob-kitob: bitta o'qituvchida haftasiga 3 soat tejash
+    × 33 o'quv haftasi. Raqamlar demo maktab o'lchovlari va o'qituvchi tajribasiga asoslangan, pilotda tekshiriladi.</p>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>9 / 12</span></div>
+</section>
+
+<!-- 10. DALIL -->
+<section class="slide">
+  <div class="eyebrow">Dalil</div>
+  <h1 class="sm">Taxmin emas: o'qituvchilardan so'rayapmiz</h1>
+  <div class="split">
+    <div class="card tint">
+      <h3>So'rovnoma jonli — 30 savol, 6 bo'lim</h3>
+      <ul class="ticks tight" style="margin-top:10px">
+        <li>Hafta davomida tekshiruvga qancha vaqt ketadi</li>
+        <li>Nechta o'quvchining daftarini shaxsan ko'ra oladi</li>
+        <li>Kim qayerda qiynalayotganini qayerda yozib boradi</li>
+        <li>Uy vazifasini suratdan tekshirishni qanchalik tez-tez ishlatardi</li>
+        <li>AI bahosiga ishonch: tasdiqlash tartibi to'g'rimi</li>
+        <li>Kim to'lashi kerak va qancha</li>
+      </ul>
+      <p style="margin-top:10px"><b>Maqsad:</b> CP2 gacha 30+, pitchgacha 50+ javob.</p>
+    </div>
+    <div>
+      <div class="card ind">
+        <h3>Jamoaning o'zi — birinchi manba</h3>
+        <p>Uch a'zodan ikkitasi hozir matematikadan dars beradi. Kartochka formati, savol turlari va hisobot
+          shakli shu tajribadan chiqqan: masalan, javob chizig'ini yirtish g'oyasidan voz kechdik —
+          sinfda bu chalkashlik keltirib chiqaradi.</p>
+      </div>
+      <div class="card gold mt">
+        <h3>Pilot rejasi</h3>
+        <p>4 hafta, 2 ta sinf: birinchi hafta — joriy holat o'lchovi, keyin har darsda tizim bilan ishlash.
+          O'lchaymiz: tekshiruvga ketgan vaqt, qamrov, o'quvchilarning bosqichlar bo'yicha o'sishi.</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>10 / 12</span></div>
+</section>
+
+<!-- 11. JAMOA -->
+<section class="slide">
+  <div class="eyebrow">Jamoa</div>
+  <h1 class="sm">Sohani ichkaridan bilamiz</h1>
+  <div class="grid g3">
+    <div class="card">
+      <div class="tag">Project manager</div>
+      <h3 style="margin-top:6px">Sultonboyev Bekzodbek</h3>
+      <p>Matematika o'qituvchisi, magistratura 2-bosqich talabasi. Mahsulot talablari, maktablar bilan aloqa,
+        pilotni tashkil etish.</p>
+    </div>
+    <div class="card">
+      <div class="tag">Analitik</div>
+      <h3 style="margin-top:6px">Sultonboyeva Mohinur</h3>
+      <p>Matematika va informatika o'qituvchisi, 4 yillik tajriba. Savollar metodikasi, so'rovnoma va
+        natijalar tahlili.</p>
+    </div>
+    <div class="card">
+      <div class="tag">Full-stack dasturchi</div>
+      <h3 style="margin-top:6px">Boltayev Diyorbek</h3>
+      <p>3 yillik tajriba. Kompyuter ko'rish, AI integratsiyasi va butun tizim.</p>
+    </div>
+  </div>
+  <div class="card tint mt">
+    <h3>Nima uchun bu muhim</h3>
+    <p>Ta'lim mahsulotlarining ko'pchiligi sinfni tashqaridan tasavvur qilib quriladi. Bizda mahsulot talablari
+      dars jadvalidan, texnologik xaritadan va haqiqiy daftarlardan chiqadi — shuning uchun tizim o'qituvchidan
+      yangi odat talab qilmaydi.</p>
+  </div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>11 / 12</span></div>
+</section>
+
+<!-- 12. YAKUN -->
+<section class="slide">
+  <div class="eyebrow">Yakun</div>
+  <h1 class="sm">Nimani ko'rsatamiz va keyin nima qilamiz</h1>
+  <div class="grid g2">
+    <div class="card ind">
+      <h3>Bugungi demo (3 daqiqa)</h3>
+      <ul class="ticks tight ind" style="margin-top:10px">
+        <li>Real reja bo'yicha bugungi dars va ssenariy</li>
+        <li>Nomli kartochkalar: masala, yechim maydoni, javob bloki</li>
+        <li>Bitta surat — 10 ta ish avtomatik o'qiladi</li>
+        <li>Qo'lyozma yechim bahosi va o'qituvchi tasdig'i</li>
+        <li>Feedback, jurnal va keyingi dars ssenariysi</li>
+      </ul>
+    </div>
+    <div class="card tint">
+      <h3>CP2 gacha rejamiz</h3>
+      <ul class="ticks tight" style="margin-top:10px">
+        <li>Haqiqiy bosilgan varaqlar bilan sinfda sinov</li>
+        <li>30+ o'qituvchi javobi va 2 ta pilot kelishuvi</li>
+        <li>Real maktabdan 13 dars baholarini tizimga ko'chirish</li>
+        <li>Ota-ona xabarnomasi va direktor hisobotini soddalashtirish</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card gold mt">
+    <p style="font-size:18px"><b>Bizning o'lchovimiz oddiy:</b> o'qituvchi tekshiruvga sarflagan vaqtining yarmidan
+      ko'pini qaytarib bera olsak va har dars oxirida "kim qayerda adashdi" degan savolga aniq javob chiqsa —
+      mahsulot ishlagan bo'ladi.</p>
+  </div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>12 / 12</span></div>
+</section>
+
+<script src="present.js"></script>
+<script>
+  // slaydni ekranga sig'dirish
+  const fit = () => document.documentElement.style.setProperty('--fit',
+    Math.min(innerWidth / 1280, innerHeight / 720).toFixed(4))
+  fit(); addEventListener('resize', fit)
+</script>
+</body>
+</html>

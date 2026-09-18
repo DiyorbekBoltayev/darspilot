@@ -1,0 +1,227 @@
+/* DarsPilot taqdimot uslubi — "Xiva ko'k" brendi, 16:9 (1280×720), PDF uchun */
+@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700&family=Onest:wght@400;500;600&display=swap');
+
+:root {
+  --firuza: #0A8A91;
+  --firuza-2: #0f6f74;
+  --firuza-50: #E8F6F5;
+  --indigo: #23328C;
+  --indigo-2: #1a2670;
+  --indigo-50: #EDEFF9;
+  --terra: #C4572E;
+  --terra-50: #FBEFE9;
+  --oltin: #D9A21B;
+  --oltin-50: #FDF4E0;
+  --paper: #FAFBFB;
+  --surface: #FFFFFF;
+  --ink: #13202B;
+  --ink-2: #33414E;
+  --mute: #63707C;
+  --faint: #93A0AC;
+  --line: #E3E8EC;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Onest', 'Segoe UI', sans-serif;
+  color: var(--ink);
+  background: #6b7480;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.slide {
+  position: relative;
+  width: 1280px;
+  height: 720px;
+  padding: 56px 72px;
+  background: var(--paper);
+  overflow: hidden;
+  page-break-after: always;
+  break-after: page;
+  display: flex;
+  flex-direction: column;
+}
+.slide:last-child { page-break-after: auto; }
+
+h1, h2, h3, .num { font-family: 'Unbounded', 'Segoe UI', sans-serif; }
+
+/* --- sarlavha bloki --- */
+.eyebrow {
+  font-size: 15px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase;
+  color: var(--firuza); margin-bottom: 14px;
+}
+h1 { font-size: 46px; line-height: 1.1; font-weight: 600; letter-spacing: -.015em; }
+h1.sm { font-size: 38px; }
+.lead { margin-top: 14px; font-size: 19px; line-height: 1.5; color: var(--mute); max-width: 980px; }
+
+/* --- muqova --- */
+.cover {
+  background: var(--indigo);
+  color: #fff;
+  justify-content: center;
+}
+.cover::before {
+  content: ''; position: absolute; inset: 0;
+  background-image: url('girih.svg');
+  background-size: 300px;
+  opacity: .10;
+}
+.cover > * { position: relative; }
+.cover .kicker { font-size: 16px; letter-spacing: .12em; text-transform: uppercase; color: #9FB6E8; font-weight: 600; }
+.cover h1 { font-size: 72px; line-height: 1.02; margin-top: 18px; font-weight: 700; }
+.cover .sub { margin-top: 20px; font-size: 22px; line-height: 1.45; color: #D7DEF5; max-width: 900px; }
+.cover .meta { margin-top: 40px; display: flex; gap: 40px; font-size: 15px; color: #B9C5EA; }
+.cover .meta b { display: block; color: #fff; font-size: 17px; font-weight: 600; margin-bottom: 2px; font-family: 'Unbounded', sans-serif; }
+
+/* --- setka va kartochkalar --- */
+.grid { display: grid; gap: 18px; margin-top: 26px; }
+.g2 { grid-template-columns: repeat(2, 1fr); }
+.g3 { grid-template-columns: repeat(3, 1fr); }
+.g4 { grid-template-columns: repeat(4, 1fr); }
+.g5 { grid-template-columns: repeat(5, 1fr); }
+.grow { flex: 1; }
+
+.card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 22px 24px;
+}
+.card.tint { background: var(--firuza-50); border-color: #CCE7E6; }
+.card.ind { background: var(--indigo-50); border-color: #D6DBF2; }
+.card.warn { background: var(--terra-50); border-color: #F2D9CC; }
+.card.gold { background: var(--oltin-50); border-color: #F0DFB4; }
+.card h3 { font-size: 19px; font-weight: 600; line-height: 1.25; }
+.card p { margin-top: 8px; font-size: 15.5px; line-height: 1.5; color: var(--mute); }
+.card .big { font-family: 'Unbounded', sans-serif; font-size: 40px; font-weight: 600; line-height: 1; letter-spacing: -.02em; }
+.card .cap { font-size: 14px; color: var(--faint); margin-top: 8px; line-height: 1.4; }
+.card .tag { font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--firuza); }
+
+.num-xl { font-family: 'Unbounded', sans-serif; font-size: 56px; font-weight: 600; letter-spacing: -.02em; line-height: 1; }
+.fz-ind { color: var(--indigo); }
+.fz-fir { color: var(--firuza); }
+.fz-ter { color: var(--terra); }
+.fz-gld { color: var(--oltin); }
+
+/* --- ro'yxatlar --- */
+ul.ticks { list-style: none; margin-top: 16px; }
+ul.ticks li { position: relative; padding-left: 26px; margin-bottom: 12px; font-size: 17px; line-height: 1.45; color: var(--ink-2); }
+ul.ticks li::before {
+  content: ''; position: absolute; left: 4px; top: 8px; width: 9px; height: 9px;
+  background: var(--firuza); transform: rotate(45deg); border-radius: 2px;
+}
+ul.ticks.ind li::before { background: var(--indigo); }
+ul.ticks li b { color: var(--ink); font-weight: 600; }
+ul.tight li { margin-bottom: 8px; font-size: 16px; }
+
+/* --- jadval --- */
+table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 16px; }
+th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 13.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--mute); font-weight: 600; }
+td b { font-weight: 600; }
+td.num, th.num { font-family: 'Unbounded', sans-serif; font-size: 15px; }
+tr.total td { border-top: 2px solid var(--ink); border-bottom: none; font-weight: 600; }
+.ok { color: var(--firuza); font-weight: 600; }
+.no { color: var(--terra); font-weight: 600; }
+
+/* --- pastki kolontitul --- */
+.foot {
+  position: absolute; left: 72px; right: 72px; bottom: 26px;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 13px; color: var(--faint); border-top: 1px solid var(--line); padding-top: 12px;
+}
+.foot .brand { font-family: 'Unbounded', sans-serif; font-weight: 600; color: var(--ink-2); letter-spacing: -.01em; }
+.foot .brand span { color: var(--firuza); }
+.cover .foot { border-color: rgba(255,255,255,.18); color: #A9B7E2; }
+.cover .foot .brand { color: #fff; }
+.cover .foot .brand span { color: #7FD3D0; }
+
+/* --- kichik yordamchilar --- */
+.pill {
+  display: inline-block; padding: 5px 12px; border-radius: 999px; font-size: 13.5px; font-weight: 600;
+  background: var(--firuza-50); color: var(--firuza-2);
+}
+.pill.ind { background: var(--indigo-50); color: var(--indigo); }
+.pill.ter { background: var(--terra-50); color: var(--terra); }
+.pill.gld { background: var(--oltin-50); color: #9a7212; }
+.row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.mt { margin-top: 18px; }
+.mt-s { margin-top: 10px; }
+.quote {
+  border-left: 3px solid var(--firuza); padding: 6px 0 6px 18px; font-size: 18px; line-height: 1.5;
+  color: var(--ink-2); font-style: italic;
+}
+.split { display: grid; grid-template-columns: 1.15fr 1fr; gap: 28px; margin-top: 24px; align-items: start; }
+.split.rev { grid-template-columns: 1fr 1.15fr; }
+.stepline { display: flex; gap: 10px; margin-top: 24px; }
+.step { flex: 1; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 18px 16px; }
+.step .no { font-family: 'Unbounded', sans-serif; font-size: 13px; color: var(--firuza); font-weight: 600; }
+.step h4 { font-size: 16.5px; margin-top: 6px; font-weight: 600; font-family: 'Unbounded', sans-serif; }
+.step p { font-size: 13.5px; color: var(--mute); margin-top: 7px; line-height: 1.45; }
+.kpi { display: flex; gap: 40px; margin-top: 8px; }
+.kpi div span { display: block; font-size: 14px; color: var(--mute); margin-top: 6px; }
+
+
+/* ------------------------------------------------ taqdimot rejimi (?present) — faqat ekranda */
+@media screen {
+  body.presenting {
+    margin: 0; background: #0b1120; height: 100vh; overflow: hidden;
+    display: grid; place-items: center;
+  }
+  body.presenting .slide {
+    position: absolute; inset: 50% auto auto 50%;
+    transform: translate(-50%, -50%) scale(var(--fit, 1));
+    transform-origin: center;
+    box-shadow: 0 30px 90px -30px rgba(0,0,0,.75);
+    opacity: 0; pointer-events: none; border-radius: 8px;
+    transition: opacity .26s ease, transform .3s cubic-bezier(.22,1,.36,1);
+  }
+  body.presenting .slide.live { opacity: 1; pointer-events: auto; }
+  body.presenting .slide.past { opacity: 0; transform: translate(-50%, -50%) scale(calc(var(--fit, 1) * .97)) translateX(-4%); }
+  body.presenting .slide.future { opacity: 0; transform: translate(-50%, -50%) scale(calc(var(--fit, 1) * .97)) translateX(4%); }
+
+  /* bloklar ketma-ket chiqadi */
+  body.presenting .slide.live .rise { animation: rise .34s cubic-bezier(.22,1,.36,1) both; animation-delay: var(--d, 0ms); }
+  body.presenting .slide.live .card.rise,
+  body.presenting .slide.live .step.rise,
+  body.presenting .slide.live .layer.rise,
+  body.presenting .slide.live .tl .p.rise { animation-name: pop; }
+  body.presenting .slide.live h1.rise { animation-name: slideIn; animation-duration: .4s; }
+  body.presenting .slide.live table tr.rise { animation-name: rowIn; animation-duration: .3s; }
+  body.presenting .slide.live .stage div.rise,
+  body.presenting .slide.live .flow .f.rise { animation-name: pop; animation-duration: .38s; }
+
+  @keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+  @keyframes pop { from { opacity: 0; transform: translateY(18px) scale(.965); } to { opacity: 1; transform: none; } }
+  @keyframes slideIn { from { opacity: 0; transform: translateX(-26px); } to { opacity: 1; transform: none; } }
+  @keyframes rowIn { from { opacity: 0; transform: translateX(-14px); } to { opacity: 1; transform: none; } }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+
+  /* ssenariy qadamlari: chiqqach yengil urg'u */
+  body.presenting .slide.live .stepline .step.rise { position: relative; }
+  body.presenting .slide.live .stepline .step.rise::after {
+    content: ''; position: absolute; inset: -2px; border-radius: 16px;
+    box-shadow: 0 0 0 2px var(--firuza); opacity: 0;
+    animation: flash 1s ease-out both; animation-delay: calc(var(--d, 0ms) + .2s);
+  }
+  @keyframes flash { 0% { opacity: 0 } 25% { opacity: .55 } 100% { opacity: 0 } }
+
+  /* mavzuga moslik jadvalidagi urg'u */
+  body.presenting .slide.live .pill.rise { animation-name: pop; }
+  body.presenting .slide.live .pill:first-of-type {
+    animation: pop .38s cubic-bezier(.22,1,.36,1) both, glow 1.6s ease-in-out 1s 2;
+  }
+  @keyframes glow { 0%, 100% { box-shadow: 0 0 0 0 rgba(10,138,145,0) } 50% { box-shadow: 0 0 0 8px rgba(10,138,145,.16) } }
+
+  body.presenting .pbar {
+    position: fixed; top: 0; left: 0; height: 3px; width: 100%; z-index: 20;
+    background: linear-gradient(90deg, var(--firuza), var(--indigo));
+    transform-origin: left; transform: scaleX(0); transition: transform .3s cubic-bezier(.22,1,.36,1);
+  }
+  body.presenting .hud {
+    position: fixed; right: 20px; bottom: 16px; z-index: 20;
+    font-family: 'Unbounded', sans-serif; font-size: 13px; color: rgba(255,255,255,.5);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    body.presenting .slide, body.presenting .slide.live .rise { transition: none !important; animation: none !important; }
+  }
+}

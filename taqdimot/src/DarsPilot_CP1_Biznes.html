@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<title>DarsPilot — Biznes mentor uchun (CP1)</title>
+<link rel="stylesheet" href="deck.css">
+</head>
+<body>
+
+<!-- 1. MUQOVA -->
+<section class="slide cover">
+  <div class="kicker">Umummilliy AI Xakaton · Xorazm · Ta'lim treki · 2-ustuvor mavzu</div>
+  <h1>DarsPilot</h1>
+  <div class="sub">Matematika o'qituvchisining tekshiruv ishini AI bilan avtomatlashtiradigan dars konveyeri:
+    qog'ozli ish telefon suratidan baholanadi, har o'quvchiga shaxsiy feedback yoziladi.</div>
+  <div class="meta">
+    <div><b>Checkpoint 1</b>18-sentabr, 2026</div>
+    <div><b>Biznes mentor sessiyasi</b>10 daqiqa</div>
+    <div><b>Jamoa</b>Fractal · 3 a'zo · Xorazm</div>
+  </div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>Biznes mentor · CP1</span></div>
+</section>
+
+<!-- 2. INTRO: ASOSIY USTUNLIK -->
+<section class="slide">
+  <div class="eyebrow">Bir qarashda</div>
+  <h1>AI bizda funksiya emas — ish tartibining o'zi</h1>
+  <p class="lead">Ko'p EdTech mahsulotida AI qo'shimcha tugma bo'lib turadi. Bizda AI o'qituvchining kunini
+    boshdan oxirigacha olib boradi: darsni tayyorlaydi, ishni tekshiradi, kim qayerda adashganini eslab qoladi va
+    keyingi darsni shunga qarab o'zgartiradi.</p>
+  <div class="grid g3">
+    <div class="card tint">
+      <div class="tag">1 — Qurilmasiz</div>
+      <h3>Qog'oz + o'qituvchining telefoni</h3>
+      <p>Sinfda planshet, kompyuter yoki maxsus skaner kerak emas. Bitta A4 = 4 kartochka, bitta suratda
+        10 tagacha ish o'qiladi.</p>
+    </div>
+    <div class="card ind">
+      <div class="tag" style="color:var(--indigo)">2 — Ikki qatlamli baholash</div>
+      <h3>Mashina o'qiydi, AI tushunadi</h3>
+      <p>Yopiq javoblarni kompyuter ko'rish 99,5% aniqlik bilan o'qiydi; qo'lda yozilgan yechimni AI rubrika
+        bo'yicha baholaydi. Oxirgi so'z — o'qituvchida.</p>
+    </div>
+    <div class="card gold">
+      <div class="tag" style="color:#9a7212">3 — Yopiq sikl</div>
+      <h3>Har dars mahsulotni aniqroq qiladi</h3>
+      <p>Diagnostika → o'quvchi modeli → keyingi dars ssenariysi → yana diagnostika. Ma'lumot to'planadi,
+        nusxa ko'chirish qiyinlashadi.</p>
+    </div>
+  </div>
+  <div class="grid g4 mt">
+    <div class="card"><div class="big fz-fir">7,2 soat</div><div class="cap">bir chorakda tejalgan tekshiruv vaqti (demo maktab)</div></div>
+    <div class="card"><div class="big fz-ind">99,5%</div><div class="cap">avtomatik o'qish aniqligi</div></div>
+    <div class="card"><div class="big fz-ter">38 / 292</div><div class="cap">ishlatilgan varaq / har darsda test bo'lganda</div></div>
+    <div class="card"><div class="big fz-gld">26 s</div><div class="cap">bir sinfni to'liq baholash (javob + yechim + feedback)</div></div>
+  </div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>2 / 14</span></div>
+</section>
+
+<!-- 3. MUAMMO -->
+<section class="slide">
+  <div class="eyebrow">1 — Problem</div>
+  <h1 class="sm">Muammo bitta gapda</h1>
+  <div class="card ind mt-s" style="padding:26px 28px">
+    <p style="font-size:22px;line-height:1.5;color:var(--ink)">
+      <b>Matematika o'qituvchisi</b> bir kunda 4–5 sinfga dars berganda <b>har bir o'quvchining ishini tekshirish va
+      kim qayerda adashganini eslab qolishga</b> ulgurmaydi — natijada tekshiruvga haftasiga <b>3–5 soat</b> ketadi,
+      o'quvchilarning bir qismi esa haftalab e'tibordan chetda qoladi.</p>
+  </div>
+  <table>
+    <tr><th style="width:26%">Kuchli muammo uchun 4 savol</th><th>Bizning javobimiz</th></tr>
+    <tr><td><b>Kimda bu muammo bor?</b></td><td>5–9-sinf matematika o'qituvchisi: bir sinfda 25–35 o'quvchi, kunda 4–6 dars, jami 150+ o'quvchi.</td></tr>
+    <tr><td><b>Qanchalik tez-tez?</b></td><td>Har kuni. Uy vazifasi — har darsda, nazorat ishi — har 2 haftada, BSB/ChSB — har chorakda.</td></tr>
+    <tr><td><b>Hal qilinmasa nima yo'qotiladi?</b></td><td>Haftasiga 3–5 soat o'qituvchi vaqti; chorakda ~290 varaq qog'oz; eng muhimi — ortda qolgan o'quvchi payqalmaydi.</td></tr>
+    <tr><td><b>Hozir qanday hal qilinyapti?</b></td><td>Qo'lda tekshirish, doskada umumiy javob, "tanlab tekshirish", daftar/Excel/xotira. Ko'p hollarda — umuman tekshirilmaydi.</td></tr>
+  </table>
+  <div class="row mt">
+    <span class="pill ter">Painkiller, vitamin emas</span>
+    <span style="font-size:15.5px;color:var(--mute)">Muammo har kuni takrorlanadi va o'qituvchining shaxsiy vaqtini yeydi — kechiktirib bo'lmaydi.</span>
+  </div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>3 / 14</span></div>
+</section>
+
+<!-- 4. MIJOZ -->
+<section class="slide">
+  <div class="eyebrow">2 — Customer</div>
+  <h1 class="sm">User ≠ Customer ≠ Payer</h1>
+  <table>
+    <tr><th style="width:22%"></th><th>O'quv markazi</th><th>Xususiy maktab</th><th>Davlat maktabi (B2G)</th></tr>
+    <tr><td><b>User</b> — foydalanadi</td><td>Matematika o'qituvchisi</td><td>Fan o'qituvchilari</td><td>Fan o'qituvchilari</td></tr>
+    <tr><td><b>Customer</b> — qaror qiladi</td><td>Markaz egasi (1 kishi)</td><td>Direktor / o'quv ishlari o'rinbosari</td><td>Tuman XTB, donor loyihasi</td></tr>
+    <tr><td><b>Payer</b> — to'laydi</td><td>Markaz (ota-ona to'lovidan)</td><td>Maktab byudjeti</td><td>Byudjet yoki grant</td></tr>
+    <tr><td><b>Qaror muddati</b></td><td class="ok">1–4 hafta</td><td>1–3 oy</td><td>6–18 oy</td></tr>
+  </table>
+  <div class="split">
+    <div class="card tint">
+      <div class="tag">ICP — birinchi mijoz aniq chizilgan</div>
+      <h3 style="margin-top:8px">Urganch va Xiva shahridagi, 8–15 kishilik guruhlarda 5–9-sinf matematika
+        o'qitadigan, printeri bor va egasi bitta bo'lgan xususiy o'quv markazlari</h3>
+      <p>Guruh kichik — skanerlash oson; qaror bitta odamdan chiqadi; ota-ona natija ko'rmasa ketadi, shuning uchun
+        markaz o'sish dalilini sotib oladi.</p>
+    </div>
+    <div>
+      <ul class="ticks tight">
+        <li><b>Nega markaz birinchi:</b> pilotni bir haftada boshlash mumkin, natija 4 haftada ko'rinadi.</li>
+        <li><b>Ikkinchi segment:</b> 300+ o'quvchili xususiy maktablar — direktor paneli va ota-ona hisobotlari bilan.</li>
+        <li><b>Uchinchi:</b> davlat maktablari — donor loyihalari (ADB STEM, GPE SmartEd) va tuman pilotlari orqali.</li>
+        <li><b>Bugun qayerdan topamiz:</b> jamoamizdagi ikki o'qituvchining metod birlashmasi va maktab tarmog'i.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>4 / 14</span></div>
+</section>
+
+<!-- 5. QIYMAT -->
+<section class="slide">
+  <div class="eyebrow">3 — Value</div>
+  <h1 class="sm">Mijoz AI sotib olmaydi — natija sotib oladi</h1>
+  <div class="grid g2 mt-s">
+    <div class="card warn">
+      <div class="tag" style="color:var(--terra)">Biz bunday demaymiz</div>
+      <h3 style="margin-top:6px;color:var(--mute);font-weight:500">"Bizda GPT bor", "15 ta AI funksiya",
+        "kompyuter ko'rish va rubrika modeli"</h3>
+    </div>
+    <div class="card tint">
+      <div class="tag">Biz shuni sotamiz</div>
+      <h3 style="margin-top:6px">O'qituvchining tekshiruvga ketadigan haftasiga 3–5 soatini 1 soatga tushiramiz —
+        va har bir o'quvchining xato tarixi tizimda qoladi.</h3>
+    </div>
+  </div>
+  <div class="card ind mt" style="padding:24px 26px">
+    <div class="tag" style="color:var(--indigo)">Value proposition</div>
+    <p style="font-size:20px;line-height:1.5;color:var(--ink);margin-top:8px">
+      Biz <b>o'quv markazi va maktabga</b> — <b>o'quvchilarning o'sishini har hafta raqamda ko'rsatishga</b>
+      <b>qog'ozli ishni telefondan avtomatik baholash va shaxsiy feedback</b> orqali erishishga yordam beramiz.
+      Hozirgi alternativadan farqimiz — <b>o'qituvchiga qo'shimcha qurilma ham, qo'shimcha vaqt ham kerak emas.</b></p>
+  </div>
+  <div class="row mt-s" style="margin-top:14px">
+    <span class="pill">PISA formatidagi bosqichli savollar</span>
+    <span class="pill ind">Singapur yondashuvi: aniq → tasviriy → abstrakt</span>
+    <span class="pill gld">Milliy taqvim-mavzu rejaga to'liq mos</span>
+  </div>
+  <div class="grid g4 mt">
+    <div class="card"><div class="big fz-fir">3–5 soat</div><div class="cap">haftasiga tekshiruvga ketardi</div></div>
+    <div class="card"><div class="big fz-fir">~1 soat</div><div class="cap">DarsPilot bilan (o'lchangan tejash asosida)</div></div>
+    <div class="card"><div class="big fz-ind">100%</div><div class="cap">o'quvchi qamrovi: kim e'tibordan chetda — tizim aytadi</div></div>
+    <div class="card"><div class="big fz-gld">8 varaq</div><div class="cap">31 o'quvchilik sinfga bitta diagnostika</div></div>
+  </div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>5 / 14</span></div>
+</section>
+
+<!-- 6. MOAT -->
+<section class="slide">
+  <div class="eyebrow">3 — Value · Moat</div>
+  <h1 class="sm">Agar ChatGPT ertaga shu funksiyani qo'shsa, bizda nima qoladi?</h1>
+  <div class="grid g2">
+    <div class="card tint">
+      <h3>Mahalliy ma'lumot</h3>
+      <p>"AHA! Matematika 5-sinf" darsligi, mashq daftari va rasmiy yillik ish reja — 170 dars, BSB/ChSB sanalari
+        bilan tizimga kiritilgan. Savollar <b>PISA baholash formatiga</b> va darslikdagi <b>Singapur yondashuviga</b>
+        (aniq → tasviriy → abstrakt) mos tuzilgan, har bir noto'g'ri javob esa aniq xato turiga bog'langan.</p>
+    </div>
+    <div class="card ind">
+      <h3>Ish jarayoniga integratsiya</h3>
+      <p>Chop etish → sinfda ishlash → surat → baho → jurnal → keyingi dars ssenariysi. Bu chatga savol yozish emas,
+        o'qituvchining kunlik tartibi. Undan chiqib ketish qiyin.</p>
+    </div>
+    <div class="card gold">
+      <h3>Tarqatish kanali</h3>
+      <p>Jamoada ikki amaldagi matematika o'qituvchisi bor: metod birlashmalari, maktab direktorlari va
+        o'quv markazlari bilan to'g'ridan-to'g'ri aloqa.</p>
+    </div>
+    <div class="card warn">
+      <h3>Yopiq ma'lumot sikli</h3>
+      <p>Har diagnostika o'quvchi modelini aniqlashtiradi; model keyingi variantni tanlaydi. Bir yillik ma'lumot
+        to'plangan sinfni yangi vosita bilan almashtirish — xotirani yo'qotish demak.</p>
+    </div>
+  </div>
+  <div class="card mt" style="border-color:#D6DBF2">
+    <div class="tag" style="color:var(--indigo)">"eMaktab ham shuni qilsa-chi?"</div>
+    <p style="margin-top:6px"><b>Fokus:</b> eMaktab — butun maktab jurnali; biz — matematika darsidagi diagnostika va
+      shaxsiylashtirish. <b>Hamkorlik:</b> raqobat emas, integratsiya — ro'yxat importi va formativ ball eksporti.
+      <b>Mustaqil bozor:</b> o'quv markazlari eMaktabga bog'liq emas va natija uchun bugun to'laydi.</p>
+  </div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>6 / 14</span></div>
+</section>
+
+<!-- 7. RAQOBAT -->
+<section class="slide">
+  <div class="eyebrow">Raqobat</div>
+  <h1 class="sm">Eng katta raqib — odat: daftar, Excel va "shunday ham bo'laveradi"</h1>
+  <table>
+    <tr>
+      <th style="width:30%">Imkoniyat</th><th>DarsPilot</th><th>EduBaza</th><th>ZipGrade / Plickers</th>
+      <th>ChatGPT</th><th>Hozirgi odat</th>
+    </tr>
+    <tr><td>Dars ssenariysi (milliy reja bo'yicha)</td><td class="ok">✓</td><td class="ok">✓</td><td class="no">—</td><td>qisman</td><td class="no">—</td></tr>
+    <tr><td>Qog'ozli ishni suratdan avtomatik baholash</td><td class="ok">✓</td><td class="no">—</td><td class="ok">✓</td><td class="no">—</td><td class="no">—</td></tr>
+    <tr><td>Qo'lda yozilgan yechimni rubrika bo'yicha baholash</td><td class="ok">✓</td><td class="no">—</td><td class="no">—</td><td>qisman</td><td class="no">—</td></tr>
+    <tr><td>O'quvchi xotirasi: kim qayerda adashgan, kim e'tibordan chetda</td><td class="ok">✓</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td></tr>
+    <tr><td>Uy vazifasi daftarini suratdan tekshirish</td><td class="ok">✓</td><td class="no">—</td><td class="no">—</td><td>qisman</td><td class="no">—</td></tr>
+    <tr><td>Qurilmasiz ishlash (faqat qog'oz va telefon)</td><td class="ok">✓</td><td class="ok">✓</td><td class="ok">✓</td><td class="no">—</td><td class="ok">✓</td></tr>
+    <tr><td>Narx (o'qituvchi uchun oyiga)</td><td>0 – 69 000 so'm</td><td>49–69 000 so'm</td><td>~7 000 so'm</td><td>~250 000 so'm</td><td>0</td></tr>
+  </table>
+  <p class="lead" style="font-size:16.5px">Bizning javobimiz bitta funksiyada emas — <b>zanjirda</b>: reja → ssenariy →
+    qog'oz → surat → tashxis → feedback → keyingi dars. Raqobatchilar zanjirning bitta bo'g'inini qamraydi.</p>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>7 / 14</span></div>
+</section>
+
+<!-- 8. BIZNES MODEL -->
+<section class="slide">
+  <div class="eyebrow">4 — Business model</div>
+  <h1 class="sm">Kim to'laydi, qancha va nega aynan pul beradi</h1>
+  <table>
+    <tr><th>Tarif</th><th>Kim uchun</th><th class="num">Narx</th><th>Nega to'laydi</th></tr>
+    <tr><td><b>Bepul</b></td><td>O'qituvchi</td><td class="num">0</td><td>Tarqatish kanali: o'qituvchi sinab ko'radi va direktorga aytadi</td></tr>
+    <tr><td><b>Pro</b></td><td>O'qituvchi</td><td class="num">69 000 so'm / oy</td><td>3 sinf, cheksiz skan, e'tibor jurnali, haftalik xulosa</td></tr>
+    <tr><td><b>Markaz</b> <span class="pill">1-ustuvor</span></td><td>O'quv markazi</td><td class="num">12 000 so'm / o'quvchi / oy</td><td>Ota-onaga har haftada o'sish hisoboti — bu to'g'ridan-to'g'ri daromad himoyasi</td></tr>
+    <tr><td><b>Maktab</b> <span class="pill">1-ustuvor</span></td><td>Xususiy maktab</td><td class="num">15 000 so'm / o'quvchi / oy</td><td>Direktor paneli, parallellar kesimi, sifat dalili; maktab tushumining 1% idan kam</td></tr>
+    <tr><td><b>Hudud</b></td><td>Tuman / viloyat XTB</td><td class="num">~60 000 so'm / o'quvchi / yil</td><td>PISA va formativ baholash talabi, anonim hudud analitikasi</td></tr>
+  </table>
+  <div class="grid g3 mt">
+    <div class="card"><div class="tag">Model</div><h3 style="margin-top:4px">B2B SaaS obuna</h3><p>O'quvchi soni bo'yicha, 9 oylik o'quv yili. Asosiy daromad shu yerdan.</p></div>
+    <div class="card"><div class="tag">Kanal</div><h3 style="margin-top:4px">Freemium (B2C)</h3><p>O'qituvchi bepul tarifdan kiradi, pastdan yuqoriga sotuvni o'zi boshlaydi.</p></div>
+    <div class="card"><div class="tag">Uzoq muddat</div><h3 style="margin-top:4px">B2G litsenziya / grant</h3><p>Donor loyihalari va vazirlik moduli — masshtab uchun, birinchi daromad uchun emas.</p></div>
+  </div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>8 / 14</span></div>
+</section>
+
+<!-- 9. UNIT EKONOMIKA -->
+<section class="slide">
+  <div class="eyebrow">4 — Business model</div>
+  <h1 class="sm">Bitta mijozga xizmat qancha turadi?</h1>
+  <table>
+    <tr><th style="width:34%">Ko'rsatkich</th><th>O'quv markazi (180 o'quvchi)</th><th>Xususiy maktab (300 o'quvchi)</th></tr>
+    <tr><td>Oylik tushum</td><td class="num">2 160 000 so'm</td><td class="num">4 500 000 so'm</td></tr>
+    <tr><td>AI xarajati (o'lchangan: 1 sinf baholash — 26 s, 10 o'quvchi)</td><td class="num">≈ 100 000 so'm</td><td class="num">≈ 165 000 so'm</td></tr>
+    <tr><td>Hosting, xabarnoma, qo'llab-quvvatlash</td><td class="num">≈ 250 000 so'm</td><td class="num">≈ 500 000 so'm</td></tr>
+    <tr class="total"><td>Yalpi marja</td><td class="num ok">≈ 84%</td><td class="num ok">≈ 85%</td></tr>
+    <tr><td>CAC (demo + 4 haftalik bepul pilot)</td><td class="num">1,5–3 mln so'm</td><td class="num">4–6 mln so'm</td></tr>
+    <tr><td>Qolish muddati (faraz: o'quv yili + 1)</td><td class="num">12 oy</td><td class="num">18 oy</td></tr>
+    <tr class="total"><td>LTV / CAC</td><td class="num ok">≈ 7,3 — sog'lom</td><td class="num ok">≈ 13,8 — sog'lom</td></tr>
+  </table>
+  <div class="row mt">
+    <span class="pill ind">LTV ≥ 3 × CAC mezoni bajarilgan</span>
+    <span class="pill gld">Qoplash muddati: markaz — 1,5 oy, maktab — 1,5 oy</span>
+  </div>
+  <p class="lead" style="font-size:15.5px">AI tannarxi foydalanuvchi soniga qarab o'sadi, shuning uchun narx
+    o'quvchi soniga bog'langan. Model tanlovi ham tannarx qarori: vizual baholashda tez modelga o'tib,
+    bitta ishni baholash vaqtini <b>100 sekunddan 5 sekundga</b> tushirdik — bu xarajatni ham shuncha kamaytiradi.
+    Raqamlar pilotda o'lchanadi.</p>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>9 / 14</span></div>
+</section>
+
+<!-- 10. VALIDATSIYA -->
+<section class="slide">
+  <div class="eyebrow">5 — Validation</div>
+  <h1 class="sm">Taxminni dalilga aylantirish: biz zinapoyaning qayerdamiz</h1>
+  <table>
+    <tr><th style="width:44%">Validation ladder</th><th>Holat</th><th>Dalil</th></tr>
+    <tr><td>"Menga yoqdi" / "yaxshi g'oya"</td><td class="ok">o'tildi</td><td>Kuchli dalil emas — hisobga olmaymiz</td></tr>
+    <tr><td>Maqsadli mijoz bilan intervyu</td><td class="ok">boshlandi</td><td>Jamoadagi 2 o'qituvchi + hamkasblar; savollar tuzilgan</td></tr>
+    <tr><td>So'rovnoma: 30 savol, 6 bo'lim</td><td class="ok">jonli</td><td>Google Form tarqatilmoqda; maqsad — CP2 gacha 30 javob</td></tr>
+    <tr><td>Ishlaydigan MVP</td><td class="ok">tayyor</td><td>3 sinf, 88 o'quvchi, real reja bo'yicha; 43 avtomatik test</td></tr>
+    <tr><td>Pilot (4 hafta, real sinf)</td><td class="no">keyingi qadam</td><td>2 ta markaz / maktab bilan yozma kelishuv — CP2 maqsadi</td></tr>
+    <tr><td>Muntazam foydalanish → to'lov</td><td class="no">hali yo'q</td><td>"Asoschi mijoz" chegirmasi bilan birinchi 3 ta pullik mijoz</td></tr>
+  </table>
+  <div class="grid g2 mt">
+    <div class="card tint">
+      <h3>So'rovnomada aynan nima so'ralyapti</h3>
+      <p>Kelajak haqida emas, o'tmishdagi xatti-harakat haqida: "hafta davomida tekshirishga qancha vaqt ketdi",
+        "nechta o'quvchining daftarini ko'ra oldingiz", "hozir qanday tekshirasiz", "kim to'lashi kerak va qancha".</p>
+    </div>
+    <div class="card warn">
+      <h3>Halol aytamiz</h3>
+      <p>Bizda hali to'lagan mijoz yo'q. Xakaton davomida yig'ayotganimiz — intervyu, so'rovnoma javoblari va
+        pilotga yozma rozilik. CP2 da raqam bilan qaytamiz.</p>
+    </div>
+  </div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>10 / 14</span></div>
+</section>
+
+<!-- 11. GTM -->
+<section class="slide">
+  <div class="eyebrow">6 — Go-to-market</div>
+  <h1 class="sm">Birinchi 10 mijozni qayerdan topamiz</h1>
+  <div class="grid g2">
+    <div class="card tint">
+      <h3>Aniq qadamlar (Instagram reklama emas)</h3>
+      <ul class="ticks tight" style="margin-top:12px">
+        <li><b>4 ta</b> o'quv markazi — Urganch va Xivadagi markaz egalariga shaxsan borib demo</li>
+        <li><b>2 ta</b> xususiy maktab direktori — jamoamizdagi o'qituvchilar orqali tanishuv</li>
+        <li><b>2 ta</b> davlat maktabi — matematika metod birlashmasi yig'ilishida ko'rsatish</li>
+        <li><b>2 ta</b> tuman XTB — anonim hudud analitikasi taklifi bilan</li>
+        <li>O'qituvchilar Telegram guruhlari — so'rovnoma orqali kelgan aloqalar</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card ind">
+        <h3>Founder-led sales</h3>
+        <p><b>Bekzodbek</b> (matematika o'qituvchisi, PM) — markaz va maktablarga demo, pilot kelishuvi.
+          <b>Mohinur</b> (o'qituvchi, analitik) — so'rovnoma, intervyu va natijalar tahlili.
+          <b>Diyorbek</b> (full-stack) — pilot davomida mahsulotni haftalik yangilash.</p>
+      </div>
+      <div class="card gold mt">
+        <h3>Nega bu kanal ishlaydi</h3>
+        <p>Biz bozorga tashqaridan kirmayapmiz: jamoaning ikki a'zosi shu bozorning ichida ishlaydi —
+          o'qituvchilar xonasiga kirish uchun sovuq qo'ng'iroq kerak emas.</p>
+      </div>
+    </div>
+  </div>
+  <div class="card mt-s" style="margin-top:16px">
+    <p><b>Pilot taklifi:</b> 4 hafta bepul, o'rnatish va o'qitish biz tomondan; shart — haftalik fikr-mulohaza va
+      natijani keys-stadi sifatida ishlatish huquqi. Birinchi 3 ta pullik mijozga bir yilga −50% "asoschi mijoz" narxi.</p>
+  </div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>11 / 14</span></div>
+</section>
+
+<!-- 12. BOZOR -->
+<section class="slide">
+  <div class="eyebrow">Bozor hajmi</div>
+  <h1 class="sm">Pastdan yuqoriga: mijozlar soni × bitta mijozdan yillik daromad</h1>
+  <table>
+    <tr><th style="width:14%">Daraja</th><th style="width:52%">Hisob-kitob</th><th class="num">Yillik hajm</th></tr>
+    <tr><td><b>SOM</b><br><span style="color:var(--faint);font-size:14px">3-yil maqsadi</span></td>
+      <td>40 xususiy maktab (12 000 o'quvchi) + 400 o'quv markazi (o'rtacha 150 o'quvchi) +
+        2 000 pullik o'qituvchi + 2 tuman B2G pilot (30 000 o'quvchi)</td>
+      <td class="num ok">≈ 11,8 mlrd so'm<br><span style="font-size:13px;color:var(--faint)">≈ $1 mln ARR</span></td></tr>
+    <tr><td><b>SAM</b><br><span style="color:var(--faint);font-size:14px">3 yilda erishiladigan</span></td>
+      <td>551 xususiy maktabning 60% i + o'quv markazlaridagi ~300 ming matematika o'quvchisi +
+        pullik o'qituvchilar (70 mingning 5% i)</td>
+      <td class="num">≈ 52 mlrd so'm<br><span style="font-size:13px;color:var(--faint)">≈ $4,4 mln</span></td></tr>
+    <tr><td><b>TAM</b><br><span style="color:var(--faint);font-size:14px">O'zbekiston, 5–11-sinf matematika</span></td>
+      <td>≈ 4,4 mln o'quvchi × 10 000 so'm × 9 oy + o'quv markazlari segmenti</td>
+      <td class="num">≈ 430 mlrd so'm<br><span style="font-size:13px;color:var(--faint)">≈ $36 mln</span></td></tr>
+  </table>
+  <div class="grid g3 mt">
+    <div class="card"><h3>Birinchi yil — Xorazm</h3><p>10 mijoz × o'rtacha 1,8 mln so'm/oy × 9 oy ≈ <b>160 mln so'm</b>.
+      Bitta viloyatda isbotlab, keyin kengaytiramiz.</p></div>
+    <div class="card"><h3>Kengayish yo'nalishi</h3><p>Fizika, kimya va boshqa aniq fanlar — dvigatel bir xil,
+      faqat masalalar banki va reja o'zgaradi.</p></div>
+    <div class="card"><h3>Manbalar</h3><p>Raqamlar ochiq statistika va aniq ko'rsatilgan farazlarga asoslangan;
+      har bir faraz texnik topshiriqda manbasi bilan yozilgan.</p></div>
+  </div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>12 / 14</span></div>
+</section>
+
+<!-- 13. JAMOA -->
+<section class="slide">
+  <div class="eyebrow">Jamoa</div>
+  <h1 class="sm">Nega aynan biz?</h1>
+  <div class="grid g3">
+    <div class="card">
+      <div class="tag">Full-stack dasturchi</div>
+      <h3 style="margin-top:6px">Boltayev Diyorbek</h3>
+      <p>3 yillik amaliy tajriba. Backend, kompyuter ko'rish va frontend — mahsulotning butun texnik qismi.</p>
+    </div>
+    <div class="card">
+      <div class="tag">Project manager</div>
+      <h3 style="margin-top:6px">Sultonboyev Bekzodbek</h3>
+      <p>Matematika o'qituvchisi, magistratura 2-bosqich talabasi. Mahsulot talablari, maktablar bilan aloqa va pilot.</p>
+    </div>
+    <div class="card">
+      <div class="tag">Analitik</div>
+      <h3 style="margin-top:6px">Sultonboyeva Mohinur</h3>
+      <p>Matematika va informatika o'qituvchisi, 4 yillik tajriba. So'rovnoma, intervyular va natijalar tahlili.</p>
+    </div>
+  </div>
+  <div class="grid g2 mt">
+    <div class="card tint">
+      <h3>Ustunligimiz — muammo ichidan chiqqanmiz</h3>
+      <p>Uch kishidan ikkitasi hozir sinfda dars beradi. Biz muammoni tadqiqotdan emas, o'z ish kunimizdan bilamiz:
+        qaysi kartochka qulay, qaysi hisobot keraksiz, direktor nimani so'raydi.</p>
+    </div>
+    <div class="card ind">
+      <h3>Xakatonda nima qildik</h3>
+      <p>Ikki kunda ishlaydigan tizim: 3 sinf, real yillik reja, avtomatik baholash, 43 test va public GitHub.
+        Mahsulot bugun demo qilinadi — slaydda emas, ekranda.</p>
+    </div>
+  </div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>13 / 14</span></div>
+</section>
+
+<!-- 14. TAVSIYALARNI QO'LLASH -->
+<section class="slide">
+  <div class="eyebrow">Yakun</div>
+  <h1 class="sm">Kechagi biznes vorkshopdagi tavsiyalar — bugungi ishimizda</h1>
+  <table>
+    <tr><th style="width:44%">Vorkshopdagi tavsiya</th><th>Fractal nima qildi</th></tr>
+    <tr><td>Muammo, keyin mijoz, keyin yechim — texnologiya eng oxirida</td><td>Bu taqdimotda birorta model nomi yoki arxitektura slaydi yo'q</td></tr>
+    <tr><td>Muammoni bitta gapda yozing</td><td>3-slayd: mijoz, vaziyat, muammo va oqibat bitta gapda</td></tr>
+    <tr><td>Painkiller izlang</td><td>Har kuni takrorlanadigan, o'qituvchining shaxsiy vaqtini yeydigan muammo</td></tr>
+    <tr><td>User ≠ Customer ≠ Payer, ICP ni aniq chizing</td><td>4-slayd: uch segment uchun uchlik + ICP bitta gapda</td></tr>
+    <tr><td>Mijoz natija sotib oladi</td><td>5-slayd: soat va foizda o'lchangan natija, funksiyalar ro'yxati emas</td></tr>
+    <tr><td>ChatGPT ertaga qo'shsa, sizda nima qoladi?</td><td>6-slayd: 4 ta moat — ma'lumot, integratsiya, kanal, sikl</td></tr>
+    <tr><td>Cost to serve va LTV ≥ 3 × CAC</td><td>9-slayd: yalpi marja 84–85%, LTV/CAC 7,3 va 13,8</td></tr>
+    <tr><td>48 soatda ham dalil yig'sa bo'ladi</td><td>O'qituvchilar so'rovnomasi jonli, intervyular boshlandi</td></tr>
+    <tr><td>Birinchi 10 mijozni aniq ayting</td><td>11-slayd: ism va hudud bilan 10 ta manzil</td></tr>
+    <tr><td>Bozorni pastdan yuqoriga hisoblang</td><td>12-slayd: SOM → SAM → TAM, farazlar ko'rsatilgan</td></tr>
+  </table>
+  <div class="card ind mt-s" style="margin-top:14px">
+    <p style="font-size:17px"><b>CP2 gacha maqsadimiz:</b> 30+ so'rovnoma javobi, 2 ta pilot kelishuvi va
+      birinchi real sinfda o'tkazilgan diagnostika natijasi.</p>
+  </div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>14 / 14</span></div>
+</section>
+
+<script src="present.js"></script>
+<script>
+  // slaydni ekranga sig'dirish
+  const fit = () => document.documentElement.style.setProperty('--fit',
+    Math.min(innerWidth / 1280, innerHeight / 720).toFixed(4))
+  fit(); addEventListener('resize', fit)
+</script>
+</body>
+</html>
