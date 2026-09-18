@@ -45,6 +45,35 @@ istalgan odam kirib, tizim qanday ishlashini so'rab bilib olishi mumkin (kalitsi
 (`app/auth.py`). Demo hisobi: `demo@darspilot.uz` / `demo1234` — sahifadagi tugma bilan bir bosishda.
 Ish stoli kirgandan keyin `/bugun` manzilida ochiladi.
 
+## Frontend arxitekturasi
+
+```
+web/src
+├─ pages/            # marshrutlar: Landing, Auth, Today, Lesson, Results, Grades, Director, ParentPortal …
+├─ components/
+│  ├─ ui.tsx         # dizayn primitivlari: Button, Card, Stat, Badge, Modal, Ring (kutubxona ishlatilmagan)
+│  ├─ Layout.tsx     # yon panel, rol almashtirish, sinf tanlash
+│  ├─ lesson/        # dars konveyeri qadamlari (Prepare/Class/Check/Analysis/Next, HomeworkPanel)
+│  ├─ diagnostic/    # ScanPanel: surat navbati, skanerlash, javoblar jadvali
+│  ├─ landing/       # HeroScene animatsiyasi va chatbot
+│  └─ fx/            # three.js sahnalari (sinf galaktikasi, bilim oqimi) — faqat kerak bo'lganda yuklanadi
+└─ lib/              # api mijozi, tiplar, auth do'koni, yordamchilar
+```
+
+**Qarorlar va sabablari**
+
+| Qaror | Sabab |
+|---|---|
+| React 19 + Vite + TypeScript (`strict`) | Jamoa tajribasi; build 1 soniya; `tsc -b && oxlint` — 0 xato |
+| TanStack Query | Server holati uchun yagona manba: kesh, invalidatsiya, fon yangilanishi (uy vazifasi tahlili tugaganda ro'yxat o'zi yangilanadi) |
+| Redux yo'q | Global holat deyarli yo'q: sessiya va AI overlay — ikkita kichik context, auth — 40 qatorli `useSyncExternalStore` do'koni |
+| Tailwind 4 `@theme` tokenlari | Brend ranglari va shriftlar bitta joyda; komponent kutubxonasi o'rniga 200 qatorlik `ui.tsx` |
+| Marshrut bo'yicha code splitting | Boshlang'ich yuk ≈ 160 KB (gzip); har sahifa 2–19 KB |
+| three.js faqat `lazy()` bilan | 145 KB (gzip) alohida chunk — vizualizatsiyasi bor sahifalardagina yuklanadi |
+| Animatsiyalar shartli | `prefers-reduced-motion`, WebGL yo'q bo'lsa statik fallback, sahifa ko'rinmasa sikl to'xtaydi, unmount'da `dispose()` |
+
+Tekshiruv: `cd web && npm run check` (TypeScript strict + oxlint), backend uchun `pytest` (45 test).
+
 ## Ishga tushirish — bitta buyruq
 
 Talab: Docker Desktop (Compose v2).
