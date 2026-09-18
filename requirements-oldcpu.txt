@@ -1,0 +1,17 @@
+# Eski serverlar uchun (x86-64-v1 CPU: SSE4.2 yo'q — QEMU ning umumiy modeli).
+# NumPy 2.x va OpenCV 5.x binarlari x86-64-v2 ni talab qiladi, shuning uchun eskiroq,
+# SSE3 bazaviy versiyalar qotirilgan. Python 3.12 bilan ishlatiladi (numpy 1.26 3.13 ni qo'llamaydi).
+fastapi==0.141.1
+uvicorn[standard]==0.53.0
+python-multipart==0.0.32
+python-dotenv==1.2.3
+pydantic==2.13.5
+SQLAlchemy==2.0.54
+psycopg[binary]==3.3.5
+minio==7.2.20
+openai==3.14.1
+opencv-python-headless==4.10.0.84
+numpy==1.26.4
+reportlab==4.2.5
+openpyxl==3.1.5
+pymupdf==1.24.10

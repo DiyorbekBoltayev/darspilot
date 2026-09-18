@@ -1,5 +1,7 @@
 # DarsPilot API: FastAPI + OpenCV + GPT
-FROM python:3.13-slim
+# Eski CPU li serverlar uchun: --build-arg PY=3.12 --build-arg REQ=requirements-oldcpu.txt
+ARG PY=3.13
+FROM python:${PY}-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
@@ -11,7 +13,8 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /srv
-COPY requirements.txt .
+ARG REQ=requirements.txt
+COPY ${REQ} ./requirements.txt
 RUN pip install -r requirements.txt
 
 COPY app ./app
