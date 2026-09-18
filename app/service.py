@@ -3,6 +3,7 @@ import io
 import random
 import secrets
 import time
+from concurrent.futures import ThreadPoolExecutor
 from datetime import date, datetime, timedelta
 
 import cv2
@@ -24,6 +25,10 @@ from .storage import storage
 
 class NotFound(Exception):
     pass
+
+
+# Uy vazifasi suratlari fonda tahlil qilinadi: o'qituvchi sinfda yurib suratga olaveradi, kutmaydi.
+_BG = ThreadPoolExecutor(max_workers=3, thread_name_prefix="darspilot-bg")
 
 
 def avg(xs):
@@ -316,6 +321,12 @@ def diagnostic_detail(did):
         resp = {r.student_id: r for r in s.scalars(select(Response).where(Response.diagnostic_id == did))}
         res = {r.student_id for r in s.scalars(select(Result).where(Result.diagnostic_id == did))}
         scans = s.scalars(select(Scan).where(Scan.diagnostic_id == did).order_by(Scan.id.desc())).all()
+        by_no = {st.journal_no: st for st in sts}
+        scan_counts, latest_scan = {}, {}
+        for x in sorted(scans, key=lambda x: x.id):          # eskisidan yangisiga: oxirgisi ustun bo'ladi
+            for n in (x.journal_nos or []):
+                scan_counts[n] = scan_counts.get(n, 0) + 1
+                latest_scan[n] = x.id
         rows = [{**student_brief(st), "level": assign.get(st.id),
                  "marks": resp[st.id].marks if st.id in resp else None,
                  "flags": resp[st.id].flags if st.id in resp else {},
@@ -333,15 +344,62 @@ def diagnostic_detail(did):
             "rows": rows,
             "responses": sum(1 for r in rows if r["marks"]), "flagged": sum(1 for r in rows if r["flags"]),
             "graded": len(res),
-            "scans": [{"id": x.id, "url": storage_url(x.annotated_key), "original": storage_url(x.original_key),
-                       "strips": x.strips_found} for x in scans],
+            "pending": sum(1 for x in scans if x.status == "yuklandi"),
+            "scans": [{"id": x.id, "status": x.status,
+                       "url": storage_url(x.annotated_key or x.original_key), "original": storage_url(x.original_key),
+                       "strips": x.strips_found,
+                       "at": x.created_at.strftime("%H:%M") if x.created_at else "",
+                       "students": [{"journal_no": n, "name": by_no[n].full_name, "code": by_no[n].code,
+                                     "repeat": scan_counts.get(n, 0) > 1,
+                                     "latest": latest_scan.get(n) == x.id}
+                                    for n in (x.journal_nos or []) if n in by_no]}
+                      for x in scans],
             "pdf": {"varaqlar": f"/api/diagnostics/{did}/pdf/varaqlar", "kalit": f"/api/diagnostics/{did}/pdf/kalit"},
             "sheets": -(-len(rows) // pdfgen.CARDS_PER_SHEET),
             "kind": d.kind, "max_points": d.max_points, "quality": scan_quality(did),
         }
 
 
-def process_photo(did: int, data: bytes, filename: str) -> dict:
+def store_photo(did: int, data: bytes, filename: str = "surat.jpg") -> dict:
+    """Suratni omborga yuklaydi va navbatga qo'yadi (hali o'qilmaydi)."""
+    img = cv2.imdecode(np.frombuffer(data, np.uint8), cv2.IMREAD_COLOR)
+    if img is None:
+        raise ValueError(f"{filename}: rasmni o'qib bo'lmadi")
+    with db.session() as s:
+        _load(s, did)
+    stamp = time.strftime("%Y%m%d-%H%M%S") + f"-{random.randint(100, 999)}"
+    key = f"scans/{did}/{stamp}-asl.jpg"
+    ok, buf = cv2.imencode(".jpg", img, [cv2.IMWRITE_JPEG_QUALITY, 85])
+    storage.put(key, buf.tobytes(), "image/jpeg")
+    with db.session() as s:
+        s.add(Scan(diagnostic_id=did, original_key=key, annotated_key="", strips_found=0,
+                   journal_nos=[], status="yuklandi"))
+    return diagnostic_detail(did)
+
+
+def scan_pending(did: int) -> dict:
+    """Navbatdagi barcha suratlarni o'qiydi."""
+    with db.session() as s:
+        pending = [(x.id, x.original_key) for x in s.scalars(
+            select(Scan).where(Scan.diagnostic_id == did, Scan.status == "yuklandi").order_by(Scan.id))]
+    total = {"photos": 0, "found": 0, "matched": 0, "flagged": 0, "unknown": [], "errors": []}
+    for scan_id, key in pending:
+        try:
+            res = process_photo(did, storage.get(key), key.rsplit("/", 1)[-1], scan_id=scan_id)
+        except Exception as e:
+            total["errors"].append(f"{key.rsplit('/', 1)[-1]}: {e}")
+            continue
+        if "error" in res:
+            total["errors"].append(res["error"])
+            continue
+        total["photos"] += 1
+        for k in ("found", "matched", "flagged"):
+            total[k] += res[k]
+        total["unknown"] += res["unknown"]
+    return total
+
+
+def process_photo(did: int, data: bytes, filename: str, scan_id: int | None = None) -> dict:
     img = cv2.imdecode(np.frombuffer(data, np.uint8), cv2.IMREAD_COLOR)
     if img is None:
         return {"error": f"{filename}: rasmni o'qib bo'lmadi"}
@@ -380,10 +438,33 @@ def process_photo(did: int, data: bytes, filename: str) -> dict:
                                auto_marks=dict(r.marks), confidence=r.confidence, corrected=0, solution_key=sol_key))
             matched += 1
             flagged += bool(r.flags)
-        s.add(Scan(diagnostic_id=did, original_key=orig_key, annotated_key=ann_key, strips_found=len(reads)))
+        nos = sorted(r.journal_no for r in reads)
+        row = s.get(Scan, scan_id) if scan_id else None
+        if row:
+            row.original_key, row.annotated_key = orig_key, ann_key
+            row.strips_found, row.journal_nos, row.status = len(reads), nos, "o'qildi"
+        else:
+            s.add(Scan(diagnostic_id=did, original_key=orig_key, annotated_key=ann_key, strips_found=len(reads),
+                       journal_nos=nos, status="o'qildi"))
         if d.status == "yaratildi":
             d.status = "skanerlandi"
     return {"found": len(reads), "matched": matched, "flagged": flagged, "unknown": unknown, "annotated": storage_url(ann_key)}
+
+
+def delete_scan(did: int, scan_id: int) -> dict:
+    """Yuklangan suratni o'chiradi (javoblar saqlanadi — ularni o'qituvchi qo'lda tuzatishi mumkin)."""
+    with db.session() as s:
+        row = s.get(Scan, scan_id)
+        if not row or row.diagnostic_id != did:
+            raise NotFound
+        keys = [row.original_key, row.annotated_key]
+        s.delete(row)
+    for key in keys:
+        try:
+            storage.delete(key)
+        except Exception:
+            pass
+    return diagnostic_detail(did)
 
 
 def save_response(did: int, sid: int, marks: dict):
@@ -916,19 +997,21 @@ def homework_view(lesson_id: int):
         ref, topic = homework_reference(s, lesson)
         rows = {h.student_id: h for h in s.scalars(select(Homework).where(Homework.lesson_id == lesson_id))}
         students = [{**student_brief(st),
-                     "homework": ({"id": rows[st.id].id, "correct": rows[st.id].correct, "total": rows[st.id].total,
+                     "homework": ({"id": rows[st.id].id, "status": rows[st.id].status,
+                                   "correct": rows[st.id].correct, "total": rows[st.id].total,
                                    "tasks": rows[st.id].tasks, "comment": rows[st.id].comment,
                                    "source": rows[st.id].source, "confirmed": rows[st.id].confirmed,
                                    "image": storage_url(rows[st.id].image_key) if rows[st.id].image_key else None}
                                   if st.id in rows else None)}
                     for st in class_students(s, lesson.class_id)]
-        checked = [x for x in students if x["homework"]]
+        checked = [x for x in students if x["homework"] and x["homework"]["status"] == "tayyor"]
         errors = {}
         for x in checked:
             for t in x["homework"]["tasks"]:
                 if not t.get("togri") and t.get("xato"):
                     errors[t["xato"]] = errors.get(t["xato"], 0) + 1
-        return {"lesson_id": lesson_id, "class_id": lesson.class_id, "date": fmt_date(lesson.date),
+        pending = sum(1 for x in students if x["homework"] and x["homework"]["status"] == "navbatda")
+        return {"lesson_id": lesson_id, "class_id": lesson.class_id, "date": fmt_date(lesson.date), "pending": pending,
                 "topic": topic, "reference": ref, "students": students,
                 "checked": len(checked),
                 "avg_pct": round(100 * avg(x["homework"]["correct"] / max(1, x["homework"]["total"]) for x in checked))
@@ -937,8 +1020,15 @@ def homework_view(lesson_id: int):
                 "top_errors": sorted(({"name": k, "count": v} for k, v in errors.items()), key=lambda e: -e["count"])[:4]}
 
 
+PAGE_MESSAGE = {
+    "kartochka": "Bu — diagnostika kartochkasi surati, uy vazifasi emas. Mashq daftari sahifasini suratga oling.",
+    "darslik": "Suratda bosma kitob sahifasi ko'rinyapti — o'quvchining yozgan ishi yo'q.",
+    "boshqa": "Suratda daftar sahifasi topilmadi. Yaqinroqdan, yorug'roq joyda qayta suratga oling.",
+}
+
+
 def check_homework(lesson_id: int, student_id: int, data: bytes, filename: str = "uy.jpg") -> dict:
-    """Mashq daftari sahifasi surati → AI har mashqni tekshiradi."""
+    """Suratni saqlaydi va tahlilni fonga qo'yadi — o'qituvchi keyingi o'quvchiga o'tishi mumkin."""
     img = cv2.imdecode(np.frombuffer(data, np.uint8), cv2.IMREAD_COLOR)
     if img is None:
         raise ValueError(f"{filename}: rasmni o'qib bo'lmadi")
@@ -954,20 +1044,64 @@ def check_homework(lesson_id: int, student_id: int, data: bytes, filename: str =
         lesson = s.get(Lesson, lesson_id)
         if not lesson:
             raise NotFound
-        ref, topic = homework_reference(s, lesson)
-    got = llm.check_homework(jpg, {"mavzu": topic, "manba": ref, "sinf": 5})
-    with db.session() as s:
+        ref, _topic = homework_reference(s, lesson)
         row = s.scalars(select(Homework).where(Homework.lesson_id == lesson_id, Homework.student_id == student_id)).first()
-        payload = dict(image_key=key, reference=ref, tasks=(got["masalalar"] if got else []),
-                       correct=(got["correct"] if got else 0), total=(got["total"] if got else 0),
-                       comment=(got["izoh"] if got else "AI tekshira olmadi — qo'lda kiriting."),
-                       source=("ai" if got else "yo'q"), confirmed=False)
+        payload = dict(image_key=key, reference=ref, tasks=[], correct=0, total=0,
+                       comment="Navbatda — AI tekshirmoqda…", source="ai", confirmed=False, status="navbatda")
         if row:
             for k2, v in payload.items():
                 setattr(row, k2, v)
         else:
             s.add(Homework(lesson_id=lesson_id, student_id=student_id, **payload))
+    _BG.submit(analyze_homework, lesson_id, student_id, jpg)
     return homework_view(lesson_id)
+
+
+def analyze_homework(lesson_id: int, student_id: int, jpg: bytes):
+    """Fon ishi: surat turini tekshiradi, so'ng AI mashqlarni baholaydi."""
+    try:
+        with db.session() as s:
+            lesson = s.get(Lesson, lesson_id)
+            ref, topic = homework_reference(s, lesson) if lesson else (None, None)
+        # 1) tez tekshiruv: bizning javob blokimiz markerlari bormi? unda bu kartochka, daftar emas
+        img = cv2.imdecode(np.frombuffer(jpg, np.uint8), cv2.IMREAD_COLOR)
+        reads, _ann = omr.scan_image(img) if img is not None else ([], None)
+        if reads:
+            _finish_homework(lesson_id, student_id, None, "xato", PAGE_MESSAGE["kartochka"])
+            return
+        context = {"mavzu": topic, "manba": ref, "sinf": 5}
+        got = llm.check_homework(jpg, context)
+        # chegaradagi suratlarda tasnif bir marta adashishi mumkin — bir marta qayta so'raymiz
+        if got is not None and not got.get("masalalar") and str(got.get("sahifa", "")) not in ("kartochka", "darslik"):
+            got = llm.check_homework(jpg, context) or got
+        if got is None:
+            _finish_homework(lesson_id, student_id, None, "xato", "AI tekshira olmadi — qo'lda kiriting.")
+            return
+        if not got.get("masalalar"):
+            page = str(got.get("sahifa", "boshqa"))
+            _finish_homework(lesson_id, student_id, None, "xato",
+                             PAGE_MESSAGE.get(page, got.get("izoh") or PAGE_MESSAGE["boshqa"]))
+            return
+        note = got["izoh"]
+        if got.get("mavzuga_mos") is False:
+            note = f"Diqqat: mashqlar bugungi mavzuga mos kelmasligi mumkin. {note}"
+        _finish_homework(lesson_id, student_id, got, "tayyor", note)
+    except Exception as e:                       # fon ishi ilovani yiqitmasligi kerak
+        _finish_homework(lesson_id, student_id, None, "xato", f"Tahlilda xato: {type(e).__name__}")
+
+
+def _finish_homework(lesson_id: int, student_id: int, got: dict | None, status: str, comment: str):
+    with db.session() as s:
+        row = s.scalars(select(Homework).where(Homework.lesson_id == lesson_id,
+                                               Homework.student_id == student_id)).first()
+        if not row:
+            return
+        row.tasks = got["masalalar"] if got else []
+        row.correct = got["correct"] if got else 0
+        row.total = got["total"] if got else 0
+        row.comment = comment[:300]
+        row.source = "ai" if got else "yo'q"
+        row.status = status
 
 
 def confirm_homework(lesson_id: int, student_id: int, tasks: list | None = None, confirmed: bool = True):
@@ -982,6 +1116,7 @@ def confirm_homework(lesson_id: int, student_id: int, tasks: list | None = None,
             row.tasks, row.total = clean, len(clean)
             row.correct = sum(1 for t in clean if t["togri"])
             row.source = "o'qituvchi"
+            row.status = "tayyor"
         row.confirmed = confirmed
     return homework_view(lesson_id)
 

@@ -235,3 +235,51 @@ def test_print_safety_margins():
     assert L.TEST_COL_X0 - 3.5 > L.MARKER_POS[0][0] + L.MARKER_SIZE
     # old va orqa tomon chekkalari bir xil (duplex siljishi ikkala tomonga teng ta'sir qiladi)
     assert abs(r["blok_chap"] - r["blok_ong"]) < 0.01
+
+
+# ------------------------------------------------------------------ 9. yuklangan suratlarni boshqarish
+def test_scan_list_shows_students_and_can_be_deleted(client):
+    """Har surat qaysi o'quvchilarni o'qigani ko'rinadi, takroriy yuklash belgilanadi va surat o'chiriladi."""
+    d = _graded_diagnostic(client)
+    before = client.get(f"/api/diagnostics/{d['id']}").json()
+    client.post(f"/api/diagnostics/{d['id']}/demo-photo")          # bitta surat yuklaymiz
+    after = client.get(f"/api/diagnostics/{d['id']}").json()
+    assert len(after["scans"]) == len(before["scans"]) + 1
+    scan = after["scans"][0]
+    assert scan["strips"] > 0 and scan["students"], "suratdan o'qilgan o'quvchilar ro'yxati bo'sh"
+    assert all("code" in st and "name" in st for st in scan["students"])
+    assert any(st["latest"] for st in scan["students"])
+
+    left = client.delete(f"/api/diagnostics/{d['id']}/scans/{scan['id']}").json()
+    assert len(left["scans"]) == len(before["scans"])
+    assert left["responses"] == after["responses"]                # javoblar saqlanadi
+    assert client.delete(f"/api/diagnostics/{d['id']}/scans/{scan['id']}").status_code == 404
+
+
+# ------------------------------------------------------------------ 10. uy vazifasi: kartochka surati rad etiladi
+def test_homework_rejects_diagnostic_card_photo(client):
+    """Uy vazifasi o'rniga diagnostika kartochkasi yuklansa — tizim buni markerlaridan aniqlab rad etadi."""
+    import random
+
+    from app import service as svc
+
+    with db.session() as s:
+        lesson = s.scalars(select_conducted()).first()
+        lid, cid = lesson.id, lesson.class_id
+    sid = _first_student(cid)
+
+    spec = problems.generate("amallar_tartibi", "B2", 5)
+    cards = [{"journal_no": 1, "code": "5A-01", "name": "Sinov", "level": "B2", "spec": spec}]
+    marks = simulate.simulate_answers(spec, "kuchli", random.Random(1))
+    photo = simulate.make_photo(cards, {1: marks}, "18.09.2026", "Sinov", "5-A", seed=3)
+    ok, buf = simulate.cv2.imencode(".jpg", photo)
+
+    view = client.post(f"/api/lessons/{lid}/homework", files={"file": ("kartochka.jpg", buf.tobytes(), "image/jpeg")},
+                       data={"student_id": str(sid)}).json()
+    svc.analyze_homework(lid, sid, buf.tobytes())            # fon ishini shu yerda kutamiz
+    after = client.get(f"/api/lessons/{lid}/homework").json()
+    hw = next(x for x in after["students"] if x["id"] == sid)["homework"]
+    assert hw["status"] == "xato"
+    assert "kartochka" in hw["comment"].lower()
+    assert hw["total"] == 0
+    assert view["pending"] >= 0

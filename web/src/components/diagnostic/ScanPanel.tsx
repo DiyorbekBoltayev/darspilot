@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { BadgeCheck, Camera, Check, CircleCheck, Image as ImageIcon, ListChecks, Pencil, ScanLine, TriangleAlert, Upload, WandSparkles, X } from 'lucide-react'
+import { BadgeCheck, Camera, Check, CircleCheck, Copy, Image as ImageIcon, ListChecks, Pencil, ScanLine, Trash2, TriangleAlert, Upload, WandSparkles, X } from 'lucide-react'
 import { api } from '@/lib/api'
 import type { DiagnosticDetail as Detail, DiagnosticRow } from '@/lib/types'
 import { LEVEL_NAMES, cn } from '@/lib/utils'
@@ -10,16 +10,32 @@ import { Button, Card, CardHeader, Modal } from '@/components/ui'
 
 const QS = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7'] as const
 
+/** Telefon/planshet — sensorli ekran: maydonga tegilganda darhol kamera ochiladi. */
+const isTouch = () => typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches
+
 export function Scanner({ data, onDone, onShowAnswers }: { data: Detail; onDone: () => void; onShowAnswers: () => void }) {
   const ai = useAi()
+  const qc = useQueryClient()
   const inputRef = useRef<HTMLInputElement>(null)
+  const cameraRef = useRef<HTMLInputElement>(null)
   const [drag, setDrag] = useState(false)
   const [last, setLast] = useState<{ found: number; matched: number; flagged: number; errors: string[] } | null>(null)
   const [zoom, setZoom] = useState<string | null>(null)
 
+  // 1-bosqich: surat omborga yuklanadi (o'qilmaydi) — o'qituvchi ketma-ket suratga oladi
+  const upload = useMutation({
+    mutationFn: (files: File[]) => api.uploadPhotos(data.id, files),
+    onSuccess: (d, files) => { qc.setQueryData(['diagnostic', data.id], d); ai.toast(`${files.length} ta surat qo'shildi`) },
+    onError: (e) => ai.toast(e.message, 'bad'),
+  })
+  // 2-bosqich: navbatdagi barcha suratlar birdan o'qiladi
   const scan = useMutation({
-    mutationFn: (files: File[]) => ai.run('scan', () => api.scan(data.id, files)),
-    onSuccess: (r) => { setLast(r); onDone(); ai.toast(`${r.matched} ta javob chizig'i o'qildi`) },
+    mutationFn: () => ai.run('scan', () => api.scanPending(data.id)),
+    onSuccess: (r) => {
+      setLast({ found: r.found, matched: r.matched, flagged: r.flagged, errors: r.errors })
+      onDone()
+      ai.toast(r.matched ? `${r.matched} ta javob bloki o'qildi` : "Hech qanday kartochka tanilmadi", r.matched ? 'good' : 'bad')
+    },
   })
   const demo = useMutation({
     mutationFn: () => ai.run('demo', () => api.demoPhoto(data.id)),
@@ -27,9 +43,10 @@ export function Scanner({ data, onDone, onShowAnswers }: { data: Detail; onDone:
   })
   const onFiles = (list: FileList | null) => {
     const files = Array.from(list ?? []).filter((f) => f.type.startsWith('image/'))
-    if (files.length) scan.mutate(files)
+    if (files.length) upload.mutate(files)
   }
   const remaining = data.rows.length - data.responses
+  const pending = data.pending
 
   return (
     <div className="grid grid-cols-1 gap-6 xl:grid-cols-5">
@@ -38,17 +55,43 @@ export function Scanner({ data, onDone, onShowAnswers }: { data: Detail; onDone:
           onDragOver={(e) => { e.preventDefault(); setDrag(true) }}
           onDragLeave={() => setDrag(false)}
           onDrop={(e) => { e.preventDefault(); setDrag(false); onFiles(e.dataTransfer.files) }}
-          onClick={() => inputRef.current?.click()}
+          onClick={() => (isTouch() ? cameraRef : inputRef).current?.click()}
           className={cn('relative flex cursor-pointer flex-col items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed bg-surface px-6 py-12 text-center transition-colors',
             drag ? 'border-firuza-500 bg-firuza-50' : 'border-line-strong hover:border-firuza-300')}
         >
           <div className="girih pointer-events-none absolute inset-0 opacity-[0.07]" />
           <div className="relative grid size-16 place-items-center rounded-2xl bg-firuza-500 text-white shadow-[inset_0_-3px_0_rgb(0_0_0/0.15)]"><Camera className="size-7" /></div>
-          <div className="relative mt-4 text-lg font-semibold text-ink">Suratni yuklang yoki torting</div>
-          <p className="relative mt-1 text-sm text-mute">Bir suratda 10 tagacha kartochka · bir nechta surat mumkin · telefonda kamera ochiladi</p>
-          <input ref={inputRef} type="file" accept="image/*" capture="environment" multiple hidden onChange={(e) => onFiles(e.target.files)} />
-          <Button variant="primary" icon={Upload} className="relative mt-5" loading={scan.isPending}>Surat tanlash</Button>
+          <div className="relative mt-4 text-lg font-semibold text-ink">
+            {pending > 0 ? `${pending} ta surat navbatda` : 'Kartochkalarni suratga oling'}
+          </div>
+          <p className="relative mt-1 text-sm text-mute">
+            Bir suratda 10 tagacha kartochka. Suratga olasiz — ro'yxatga tushadi, keyingisini olasiz;
+            hammasi yig'ilgach «Skanerlash» tugmasini bosasiz.
+          </p>
+          <input ref={cameraRef} type="file" accept="image/*" capture="environment" hidden onChange={(e) => { onFiles(e.target.files); e.target.value = '' }} />
+          <input ref={inputRef} type="file" accept="image/*" multiple hidden onChange={(e) => { onFiles(e.target.files); e.target.value = '' }} />
+          <div className="relative mt-5 flex flex-wrap items-center justify-center gap-2">
+            <Button variant="primary" icon={Camera} loading={upload.isPending}
+              onClick={(e) => { e.stopPropagation(); cameraRef.current?.click() }}>
+              {pending > 0 ? 'Yana rasmga olish' : 'Rasmga olish'}
+            </Button>
+            <Button icon={Upload} onClick={(e) => { e.stopPropagation(); inputRef.current?.click() }}>Fayldan tanlash</Button>
+          </div>
         </div>
+
+        {pending > 0 && (
+          <Card className="p-5 ring-1 ring-firuza-200">
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="flex-1">
+                <div className="text-sm font-semibold text-ink">{pending} ta surat o'qishga tayyor</div>
+                <p className="mt-0.5 text-[13px] text-mute">Hammasini suratga olib bo'lgach bitta tugma bilan o'qing.</p>
+              </div>
+              <Button variant="primary" icon={ScanLine} loading={scan.isPending} onClick={() => scan.mutate()}>
+                Skanerlash ({pending})
+              </Button>
+            </div>
+          </Card>
+        )}
 
         <Card className="p-5">
           <div className="flex items-start gap-3">
@@ -66,7 +109,7 @@ export function Scanner({ data, onDone, onShowAnswers }: { data: Detail; onDone:
         <div className="grid grid-cols-3 gap-3">
           <MiniStat label="Javoblar" value={`${data.responses}/${data.rows.length}`} />
           <MiniStat label="Tekshirish kerak" value={data.flagged} warn={data.flagged > 0} />
-          <MiniStat label="Suratlar" value={data.scans.length} />
+          <MiniStat label="Suratlar" value={pending > 0 ? `${data.scans.length} · ${pending} navbatda` : data.scans.length} />
         </div>
       </div>
 
@@ -85,18 +128,10 @@ export function Scanner({ data, onDone, onShowAnswers }: { data: Detail; onDone:
           </Card>
         )}
         <Card>
-          <CardHeader icon={ScanLine} title="Skanerlangan suratlar" hint="Yashil ramka — ishonchli o'qilgan, sariq — o'qituvchi tasdig'i kerak" />
-          <div className="grid grid-cols-1 gap-3 p-5 sm:grid-cols-2">
+          <CardHeader icon={ScanLine} title="Yuklangan suratlar" hint="Har suratda kim o'qilgani ko'rsatilgan · yashil ramka — ishonchli, sariq — tasdiq kerak" />
+          <div className="space-y-3 p-5">
             {data.scans.length === 0 && <p className="text-sm text-mute">Hali surat yuklanmagan.</p>}
-            {data.scans.map((s) => (
-              <button key={s.id} onClick={() => setZoom(s.url)} className="group relative overflow-hidden rounded-xl bg-sunken ring-1 ring-line">
-                <img src={s.url} alt="" loading="lazy" className="aspect-[4/3] w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
-                <div className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-gradient-to-t from-ink/70 to-transparent px-3 py-2 text-xs text-white">
-                  <span>{s.strips} ta kartochka</span>
-                  <a href={s.original} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()} className="text-white/80 hover:text-white">asl surat</a>
-                </div>
-              </button>
-            ))}
+            {data.scans.map((s) => <ScanRow key={s.id} did={data.id} scan={s} onZoom={setZoom} onDone={onDone} />)}
           </div>
         </Card>
       </div>
@@ -109,6 +144,67 @@ export function Scanner({ data, onDone, onShowAnswers }: { data: Detail; onDone:
           </motion.div>
         )}
       </AnimatePresence>
+    </div>
+  )
+}
+
+/** Bitta yuklangan surat: kim o'qilgani, takroriy yuklash belgisi va o'chirish. */
+function ScanRow({ did, scan, onZoom, onDone }: {
+  did: number
+  scan: Detail['scans'][number]
+  onZoom: (url: string) => void
+  onDone: () => void
+}) {
+  const ai = useAi()
+  const qc = useQueryClient()
+  const [confirm, setConfirm] = useState(false)
+  const del = useMutation({
+    mutationFn: () => api.deleteScan(did, scan.id),
+    onSuccess: (d) => { qc.setQueryData(['diagnostic', did], d); onDone(); ai.toast("Surat o'chirildi") },
+    onError: (e) => ai.toast(e.message, 'bad'),
+  })
+
+  return (
+    <div className="flex gap-3 rounded-xl bg-sunken p-3 ring-1 ring-line">
+      <button onClick={() => onZoom(scan.url)} className="shrink-0 overflow-hidden rounded-lg ring-1 ring-line">
+        <img src={scan.url} alt="" loading="lazy" className="size-24 object-cover transition-transform duration-500 hover:scale-105" />
+      </button>
+      <div className="min-w-0 flex-1">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="num text-[13px] font-semibold text-ink">
+            {scan.status === 'yuklandi' ? 'Navbatda — hali o\'qilmagan' : `${scan.strips} ta kartochka`}
+          </span>
+          {scan.at && <span className="text-[12px] text-faint">{scan.at}</span>}
+          <a href={scan.original} target="_blank" rel="noreferrer" className="text-[12px] text-firuza-700 hover:underline">asl surat</a>
+        </div>
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {scan.students.length === 0 && <span className="text-[12.5px] text-terra-600">Hech qanday kartochka tanilmadi</span>}
+          {scan.students.map((st) => (
+            <span key={st.journal_no}
+              title={st.repeat ? (st.latest ? 'Bu o\'quvchi bir necha marta yuklangan — jadvalda shu surat natijasi turibdi'
+                : 'Bu o\'quvchi keyinroq qayta yuklangan — jadvalda yangirog\'i turibdi') : undefined}
+              className={cn('inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[12px] ring-1',
+                st.repeat && !st.latest ? 'bg-oltin-50 text-oltin-600 ring-oltin-100'
+                  : 'bg-firuza-50 text-firuza-700 ring-firuza-100')}>
+              {st.repeat && <Copy className="size-3" />}
+              {st.code} · {st.name.split(' ')[0]}
+            </span>
+          ))}
+        </div>
+      </div>
+      <div className="flex w-full shrink-0 items-start sm:w-auto">
+        {confirm ? (
+          <div className="flex items-center gap-1.5">
+            <Button variant="ghost" onClick={() => setConfirm(false)}>Bekor</Button>
+            <Button variant="danger" icon={Trash2} loading={del.isPending} onClick={() => del.mutate()}>O'chirish</Button>
+          </div>
+        ) : (
+          <button onClick={() => setConfirm(true)} title="Suratni o'chirish"
+            className="grid size-9 place-items-center rounded-lg text-faint transition-colors hover:bg-terra-50 hover:text-terra-500">
+            <Trash2 className="size-4" />
+          </button>
+        )}
+      </div>
     </div>
   )
 }

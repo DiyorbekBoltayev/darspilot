@@ -41,12 +41,38 @@ def init(retries: int = 30):
             time.sleep(2)
     _upgrade_if_needed()
     Base.metadata.create_all(engine)
+    _add_missing_columns()
     with session() as s:
         row = s.get(Setting, "schema_version")
         if row:
             row.value = SCHEMA_VERSION
         else:
             s.add(Setting(key="schema_version", value=SCHEMA_VERSION))
+
+
+# Sxemani buzmasdan qo'shilgan ustunlar: demo ma'lumotni yo'qotmaslik uchun ALTER bilan qo'shiladi
+NEW_COLUMNS = {
+    "scans": {"journal_nos": {"postgresql": "JSONB", "sqlite": "JSON"},
+              "status": {"postgresql": "VARCHAR(20) DEFAULT 'o''qildi'", "sqlite": "VARCHAR(20) DEFAULT 'o''qildi'"}},
+    "homework": {"status": {"postgresql": "VARCHAR(20) DEFAULT 'tayyor'", "sqlite": "VARCHAR(20) DEFAULT 'tayyor'"}},
+    "lessons": {"debrief": {"postgresql": "JSONB", "sqlite": "JSON"}},
+}
+
+
+def _add_missing_columns():
+    insp = inspect(engine)
+    tables = set(insp.get_table_names())
+    dialect = engine.dialect.name
+    for table, columns in NEW_COLUMNS.items():
+        if table not in tables:
+            continue
+        have = {c["name"] for c in insp.get_columns(table)}
+        for name, types in columns.items():
+            if name in have:
+                continue
+            ddl = types.get(dialect, "JSON")
+            with engine.begin() as conn:
+                conn.execute(text(f'ALTER TABLE {table} ADD COLUMN {name} {ddl}'))
 
 
 def _upgrade_if_needed():

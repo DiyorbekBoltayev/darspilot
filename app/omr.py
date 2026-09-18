@@ -21,9 +21,13 @@ _params.minMarkerPerimeterRate = 0.008
 _params.polygonalApproxAccuracyRate = 0.05
 _DETECTOR = cv2.aruco.ArucoDetector(_DICT, _params)
 
-FILLED = 0.33       # doiracha ichidagi siyoh ulushi: bundan yuqori — bo'yalgan
-UNSURE_LOW = 0.18   # shu oraliqda — xira belgi
-SECOND_MAX = 0.24   # ikkinchi eng qora doiracha shundan yuqori bo'lsa — ikki belgi
+# Chegaralar har bir chiziq uchun o'sha chiziqning o'z siyohiga qarab hisoblanadi:
+# telefon surati, yorug'lik, ruchka rangi va qog'oz turli bo'lgani uchun qat'iy chegara ishlamaydi.
+FILL_FRAC = 0.42     # bo'sh va eng qora doiracha orasidagi ulush: bundan yuqori — bo'yalgan
+LOW_FRAC = 0.22      # shu oraliqda — xira belgi
+SECOND_REL = 0.70    # ikkinchi doiracha eng qoraning shunchasidan yuqori bo'lsa — ikki belgi
+ABS_MIN = 0.10       # umuman siyoh yo'q (bo'sh ustun) deb hisoblash uchun minimal qiymat
+SEARCH_MM = 0.9      # doiracha markazini shu radiusda qidiramiz (bosma va perspektiva siljishi uchun)
 
 
 @dataclass
@@ -104,19 +108,35 @@ def _disk_mean(ink, cx_mm, cy_mm, r_mm):
     cx, cy, r = int(round(cx_mm * s)), int(round(cy_mm * s)), int(round(r_mm * s))
     y0, y1, x0, x1 = max(cy - r, 0), cy + r + 1, max(cx - r, 0), cx + r + 1
     patch = ink[y0:y1, x0:x1]
+    if patch.size == 0:
+        return 0.0
     yy, xx = np.ogrid[y0 - cy:y1 - cy, x0 - cx:x1 - cx]
     mask = xx * xx + yy * yy <= r * r
     return float(patch[mask].mean()) if mask.any() else 0.0
 
 
-def _choose(values):
+_OFFSETS = [(0.0, 0.0), (-SEARCH_MM, 0.0), (SEARCH_MM, 0.0), (0.0, -SEARCH_MM), (0.0, SEARCH_MM),
+            (-SEARCH_MM * 0.7, -SEARCH_MM * 0.7), (SEARCH_MM * 0.7, -SEARCH_MM * 0.7),
+            (-SEARCH_MM * 0.7, SEARCH_MM * 0.7), (SEARCH_MM * 0.7, SEARCH_MM * 0.7)]
+
+
+def _bubble_ink(ink, cx_mm, cy_mm, r_mm):
+    """Doirachani biroz siljigan holatda ham topadi: kichik oynadagi eng qora joy olinadi."""
+    return max(_disk_mean(ink, cx_mm + dx, cy_mm + dy, r_mm) for dx, dy in _OFFSETS)
+
+
+def _choose(values, base, peak):
+    """base — bo'sh doiracha darajasi, peak — shu chiziqdagi eng qora belgi. Chegaralar shularga nisbatan."""
+    span = max(peak - base, 0.06)
+    fill = base + FILL_FRAC * span
+    low = base + LOW_FRAC * span
     order = np.argsort(values)[::-1]
     best, second = values[order[0]], values[order[1]]
-    if best < UNSURE_LOW:
+    if best < max(low, ABS_MIN):
         return None, None
-    if best < FILLED:
+    if best < fill:
         return int(order[0]), "xira belgi"
-    if second > SECOND_MAX:
+    if second > best * SECOND_REL and second > fill:
         return int(order[0]), "ikki belgi"
     return int(order[0]), None
 
@@ -130,11 +150,19 @@ def read_strip(gray, pts: dict) -> StripRead:
                                  borderValue=255)
     ink = _ink_map(cv2.GaussianBlur(warped, (3, 3), 0))
 
+    # 1-bosqich: barcha doirachalar o'lchanadi, so'ng shu chiziqning o'z darajasi hisoblanadi
+    test_vals = [[_bubble_ink(ink, *L.test_bubble(qi, li), L.TEST_SAMPLE_R) for li in range(4)]
+                 for qi in range(len(L.TEST_QUESTIONS))]
+    grid_vals = [[_bubble_ink(ink, *L.grid_bubble(ci, ri), L.GRID_SAMPLE_R) for ri in range(len(L.GRID_ROWS))]
+                 for ci in range(L.GRID_COLS)]
+    flat = np.array([v for row in test_vals for v in row] + [v for col in grid_vals for v in col])
+    base = float(np.median(flat))
+    peak = float(np.percentile(flat, 97))
+
     res = StripRead(journal_no=0)
     unsure = 0
     for qi, q in enumerate(L.TEST_QUESTIONS):
-        vals = [_disk_mean(ink, *L.test_bubble(qi, li), L.TEST_SAMPLE_R) for li in range(4)]
-        idx, flag = _choose(vals)
+        idx, flag = _choose(test_vals[qi], base, peak)
         res.marks[q] = L.LETTERS[idx] if idx is not None else None
         if flag:
             res.flags[q] = flag
@@ -143,8 +171,7 @@ def read_strip(gray, pts: dict) -> StripRead:
     symbols = []
     grid_flags = []
     for ci in range(L.GRID_COLS):
-        vals = [_disk_mean(ink, *L.grid_bubble(ci, ri), L.GRID_SAMPLE_R) for ri in range(len(L.GRID_ROWS))]
-        idx, flag = _choose(vals)
+        idx, flag = _choose(grid_vals[ci], base, peak)
         symbols.append(L.GRID_ROWS[idx] if idx is not None else "")
         if flag:
             grid_flags.append(f"{ci + 1}-ustun: {flag}")

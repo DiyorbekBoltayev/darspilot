@@ -35,6 +35,9 @@ class MinioStorage:
             resp.close()
             resp.release_conn()
 
+    def delete(self, key: str):
+        self.client.remove_object(self.bucket, key)
+
     def exists(self, key: str) -> bool:
         try:
             self.client.stat_object(self.bucket, key)
@@ -66,6 +69,9 @@ class LocalStorage:
 
     def exists(self, key):
         return self._path(key).exists()
+
+    def delete(self, key):
+        self._path(key).unlink(missing_ok=True)
 
 
 storage = MinioStorage() if config.MINIO_ENDPOINT else LocalStorage()

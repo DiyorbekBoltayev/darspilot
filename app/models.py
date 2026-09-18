@@ -67,6 +67,7 @@ class Lesson(Base):
     group_work: Mapped[bool] = mapped_column(Boolean, default=False)
     conducted_at: Mapped[datetime | None] = mapped_column(DateTime)
     quick_check: Mapped[dict | None] = mapped_column(JsonType)
+    debrief: Mapped[dict | None] = mapped_column(JsonType)   # o'qituvchining ovozli/matnli dars tahlili
 
 
 class Attention(Base):
@@ -122,6 +123,8 @@ class Scan(Base):
     original_key: Mapped[str] = mapped_column(String(300))
     annotated_key: Mapped[str] = mapped_column(String(300))
     strips_found: Mapped[int] = mapped_column(Integer)
+    journal_nos: Mapped[list | None] = mapped_column(JsonType)   # shu suratdan o'qilgan o'quvchilar (jurnal raqami)
+    status: Mapped[str] = mapped_column(String(20), default="o'qildi")   # yuklandi | o'qildi
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
 
@@ -284,6 +287,7 @@ class Homework(Base):
     comment: Mapped[str | None] = mapped_column(Text)
     source: Mapped[str] = mapped_column(String(20), default="ai")
     confirmed: Mapped[bool] = mapped_column(Boolean, default=False)
+    status: Mapped[str] = mapped_column(String(20), default="tayyor")    # navbatda | tayyor | xato
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
 
