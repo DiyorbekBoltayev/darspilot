@@ -54,6 +54,23 @@
   .ue{display:flex;gap:34px;margin-top:22px;padding-top:20px;border-top:1px solid var(--line)}
   .ue div{font-size:16px;color:var(--mute)}
   .ue b{display:block;font-family:'Unbounded',sans-serif;font-size:30px;color:var(--indigo);font-weight:600}
+  .loop{display:flex;align-items:stretch;gap:0;margin-top:26px}
+  .loop .st{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px 16px;position:relative}
+  .loop .st + .st{margin-left:14px}
+  .loop .st::after{content:'→';position:absolute;right:-19px;top:50%;transform:translateY(-50%);
+    color:var(--firuza);font-size:20px;font-weight:700}
+  .loop .st:last-child::after{content:''}
+  .loop .n{font-family:'Unbounded',sans-serif;font-size:12.5px;color:var(--firuza);font-weight:600;letter-spacing:.06em}
+  .loop h5{font-family:'Unbounded',sans-serif;font-size:19px;font-weight:600;margin-top:8px;line-height:1.2}
+  .loop p{font-size:14.5px;color:var(--mute);margin-top:9px;line-height:1.45}
+  .loopback{margin-top:16px;background:var(--indigo-50);border:1px solid #D6DBF2;border-radius:14px;
+    padding:14px 20px;font-size:17px;color:var(--ink-2);text-align:center}
+  .feat{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:26px}
+  .feat > div{border:1px solid var(--line);border-radius:16px;padding:20px 22px;background:var(--surface)}
+  .feat .ic{font-size:26px}
+  .feat h4{font-family:'Unbounded',sans-serif;font-size:19px;font-weight:600;margin-top:10px;line-height:1.2}
+  .feat p{font-size:15px;color:var(--mute);margin-top:9px;line-height:1.45}
+  .feat .hi{background:var(--firuza-50);border-color:#CCE7E6}
 </style>
 </head>
 <body>
@@ -83,7 +100,7 @@
     <div class="card"><h3>Hozircha matematika</h3><p>Butun matematika kursi uchun; dvigatel fanga bog'lanmagan.</p></div>
     <div class="card ind"><h3>Jonli ishlaydi</h3><p>darspilot.com — 3 sinf, 88 o'quvchilik demo maktab bilan.</p></div>
   </div>
-  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>2 / 8</span></div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>2 / 10</span></div>
 </section>
 
 <section class="slide">
@@ -104,11 +121,51 @@
     <div><div class="hero-num n-xl">15/36</div><div class="cap2">o'qituvchi kim bilan 2 haftadan beri ishlamaganini aniq biladi</div></div>
     <div><div class="hero-num n-xl">26–30</div><div class="cap2">bitta sinfdagi o'quvchi — har biriga alohida ulgurib bo'lmaydi</div></div>
   </div>
-  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>3 / 8</span></div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>3 / 10</span></div>
 </section>
 
 <section class="slide">
-  <div class="stag"><span class="k">04</span><span class="v">Bozor hajmi</span></div>
+  <div class="stag"><span class="k">04</span><span class="v">Tizim qanday ishlaydi</span></div>
+  <h1 class="xl">Har bir dars keyingisini o'zgartiradi</h1>
+  <div class="loop">
+    <div class="st"><div class="n">01</div><h5>Tayyorlash</h5>
+      <p>Rejadan mavzu olinadi, AI ssenariy tuzadi va har o'quvchiga <b>o'z darajasida</b> masala yozadi</p></div>
+    <div class="st"><div class="n">02</div><h5>Darsda</h5>
+      <p>Ssenariy bo'yicha yuriladi; kim bilan ishlangani <b>ovoz bilan</b> qayd etiladi</p></div>
+    <div class="st"><div class="n">03</div><h5>Tekshirish</h5>
+      <p>Kartochkalar va mashq daftari <b>telefon suratidan</b> o'qiladi, xato turi aniqlanadi</p></div>
+    <div class="st"><div class="n">04</div><h5>Tahlil</h5>
+      <p>Sinf va har bola bo'yicha xulosa; o'qituvchi o'z fikrini <b>aytib</b> qoldiradi</p></div>
+    <div class="st"><div class="n">05</div><h5>Keyingi dars</h5>
+      <p>Natijalar yangi ssenariyga o'tadi: kim bilan ishlash, nimani takrorlash</p></div>
+  </div>
+  <div class="loopback">Har bir dars xulosasi <b>saqlanadi</b> — tizim o'quvchining butun tarixini biladi,
+    shuning uchun keyingi masala va ko'rsatma aynan unga moslanadi.</div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>4 / 10</span></div>
+</section>
+
+<section class="slide">
+  <div class="stag"><span class="k">05</span><span class="v">Asosiy imkoniyatlar</span></div>
+  <h1 class="xl">Nimalarni o'zi bajaradi</h1>
+  <div class="feat">
+    <div class="hi"><div class="ic">🧩</div><h4>Individual masala</h4>
+      <p>Har o'quvchiga o'z darajasida: sonlar ham, chalg'ituvchi javoblar ham alohida</p></div>
+    <div><div class="ic">📷</div><h4>Bitta suratdan butun sinf</h4>
+      <p>10 tagacha ish ~2 soniyada o'qiladi; shubhali katak o'qituvchiga chiqadi</p></div>
+    <div class="hi"><div class="ic">🎯</div><h4>Xato turini nomlaydi</h4>
+      <p>«5/7» emas — qaysi bosqichda qoqilgani: shartni tushunish, model, hisob yoki talqin</p></div>
+    <div><div class="ic">🎙</div><h4>Ovozli e'tibor jurnali</h4>
+      <p>«Bugun Aziza va Bekzod bilan ishladim» — ismlar sinf ro'yxatiga o'zi bog'lanadi</p></div>
+    <div class="hi"><div class="ic">🗣</div><h4>Ovozli dars tahlili</h4>
+      <p>O'qituvchi 20 soniya gapiradi — tizim tartibli xulosa va keyingi darsga ko'rsatma qaytaradi</p></div>
+    <div><div class="ic">📊</div><h4>Jurnal va hisobot</h4>
+      <p>Baholar, BSB/ChSB, ota-onaga xabar va direktor uchun kesim — qo'lda yozish yo'q</p></div>
+  </div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>5 / 10</span></div>
+</section>
+
+<section class="slide">
+  <div class="stag"><span class="k">06</span><span class="v">Bozor hajmi</span></div>
   <h1 class="xl">Xususiy maktablar va o'quv markazlari</h1>
   <div class="tam">
     <div><div class="lbl">TAM</div><div class="val">≈ 10,5 mlrd so'm</div>
@@ -124,11 +181,11 @@
   <div class="note" style="margin-top:30px;font-size:17px;color:var(--mute)">
     Hisob asosi: <b style="color:var(--ink)">o'quvchi soni × oylik narx × 9 oylik o'quv yili.</b>
     Maktab 10 000, o'quv markazi 8 000 so'm — o'rtacha 9 000 so'm bilan hisoblangan.</div>
-  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>4 / 8</span></div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>6 / 10</span></div>
 </section>
 
 <section class="slide">
-  <div class="stag"><span class="k">05</span><span class="v">Yechim + raqobatchilar tahlili</span></div>
+  <div class="stag"><span class="k">07</span><span class="v">Yechim + raqobatchilar tahlili</span></div>
   <h1 class="xl">Nima uchun biz eng yaxshimiz</h1>
   <table class="cmp" style="margin-top:18px">
     <tr><th style="width:400px">Xususiyat</th><th>DarsPilot</th><th>Onlayn test platformalari</th><th>Jurnal / ERP va qo'lda ish</th></tr>
@@ -141,11 +198,11 @@
   <div class="note" style="margin-top:22px;font-size:17px;color:var(--mute)">
     <b style="color:var(--ink)">Ustunligimiz —</b> yopiq sikl: dars rejasi, tekshiruv va tahlil bitta joyda.
     Shuning uchun har bir dars natijasi keyingisini o'zgartiradi; raqobatchilar zanjirning bitta bo'g'inida.</div>
-  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>5 / 8</span></div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>7 / 10</span></div>
 </section>
 
 <section class="slide">
-  <div class="stag"><span class="k">06</span><span class="v">Monetizatsiya modeli</span></div>
+  <div class="stag"><span class="k">08</span><span class="v">Monetizatsiya modeli</span></div>
   <h1 class="xl">Obuna: o'quvchi soni bo'yicha</h1>
   <div class="money">
     <div><div class="q">Kim to'laydi</div><div class="a">Xususiy maktab<br>va o'quv markazi</div>
@@ -161,11 +218,11 @@
     <div><b>5,1</b>LTV / CAC — ehtiyotkor farazda</div>
     <div><b>≈ 2,4 oy</b>jalb qilish xarajati qoplanadi</div>
   </div>
-  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>6 / 8</span></div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>8 / 10</span></div>
 </section>
 
 <section class="slide">
-  <div class="stag"><span class="k">07</span><span class="v">Maqsadlar va KPI</span></div>
+  <div class="stag"><span class="k">09</span><span class="v">Maqsadlar va KPI</span></div>
   <h1 class="xl">Keyingi bir yil</h1>
   <div class="mline">
     <div class="m now"><div class="t">Hozir</div><div class="h">MVP jonli ishlaydi</div>
@@ -181,11 +238,11 @@
   <div class="note" style="margin-top:30px;font-size:17px;color:var(--mute)">
     Birinchi o'lchov — <b style="color:var(--ink)">pilotda tejalgan vaqtni o'qituvchining o'zi tasdiqlashi.</b>
     Bir viloyatda model isbotlangach, boshqa hududlar va fanlarga kengaytiramiz.</div>
-  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>7 / 8</span></div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>9 / 10</span></div>
 </section>
 
 <section class="slide">
-  <div class="stag"><span class="k">08</span><span class="v">Jamoa</span></div>
+  <div class="stag"><span class="k">10</span><span class="v">Jamoa</span></div>
   <h1 class="xl">Fractal</h1>
   <div class="team">
     <div><div class="av"><img src="img/bekzodbek.jpg" alt="Sultonboyev Bekzodbek"></div><div class="nm">Sultonboyev Bekzodbek</div>
@@ -201,7 +258,7 @@
   <div class="note" style="margin-top:34px;font-size:17px;color:var(--mute);text-align:center">
     Jamoa xakatondan oldin ham birga ishlagan: o'qituvchi + dasturchi + tahlilchi —
     <b style="color:var(--ink)">muammoni ham, yechimni ham ichkaridan bilamiz.</b></div>
-  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>8 / 8</span></div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>10 / 10</span></div>
 </section>
 
 <script src="present.js"></script>
