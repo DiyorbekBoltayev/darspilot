@@ -1,11 +1,11 @@
 import { useRef, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { BookOpenCheck, Camera, Check, Loader2, NotebookPen, RefreshCw, TriangleAlert, WandSparkles } from 'lucide-react'
+import { BookOpen, BookOpenCheck, Camera, Check, ImagePlus, Loader2, NotebookPen, RefreshCw, ScanLine, TriangleAlert, WandSparkles } from 'lucide-react'
 import { api } from '@/lib/api'
 import type { HomeworkStudent, HomeworkView } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { useAi } from '@/components/ai-context'
-import { Badge, Button, Card, CardHeader } from '@/components/ui'
+import { Badge, Button, Card, CardHeader, Modal } from '@/components/ui'
 
 /** Uy vazifasi: mashq daftari sahifasining surati → AI har mashqni tekshiradi, o'qituvchi tasdiqlaydi. */
 export default function HomeworkPanel({ lessonId }: { lessonId: number }) {
@@ -30,7 +30,8 @@ export default function HomeworkPanel({ lessonId }: { lessonId: number }) {
   })
 
   if (isLoading || !data) return <div className="skeleton h-40" />
-  const checked = data.students.filter((s) => s.homework)
+  const checked = data.students.filter((s) => s.homework && s.homework.status !== 'yuklandi')
+  const uploaded = data.students.filter((s) => s.homework?.status === 'yuklandi')
   const pending = data.students.filter((s) => !s.homework)
   const working = data.pending
 
@@ -56,6 +57,8 @@ export default function HomeworkPanel({ lessonId }: { lessonId: number }) {
           <Mini label="Asosiy xato" value={data.top_errors[0]?.name ?? '—'} hint={data.top_errors[0] ? `${data.top_errors[0].count} ta mashqda` : 'xato topilmadi'} small />
         </div>
 
+        <WorkbookPagesRow pages={data.workbook} />
+
         {data.top_errors.length > 0 && (
           <div className="mt-3 flex flex-wrap items-center gap-2">
             <TriangleAlert className="size-3.5 text-terra-500" />
@@ -63,6 +66,17 @@ export default function HomeworkPanel({ lessonId }: { lessonId: number }) {
               <Badge key={e.name} className="bg-terra-50 text-terra-600 ring-terra-100">{e.name} · {e.count}</Badge>
             ))}
             <span className="text-[12px] text-faint">— keyingi dars ssenariysida takrorlashga tushadi</span>
+          </div>
+        )}
+
+        {uploaded.length > 0 && (
+          <div className="mt-4 rounded-xl bg-firuza-50 p-3.5 ring-1 ring-firuza-200">
+            <div className="mb-2 text-[13px] font-semibold text-ink">
+              {uploaded.length} ta o'quvchining betlari yuklandi — tahlilga yuboring
+            </div>
+            <div className="space-y-2">
+              {uploaded.map((s) => <UploadedRow key={s.id} lessonId={lessonId} s={s} />)}
+            </div>
           </div>
         )}
 
@@ -80,7 +94,7 @@ export default function HomeworkPanel({ lessonId }: { lessonId: number }) {
         {pending.length > 0 && (
           <div className="mt-4">
             <div className="mb-2 text-xs font-semibold tracking-wide text-mute uppercase">
-              Tekshirilmagan ({pending.length}) <span className="ml-1 font-normal normal-case">— bosing, kamera ochiladi; suratga olgach keyingisiga o'tavering</span>
+              Tekshirilmagan ({pending.length}) <span className="ml-1 font-normal normal-case">— bosing, kamera ochiladi; bir nechta bet bo'lsa hammasini oling, keyin tahlilga yuboring</span>
             </div>
             <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3 lg:grid-cols-4">
               {pending.map((s) => <UploadButton key={s.id} lessonId={lessonId} student={s} />)}
@@ -113,28 +127,97 @@ function Mini({ label, value, hint, small }: { label: string; value: string; hin
   )
 }
 
-function UploadButton({ lessonId, student }: { lessonId: number; student: HomeworkStudent }) {
+/** Mashq daftarining shu darsga berilgan betlari — o'qituvchi qaysi mashqlar berilganini ko'rib turadi. */
+function WorkbookPagesRow({ pages }: { pages: HomeworkView['workbook'] }) {
+  const [zoom, setZoom] = useState<string | null>(null)
+  if (!pages?.pages?.length) return null
+  return (
+    <div className="mt-3 rounded-xl bg-sunken p-3 ring-1 ring-line">
+      <div className="mb-2 flex items-center gap-1.5 text-[12.5px] font-semibold text-ink">
+        <BookOpen className="size-3.5 text-indigo-600" />
+        Mashq daftari — {pages.reference}-betlar
+        <span className="font-normal text-faint">· bosib kattalashtiring</span>
+      </div>
+      <div className="flex gap-2 overflow-x-auto pb-1">
+        {pages.pages.map((p) => (
+          <button key={p.no} onClick={() => setZoom(p.url)}
+            className="relative shrink-0 overflow-hidden rounded-lg bg-white ring-1 ring-line transition-shadow hover:ring-firuza-300">
+            <img src={p.url} alt={`${p.no}-bet`} loading="lazy" className="h-28 w-auto sm:h-36" />
+            <span className="num absolute right-1 bottom-1 rounded bg-ink/70 px-1 text-[10px] text-white">{p.no}</span>
+          </button>
+        ))}
+      </div>
+      {zoom && (
+        <Modal title="Mashq daftari beti" onClose={() => setZoom(null)} wide>
+          <img src={zoom} alt="Mashq daftari beti" className="w-full rounded-lg ring-1 ring-line" />
+        </Modal>
+      )}
+    </div>
+  )
+}
+
+/** Betlari yuklangan, lekin hali tahlilga yuborilmagan o'quvchi. */
+function UploadedRow({ lessonId, s }: { lessonId: number; s: HomeworkStudent }) {
+  const ai = useAi()
+  const qc = useQueryClient()
+  const hw = s.homework!
+  const start = useMutation({
+    mutationFn: () => api.analyzeHomework(lessonId, s.id),
+    onSuccess: (d) => { qc.setQueryData(['homework', lessonId], d); ai.toast(`${s.name.split(' ')[0]} — tahlilga yuborildi`) },
+    onError: (e) => ai.toast(e.message, 'bad'),
+  })
+  return (
+    <div className="flex flex-wrap items-center gap-2 rounded-lg bg-surface p-2 ring-1 ring-line">
+      <span className="num w-5 shrink-0 text-[11px] text-faint">{s.journal_no}</span>
+      <span className="min-w-0 flex-1 truncate text-[13px] font-medium text-ink">{s.name}</span>
+      <div className="flex gap-1">
+        {hw.images.map((url, i) => (
+          <img key={url} src={url} alt={`${i + 1}-bet`} className="size-10 rounded object-cover ring-1 ring-line" />
+        ))}
+      </div>
+      <UploadButton lessonId={lessonId} student={s} more />
+      <Button variant="primary" icon={ScanLine} loading={start.isPending} onClick={() => start.mutate()}>
+        Tahlil ({hw.images.length})
+      </Button>
+    </div>
+  )
+}
+
+/** Bet suratlari: bir vazifa bir necha betdan iborat bo'lishi mumkin — hammasi bitta o'quvchiga yig'iladi. */
+function UploadButton({ lessonId, student, more }: { lessonId: number; student: HomeworkStudent; more?: boolean }) {
   const ref = useRef<HTMLInputElement>(null)
   const ai = useAi()
   const qc = useQueryClient()
   const send = useMutation({
-    // kutib turmaymiz: surat yuklanadi va tahlil fonda ketadi — o'qituvchi keyingi o'quvchiga o'tadi
-    mutationFn: (file: File) => api.checkHomework(lessonId, student.id, file),
-    onSuccess: (d: HomeworkView) => { qc.setQueryData(['homework', lessonId], d); ai.toast(`${student.name.split(' ')[0]} — surat qabul qilindi`) },
+    // suratlar saqlanadi, tahlil o'qituvchi hamma betni olgach boshlanadi
+    mutationFn: (files: File[]) => api.uploadHomework(lessonId, student.id, files, false),
+    onSuccess: (d: HomeworkView, files) => {
+      qc.setQueryData(['homework', lessonId], d)
+      ai.toast(`${student.name.split(' ')[0]} — ${files.length} ta bet qo'shildi`)
+    },
     onError: (e) => ai.toast(e.message, 'bad'),
   })
+  const onFiles = (list: FileList | null) => {
+    const files = Array.from(list ?? []).filter((f) => f.type.startsWith('image/'))
+    if (files.length) send.mutate(files)
+  }
 
   return (
     <>
-      <button onClick={() => ref.current?.click()} disabled={send.isPending}
-        className="flex items-center gap-2 rounded-lg bg-surface px-2.5 py-2 text-left text-[13px] text-ink ring-1 ring-line transition-colors hover:ring-firuza-300 disabled:opacity-60">
-        <Camera className="size-3.5 shrink-0 text-faint" />
-        <span className="num w-4 shrink-0 text-[10.5px] text-faint">{student.journal_no}</span>
-        <span className="truncate">{student.name.split(' ')[0]} {student.name.split(' ')[1]?.[0]}.</span>
-        {send.isPending && <Loader2 className="ml-auto size-3.5 shrink-0 animate-spin text-indigo-500" />}
-      </button>
-      <input ref={ref} type="file" accept="image/*" capture="environment" className="hidden"
-        onChange={(e) => { const f = e.target.files?.[0]; if (f) send.mutate(f); e.target.value = '' }} />
+      {more ? (
+        <Button icon={ImagePlus} loading={send.isPending} onClick={() => ref.current?.click()}>Yana bet</Button>
+      ) : (
+        <button onClick={() => ref.current?.click()} disabled={send.isPending}
+          className="flex items-center gap-2 rounded-lg bg-surface px-2.5 py-2 text-left text-[13px] text-ink ring-1 ring-line transition-colors hover:ring-firuza-300 disabled:opacity-60">
+          <Camera className="size-3.5 shrink-0 text-faint" />
+          <span className="num w-4 shrink-0 text-[10.5px] text-faint">{student.journal_no}</span>
+          <span className="truncate">{student.name.split(' ')[0]} {student.name.split(' ')[1]?.[0]}.</span>
+          {send.isPending && <Loader2 className="ml-auto size-3.5 shrink-0 animate-spin text-indigo-500" />}
+        </button>
+      )}
+      <input ref={ref} type="file" accept="image/*" capture="environment" multiple className="hidden"
+        onClick={(e) => e.stopPropagation()}
+        onChange={(e) => { onFiles(e.target.files); e.target.value = '' }} />
     </>
   )
 }
@@ -145,8 +228,8 @@ function RetakeButton({ lessonId, student }: { lessonId: number; student: Homewo
   const ai = useAi()
   const qc = useQueryClient()
   const send = useMutation({
-    mutationFn: (file: File) => api.checkHomework(lessonId, student.id, file),
-    onSuccess: (d: HomeworkView) => { qc.setQueryData(['homework', lessonId], d); ai.toast('Yangi surat qabul qilindi') },
+    mutationFn: (files: File[]) => api.uploadHomework(lessonId, student.id, files, false),
+    onSuccess: (d: HomeworkView) => { qc.setQueryData(['homework', lessonId], d); ai.toast('Yangi surat qabul qilindi — tahlilga yuboring') },
     onError: (e) => ai.toast(e.message, 'bad'),
   })
   return (
@@ -156,9 +239,9 @@ function RetakeButton({ lessonId, student }: { lessonId: number; student: Homewo
         className="mr-1 grid size-8 shrink-0 place-items-center rounded-lg text-terra-500 transition-colors hover:bg-terra-50">
         <RefreshCw className={cn('size-4', send.isPending && 'animate-spin')} />
       </button>
-      <input ref={ref} type="file" accept="image/*" capture="environment" className="hidden"
+      <input ref={ref} type="file" accept="image/*" capture="environment" multiple className="hidden"
         onClick={(e) => e.stopPropagation()}
-        onChange={(e) => { const f = e.target.files?.[0]; if (f) send.mutate(f); e.target.value = '' }} />
+        onChange={(e) => { const fs = Array.from(e.target.files ?? []); if (fs.length) send.mutate(fs); e.target.value = '' }} />
     </>
   )
 }
@@ -210,9 +293,16 @@ function HomeworkRow({ lessonId, s, open, onToggle }: { lessonId: number; s: Hom
       {open && (
         <div className="grid grid-cols-1 gap-4 border-t border-line p-4 lg:grid-cols-5">
           <div className="lg:col-span-2">
-            {hw.image
-              ? <a href={hw.image} target="_blank" rel="noreferrer"><img src={hw.image} alt="Daftar sahifasi" className="w-full rounded-lg bg-white ring-1 ring-line" /></a>
-              : <div className="rounded-lg bg-sunken p-4 text-[13px] text-faint ring-1 ring-line">Surat saqlanmagan</div>}
+            {hw.images.length ? (
+              <div className="space-y-2">
+                {hw.images.map((url, i) => (
+                  <a key={url} href={url} target="_blank" rel="noreferrer" className="block">
+                    <img src={url} alt={`${i + 1}-bet`} className="w-full rounded-lg bg-white ring-1 ring-line" />
+                  </a>
+                ))}
+                {hw.images.length > 1 && <p className="text-[12px] text-faint">{hw.images.length} ta bet birga tahlil qilindi</p>}
+              </div>
+            ) : <div className="rounded-lg bg-sunken p-4 text-[13px] text-faint ring-1 ring-line">Surat saqlanmagan</div>}
           </div>
           <div className="min-w-0 space-y-1.5 lg:col-span-3">
             {hw.tasks.map((t) => (

@@ -553,9 +553,12 @@ def lesson_debrief(text: str, context: dict) -> tuple:
 HOMEWORK_SYSTEM = (
     "Sen 5-sinf matematika o'qituvchisisan va o'quvchining UY VAZIFASI suratini tekshirasan. "
     "AVVAL suratning turini aniqla:\n"
-    "  'daftar' — o'quvchining daftari yoki mashq daftari sahifasi: qo'lda yozilgan yechimlar va mashq raqamlari bor;\n"
+    "  'daftar' — o'quvchining ishi ko'rinadigan sahifa. MUHIM: mashq daftari — bu BOSMA kitobcha, "
+    "o'quvchi javoblarni to'g'ridan-to'g'ri bosma betga, mashqlar yoniga yoki ular uchun ajratilgan "
+    "katakchalarga yozadi. Shuning uchun betda bosma matn bo'lishi normal: agar sahifada qo'lda yozilgan "
+    "biror narsa (javob, son, ism, belgi) bo'lsa — bu 'daftar';\n"
     "  'kartochka' — bosma test varaqasi, javob doirachalari yoki kvadrat markerlar ko'rinib turibdi;\n"
-    "  'darslik' — bosma kitob sahifasi, qo'lda yozilgan ish yo'q;\n"
+    "  'darslik' — bosma sahifa va unda qo'lda yozilgan hech narsa YO'Q (bo'sh, to'ldirilmagan);\n"
     "  'boshqa' — stol, devor, odam, qorong'i yoki o'qib bo'lmaydigan surat.\n"
     "Faqat 'daftar' bo'lgandagina mashqlarni tekshir. Boshqa hollarda masalalar ro'yxatini BO'SH qoldir. "
     "Har bir bajarilgan mashqni raqami bo'yicha ajrat va to'g'ri/xato ekanini aniqla; xato bo'lsa sababini ayt "
@@ -564,14 +567,17 @@ HOMEWORK_SYSTEM = (
 )
 
 
-def check_homework(image: bytes, context: dict) -> dict | None:
-    """context: {mavzu, manba (mashq daftari sahifasi), kutilgan_mashqlar}."""
+def check_homework(images, context: dict) -> dict | None:
+    """images: bitta surat yoki suratlar ro'yxati (bir vazifa bir necha betdan iborat bo'lishi mumkin)."""
+    if isinstance(images, (bytes, bytearray)):
+        images = [images]
     user = {
         "kontekst": context,
         "qoidalar": [
             "Avval 'sahifa' maydonini to'ldir: daftar | kartochka | darslik | boshqa.",
             "'daftar' bo'lmasa — masalalar ro'yxati bo'sh bo'lsin va izohda nima ko'rinayotganini ayt.",
             "Har mashq uchun: nom (raqami), togri (true/false), xato (qisqa tur nomi yoki null), izoh (1 gap).",
+            "Bir nechta surat berilsa — hammasi bitta o'quvchining ishi, mashqlarni bitta ro'yxatga jamla.",
             "Mashq raqami ko'rinmasa yoki yozuv o'qilmasa — uni ro'yxatga qo'shma.",
             "mavzuga_mos: mashqlar berilgan mavzuga mos keladimi (true/false).",
             "izoh (umumiy): o'qituvchiga 1 gap - nimaga e'tibor berish kerak.",
@@ -579,7 +585,7 @@ def check_homework(image: bytes, context: dict) -> dict | None:
         "javob_formati": {"sahifa": "daftar", "mavzuga_mos": True,
                           "masalalar": [{"nom": "12", "togri": True, "xato": None, "izoh": "..."}], "izoh": "..."},
     }
-    data = call_json_vision(HOMEWORK_SYSTEM, user, [image], "uy_vazifasi")
+    data = call_json_vision(HOMEWORK_SYSTEM, user, list(images)[:6], "uy_vazifasi")
     if not isinstance(data, dict) or not isinstance(data.get("masalalar"), list):
         return None
     page = str(data.get("sahifa", "")).strip().lower()

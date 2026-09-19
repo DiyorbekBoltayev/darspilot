@@ -36,6 +36,9 @@ OPENAI_TRANSCRIBE_MODEL = os.getenv("OPENAI_TRANSCRIBE_MODEL", "gpt-4o-transcrib
 # React build (docker'da nginx beradi; lokal ishga tushirishda FastAPI o'zi berishi mumkin)
 STATIC_DIR = Path(os.getenv("STATIC_DIR", BASE_DIR / "web" / "dist"))
 
+# Mashq daftari PDF si (uy vazifasi betlarini ko'rsatish va demo surat uchun)
+WORKBOOK_PDF = os.getenv("WORKBOOK_PDF", "").strip()
+
 # Bitta o'quvchi ishini qo'lda tekshirish va izoh yozishga ketadigan taxminiy vaqt (daqiqa)
 MINUTES_SAVED_PER_STUDENT = 3.5
 # Bitta o'quvchining uy vazifasini daftardan tekshirishga ketadigan taxminiy vaqt (daqiqa)

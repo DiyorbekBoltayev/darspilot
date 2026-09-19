@@ -54,7 +54,8 @@ def init(retries: int = 30):
 NEW_COLUMNS = {
     "scans": {"journal_nos": {"postgresql": "JSONB", "sqlite": "JSON"},
               "status": {"postgresql": "VARCHAR(20) DEFAULT 'o''qildi'", "sqlite": "VARCHAR(20) DEFAULT 'o''qildi'"}},
-    "homework": {"status": {"postgresql": "VARCHAR(20) DEFAULT 'tayyor'", "sqlite": "VARCHAR(20) DEFAULT 'tayyor'"}},
+    "homework": {"status": {"postgresql": "VARCHAR(20) DEFAULT 'tayyor'", "sqlite": "VARCHAR(20) DEFAULT 'tayyor'"},
+                 "image_keys": {"postgresql": "JSONB", "sqlite": "JSON"}},
     "lessons": {"debrief": {"postgresql": "JSONB", "sqlite": "JSON"}},
 }
 

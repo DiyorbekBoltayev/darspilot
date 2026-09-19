@@ -12,7 +12,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Alignment, Font, PatternFill
 from sqlalchemy import delete, func, select
 
-from . import clock, db, grading, llm, omr, pdfgen, problems, scenario, simulate
+from . import clock, db, grading, llm, omr, pdfgen, problems, scenario, simulate, workbook
 from . import methods as methods_mod
 from .config import ATTENTION_GAP_ALERT, MINUTES_SAVED_PER_HOMEWORK, MINUTES_SAVED_PER_STUDENT
 from .curriculum import ERROR_ACTIONS, ERRORS, LEVEL_NAMES, LEVELS, QUESTION_STEP, SKILLS, level_for_score
@@ -914,6 +914,16 @@ def homework_reference(s, lesson):
     return (topic.workbook if topic else None), (topic.title if topic else lesson.topic)
 
 
+def lesson_workbook(lesson_id: int) -> dict:
+    """Darsga berilgan uy vazifasi betlari (mashq daftari PDF sidan rasm)."""
+    with db.session() as s:
+        lesson = s.get(Lesson, lesson_id)
+        if not lesson:
+            raise NotFound
+        ref, topic = homework_reference(s, lesson)
+    return {"lesson_id": lesson_id, "topic": topic, **workbook.pages_view(ref)}
+
+
 def homework_view(lesson_id: int):
     with db.session() as s:
         lesson = s.get(Lesson, lesson_id)
@@ -926,7 +936,9 @@ def homework_view(lesson_id: int):
                                    "correct": rows[st.id].correct, "total": rows[st.id].total,
                                    "tasks": rows[st.id].tasks, "comment": rows[st.id].comment,
                                    "source": rows[st.id].source, "confirmed": rows[st.id].confirmed,
-                                   "image": storage_url(rows[st.id].image_key) if rows[st.id].image_key else None}
+                                   "image": storage_url(rows[st.id].image_key) if rows[st.id].image_key else None,
+                                   "images": [storage_url(k) for k in (rows[st.id].image_keys
+                                              or ([rows[st.id].image_key] if rows[st.id].image_key else []))]}
                                   if st.id in rows else None)}
                     for st in class_students(s, lesson.class_id)]
         checked = [x for x in students if x["homework"] and x["homework"]["status"] == "tayyor"]
@@ -936,7 +948,9 @@ def homework_view(lesson_id: int):
                 if not t.get("togri") and t.get("xato"):
                     errors[t["xato"]] = errors.get(t["xato"], 0) + 1
         pending = sum(1 for x in students if x["homework"] and x["homework"]["status"] == "navbatda")
+        uploaded = sum(1 for x in students if x["homework"] and x["homework"]["status"] == "yuklandi")
         return {"lesson_id": lesson_id, "class_id": lesson.class_id, "date": fmt_date(lesson.date), "pending": pending,
+                "uploaded": uploaded, "workbook": workbook.pages_view(ref),
                 "topic": topic, "reference": ref, "students": students,
                 "checked": len(checked),
                 "avg_pct": round(100 * avg(x["homework"]["correct"] / max(1, x["homework"]["total"]) for x in checked))
@@ -952,8 +966,7 @@ PAGE_MESSAGE = {
 }
 
 
-def check_homework(lesson_id: int, student_id: int, data: bytes, filename: str = "uy.jpg") -> dict:
-    """Suratni saqlaydi va tahlilni fonga qo'yadi — o'qituvchi keyingi o'quvchiga o'tishi mumkin."""
+def _shrink(data: bytes, filename: str) -> bytes:
     img = cv2.imdecode(np.frombuffer(data, np.uint8), cv2.IMREAD_COLOR)
     if img is None:
         raise ValueError(f"{filename}: rasmni o'qib bo'lmadi")
@@ -962,28 +975,107 @@ def check_homework(lesson_id: int, student_id: int, data: bytes, filename: str =
     if k < 1.0:
         img = cv2.resize(img, None, fx=k, fy=k, interpolation=cv2.INTER_AREA)
     ok, buf = cv2.imencode(".jpg", img, [cv2.IMWRITE_JPEG_QUALITY, 85])
-    jpg = buf.tobytes()
-    key = f"homework/{lesson_id}/{student_id}.jpg"
-    storage.put(key, jpg, "image/jpeg")
+    return buf.tobytes()
+
+
+def check_homework(lesson_id: int, student_id: int, files: list, analyze: bool = True) -> dict:
+    """Bir o'quvchining vazifasi: bir nechta bet surati saqlanadi.
+
+    Uy vazifasi bir darsda bir necha betdan iborat bo'lishi mumkin — o'qituvchi hammasini
+    ketma-ket suratga oladi, keyin bitta buyruq bilan tahlilga yuboradi (analyze=True).
+    """
+    if isinstance(files, (bytes, bytearray)):            # eski chaqiruvlar bilan moslik
+        files = [(bytes(files), "uy.jpg")]
+    jpgs = [_shrink(data, name) for data, name in files]
+    if not jpgs:
+        raise ValueError("Surat yuborilmadi")
     with db.session() as s:
         lesson = s.get(Lesson, lesson_id)
         if not lesson:
             raise NotFound
         ref, _topic = homework_reference(s, lesson)
         row = s.scalars(select(Homework).where(Homework.lesson_id == lesson_id, Homework.student_id == student_id)).first()
-        payload = dict(image_key=key, reference=ref, tasks=[], correct=0, total=0,
-                       comment="Navbatda — AI tekshirmoqda…", source="ai", confirmed=False, status="navbatda")
+        keys = list(row.image_keys or ([row.image_key] if row and row.image_key else [])) if row else []
+        if row and row.status in ("tayyor", "xato"):     # qayta suratga olinsa, avvalgi natija tozalanadi
+            keys = []
+        start = len(keys)
+        for i, jpg in enumerate(jpgs):
+            key = f"homework/{lesson_id}/{student_id}-{start + i + 1}.jpg"
+            storage.put(key, jpg, "image/jpeg")
+            keys.append(key)
+        keys = keys[:6]
+        payload = dict(image_key=keys[0], image_keys=keys, reference=ref, tasks=[], correct=0, total=0,
+                       comment=("Navbatda — AI tekshirmoqda…" if analyze else f"{len(keys)} ta bet yuklandi — tahlilga yuboring"),
+                       source="ai", confirmed=False, status=("navbatda" if analyze else "yuklandi"))
         if row:
             for k2, v in payload.items():
                 setattr(row, k2, v)
         else:
             s.add(Homework(lesson_id=lesson_id, student_id=student_id, **payload))
-    _BG.submit(analyze_homework, lesson_id, student_id, jpg)
+    if analyze:
+        _BG.submit(analyze_homework, lesson_id, student_id, jpgs)
+    return homework_view(lesson_id)
+
+
+def start_homework_analysis(lesson_id: int, student_id: int) -> dict:
+    """Yuklangan betlarni tahlilga yuborish."""
+    with db.session() as s:
+        row = s.scalars(select(Homework).where(Homework.lesson_id == lesson_id,
+                                               Homework.student_id == student_id)).first()
+        if not row:
+            raise NotFound
+        keys = list(row.image_keys or ([row.image_key] if row.image_key else []))
+        if not keys:
+            raise ValueError("Avval bet suratlarini yuklang")
+        row.status, row.comment = "navbatda", "Navbatda — AI tekshirmoqda…"
+    jpgs = [storage.get(k) for k in keys]
+    _BG.submit(analyze_homework, lesson_id, student_id, jpgs)
     return homework_view(lesson_id)
 
 
 DEMO_HOMEWORK_OK = ["24 + 6 * 3 = 42", "(120 - 45) : 5 = 15", "36 : 4 + 18 = 27", "7 * 8 - 14 = 42"]
 DEMO_HOMEWORK_BAD = ["24 + 6 * 3 = 90", "(120 - 45) : 5 = 105", "36 : 4 + 18 = 25", "150 - 60 : 6 = 15"]
+
+
+def _demo_workbook_page(reference: str | None, wrong: int, rng, name: str = "", date: str = "") -> bytes | None:
+    """Haqiqiy mashq daftari betiga qo'lyozmaga o'xshash javoblarni yozib beradi.
+
+    Javoblar kod bilan hisoblanadi; xato javob esa amallar tartibini buzib (chapdan o'ngga)
+    hisoblangan natija bo'ladi — AI aynan shu xato turini topishi kerak.
+    """
+    for page_no in workbook.parse_pages(reference):
+        items = workbook.exercise_lines(page_no)
+        solved = [(e, workbook.evaluate(e["expr"])) for e in items]
+        solved = [(e, v) for e, v in solved if v is not None]
+        if len(solved) < 3:
+            continue
+        data = workbook.page_jpeg(page_no)
+        if not data:
+            continue
+        img = cv2.imdecode(np.frombuffer(data, np.uint8), cv2.IMREAD_COLOR)
+        if img is None:
+            continue
+        bad_idx = set(rng.sample(range(len(solved)), min(wrong, len(solved))))
+        ink = (110, 60, 35)                              # ko'k-siyoh ruchka
+        fields = workbook.field_positions(page_no)
+        if name and fields.get("Ism"):
+            x, y = fields["Ism"]
+            cv2.putText(img, name[:22], (x + 20, y), cv2.FONT_HERSHEY_SCRIPT_SIMPLEX, 1.0, ink, 3, cv2.LINE_AA)
+        if date and fields.get("Sana"):
+            x, y = fields["Sana"]
+            cv2.putText(img, date, (x + 16, y), cv2.FONT_HERSHEY_SCRIPT_SIMPLEX, 0.9, ink, 3, cv2.LINE_AA)
+        for i, (e, value) in enumerate(solved):
+            shown = value
+            if i in bad_idx:
+                alt = workbook.evaluate_left_to_right(e["expr"])
+                shown = alt if alt is not None and alt != value else value + rng.choice([-2, -1, 1, 2])
+            text = "= " + workbook.fmt(shown)
+            x = min(e["x"] + 18, img.shape[1] - 140)
+            y = min(e["y"] + rng.randint(-4, 4), img.shape[0] - 10)
+            cv2.putText(img, text, (x, y), cv2.FONT_HERSHEY_SCRIPT_COMPLEX, 1.25, ink, 3, cv2.LINE_AA)
+        ok, buf = cv2.imencode(".jpg", img, [cv2.IMWRITE_JPEG_QUALITY, 88])
+        return buf.tobytes() if ok else None
+    return None
 
 
 def demo_homework(lesson_id: int, student_id: int | None = None) -> dict:
@@ -1008,39 +1100,48 @@ def demo_homework(lesson_id: int, student_id: int | None = None) -> dict:
             st = next((x for x in students if x.id not in have), None)
             if st is None:
                 return {"error": "Sinfdagi barcha o'quvchilarning vazifasi allaqachon yuklangan."}
-        sid, jno = st.id, st.journal_no
+        sid, jno, full_name = st.id, st.journal_no, st.full_name
         skills = skill_map(s, lesson.class_id).get(sid, {})
+        lesson_date = fmt_date(lesson.date)
 
     rng = random.Random(lesson_id * 97 + sid)
     strong = avg(skills.values()) > 0.75 if skills else rng.random() < 0.5
     wrong = 0 if strong else rng.randint(1, 2)          # kuchli o'quvchida xato yo'q, boshqasida 1–2 ta
-    picks = rng.sample(range(len(DEMO_HOMEWORK_OK)), 3)
-    tasks = []
-    for k, i in enumerate(picks):
-        bad = k < wrong
-        tasks.append({"nom": str(112 + i * 2), "yozuv": (DEMO_HOMEWORK_BAD if bad else DEMO_HOMEWORK_OK)[i]})
-    jpg = simulate.make_homework_page(tasks, seed=lesson_id * 10 + sid)
-    out = check_homework(lesson_id, sid, jpg, f"demo-daftar-{jno}.jpg")
+
+    with db.session() as s:
+        ref, _topic = homework_reference(s, s.get(Lesson, lesson_id))
+    jpg = _demo_workbook_page(ref, wrong, rng, full_name, lesson_date)   # haqiqiy mashq daftari beti
+    if jpg is None:                                     # daftar PDF si yo'q bo'lsa — chizilgan sahifa
+        picks = rng.sample(range(len(DEMO_HOMEWORK_OK)), 3)
+        tasks = []
+        for k, i in enumerate(picks):
+            bad = k < wrong
+            tasks.append({"nom": str(112 + i * 2), "yozuv": (DEMO_HOMEWORK_BAD if bad else DEMO_HOMEWORK_OK)[i]})
+        jpg = simulate.make_homework_page(tasks, seed=lesson_id * 10 + sid)
+    out = check_homework(lesson_id, sid, [(jpg, f"demo-daftar-{jno}.jpg")])
     return {**out, "demo_student_id": sid}
 
 
-def analyze_homework(lesson_id: int, student_id: int, jpg: bytes):
-    """Fon ishi: surat turini tekshiradi, so'ng AI mashqlarni baholaydi."""
+def analyze_homework(lesson_id: int, student_id: int, jpgs):
+    """Fon ishi: surat turini tekshiradi, so'ng AI barcha betlardagi mashqlarni baholaydi."""
+    if isinstance(jpgs, (bytes, bytearray)):
+        jpgs = [bytes(jpgs)]
     try:
         with db.session() as s:
             lesson = s.get(Lesson, lesson_id)
             ref, topic = homework_reference(s, lesson) if lesson else (None, None)
         # 1) tez tekshiruv: bizning javob blokimiz markerlari bormi? unda bu kartochka, daftar emas
-        img = cv2.imdecode(np.frombuffer(jpg, np.uint8), cv2.IMREAD_COLOR)
-        reads, _ann = omr.scan_image(img) if img is not None else ([], None)
-        if reads:
-            _finish_homework(lesson_id, student_id, None, "xato", PAGE_MESSAGE["kartochka"])
-            return
-        context = {"mavzu": topic, "manba": ref, "sinf": 5}
-        got = llm.check_homework(jpg, context)
+        for jpg in jpgs:
+            img = cv2.imdecode(np.frombuffer(jpg, np.uint8), cv2.IMREAD_COLOR)
+            reads, _ann = omr.scan_image(img) if img is not None else ([], None)
+            if reads:
+                _finish_homework(lesson_id, student_id, None, "xato", PAGE_MESSAGE["kartochka"])
+                return
+        context = {"mavzu": topic, "manba": ref, "sinf": 5, "betlar_soni": len(jpgs)}
+        got = llm.check_homework(jpgs, context)
         # chegaradagi suratlarda tasnif bir marta adashishi mumkin — bir marta qayta so'raymiz
         if got is not None and not got.get("masalalar") and str(got.get("sahifa", "")) not in ("kartochka", "darslik"):
-            got = llm.check_homework(jpg, context) or got
+            got = llm.check_homework(jpgs, context) or got
         if got is None:
             _finish_homework(lesson_id, student_id, None, "xato", "AI tekshira olmadi — qo'lda kiriting.")
             return

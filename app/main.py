@@ -534,9 +534,26 @@ def homework_get(lid: int):
 
 
 @app.post("/api/lessons/{lid}/homework")
-async def homework_check(lid: int, student_id: int = Form(...), file: UploadFile = File(...)):
-    """Mashq daftari sahifasi surati → AI har mashqni tekshiradi."""
-    return await _run(service.check_homework, lid, student_id, await file.read(), file.filename)
+async def homework_check(lid: int, student_id: int = Form(...), files: List[UploadFile] = File(...),
+                         analyze: bool = True):
+    """Mashq daftari betlari surati. Bir vazifa bir necha betdan iborat bo'lishi mumkin.
+
+    analyze=false bo'lsa suratlar faqat saqlanadi — o'qituvchi hamma betni olib bo'lgach tahlilga yuboradi.
+    """
+    items = [(await f.read(), f.filename or "uy.jpg") for f in files]
+    return await _run(service.check_homework, lid, student_id, items, analyze)
+
+
+@app.post("/api/lessons/{lid}/homework/{sid}/analyze")
+async def homework_analyze(lid: int, sid: int):
+    """Yuklangan betlarni AI tahliliga yuborish."""
+    return await _run(service.start_homework_analysis, lid, sid)
+
+
+@app.get("/api/lessons/{lid}/workbook")
+def lesson_workbook(lid: int):
+    """Shu darsga berilgan mashq daftari betlari (rasm bilan)."""
+    return _wrap(service.lesson_workbook, lid)
 
 
 @app.post("/api/lessons/{lid}/homework/demo")
@@ -558,7 +575,7 @@ def impact(class_id: Optional[int] = None):
 
 @app.get("/api/files/{key:path}")
 def file(key: str):
-    if not key.startswith(("scans/", "pdf/", "homework/")) or ".." in key:
+    if not key.startswith(("scans/", "pdf/", "homework/", "workbook/")) or ".." in key:
         raise HTTPException(404)
     try:
         data = storage.get(key)

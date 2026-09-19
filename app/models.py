@@ -271,7 +271,8 @@ class Homework(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     lesson_id: Mapped[int] = mapped_column(ForeignKey("lessons.id"), index=True)
     student_id: Mapped[int] = mapped_column(ForeignKey("students.id"), index=True)
-    image_key: Mapped[str | None] = mapped_column(String(300))
+    image_key: Mapped[str | None] = mapped_column(String(300))   # birinchi surat (mos kelish uchun)
+    image_keys: Mapped[list | None] = mapped_column(JsonType)     # bir vazifa bir necha betdan iborat bo'lishi mumkin
     reference: Mapped[str | None] = mapped_column(String(60))   # mashq daftari sahifasi (D1 42-43)
     tasks: Mapped[list] = mapped_column(JsonType, default=list)  # [{"nom": "12", "togri": true, "xato": "...", "izoh": "..."}]
     correct: Mapped[int] = mapped_column(Integer, default=0)
@@ -279,7 +280,7 @@ class Homework(Base):
     comment: Mapped[str | None] = mapped_column(Text)
     source: Mapped[str] = mapped_column(String(20), default="ai")
     confirmed: Mapped[bool] = mapped_column(Boolean, default=False)
-    status: Mapped[str] = mapped_column(String(20), default="tayyor")    # navbatda | tayyor | xato
+    status: Mapped[str] = mapped_column(String(20), default="tayyor")    # yuklandi | navbatda | tayyor | xato
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
 

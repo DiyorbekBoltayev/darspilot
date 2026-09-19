@@ -168,9 +168,15 @@ def test_homework_photo_flow(client):
         lid, cid = lesson.id, lesson.class_id
     sid = service.class_students_ids(cid)[0] if hasattr(service, "class_students_ids") else _first_student(cid)
     page = simulate.make_homework_page([{"nom": "118", "yozuv": "24 + 6 * 3 = 42"}], seed=3)
-    view = client.post(f"/api/lessons/{lid}/homework", files={"file": ("uy.jpg", page, "image/jpeg")},
+    # bir vazifa bir necha betdan iborat bo'lishi mumkin: ikkala bet ham bitta o'quvchiga yig'iladi
+    page2 = simulate.make_homework_page([{"nom": "119", "yozuv": "(120 - 45) : 5 = 15"}], seed=4)
+    view = client.post(f"/api/lessons/{lid}/homework?analyze=false",
+                       files=[("files", ("uy-1.jpg", page, "image/jpeg")), ("files", ("uy-2.jpg", page2, "image/jpeg"))],
                        data={"student_id": str(sid)}).json()
     row = next(x for x in view["students"] if x["id"] == sid)
+    assert row["homework"]["status"] == "yuklandi" and len(row["homework"]["images"]) == 2
+    after = client.post(f"/api/lessons/{lid}/homework/{sid}/analyze").json()
+    row = next(x for x in after["students"] if x["id"] == sid)
     assert row["homework"] is not None and row["homework"]["image"]
     # GPT o'chiq: AI javob bera olmaydi, shuning uchun o'qituvchi qo'lda kiritadi
     tasks = [{"nom": "118", "togri": True, "xato": None, "izoh": "To'g'ri"},
@@ -266,7 +272,7 @@ def test_homework_rejects_diagnostic_card_photo(client):
     photo = simulate.make_photo(cards, {1: marks}, "18.09.2026", "Sinov", "5-A", seed=3)
     ok, buf = simulate.cv2.imencode(".jpg", photo)
 
-    view = client.post(f"/api/lessons/{lid}/homework", files={"file": ("kartochka.jpg", buf.tobytes(), "image/jpeg")},
+    view = client.post(f"/api/lessons/{lid}/homework", files=[("files", ("kartochka.jpg", buf.tobytes(), "image/jpeg"))],
                        data={"student_id": str(sid)}).json()
     svc.analyze_homework(lid, sid, buf.tobytes())            # fon ishini shu yerda kutamiz
     after = client.get(f"/api/lessons/{lid}/homework").json()

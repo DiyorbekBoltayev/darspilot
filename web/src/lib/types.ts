@@ -272,11 +272,21 @@ export interface HomeworkStudent {
     source: string
     confirmed: boolean
     image: string | null
+    images: string[]
   }
+}
+
+/** Uy vazifasi berilgan mashq daftari betlari (PDF dan rasm). */
+export interface WorkbookPages {
+  reference: string | null
+  available: boolean
+  pages: { no: number; url: string }[]
 }
 
 export interface HomeworkView {
   pending: number
+  uploaded: number
+  workbook: WorkbookPages
   lesson_id: number
   class_id: number
   date: string
