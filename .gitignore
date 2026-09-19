@@ -16,3 +16,6 @@ darslik/*.pdf
 # vaqtinchalik render fayllari
 data/_*.png
 data/_*.pdf
+
+# Chop etish uchun tayyorlangan fayllar (darslik betlari — mualliflik huquqi)
+print/
