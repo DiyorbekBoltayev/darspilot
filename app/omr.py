@@ -37,7 +37,6 @@ class StripRead:
     flags: dict = field(default_factory=dict)       # {'q3': 'ikki belgi'}
     confidence: float = 1.0
     corners: int = 4
-    solution: object = None                         # yechim maydonining kesilgan surati (ixtiyoriy)
     quad: list = field(default_factory=list)        # asl suratdagi burchaklar
 
 
@@ -194,20 +193,7 @@ def read_strip(gray, pts: dict) -> StripRead:
     return res
 
 
-def crop_solution(gray, pts: dict):
-    """Javob bloki markerlari yordamida yechim maydonini to'g'rilab kesib oladi (AI baholashi uchun)."""
-    s = L.PX_PER_MM
-    x_mm, y_mm, w_mm, h_mm = L.solution_box_mm()
-    off_y = -y_mm                                     # blok koordinatasidan kesim koordinatasiga
-    src = np.float32([pts[k] for k in range(4)])
-    dst = np.float32([[L.MARKER_CENTERS[k][0] * s, (L.MARKER_CENTERS[k][1] + off_y) * s] for k in range(4)])
-    H = cv2.getPerspectiveTransform(src, dst)
-    canvas = cv2.warpPerspective(gray, H, (int(L.BLOCK_W * s), int((off_y + 2) * s)), flags=cv2.INTER_LINEAR,
-                                 borderValue=255)
-    return canvas[0:int(h_mm * s), int(x_mm * s):int((x_mm + w_mm) * s)]
-
-
-def scan_image(img_bgr, with_solutions: bool = False):
+def scan_image(img_bgr):
     """Suratdagi barcha chiziqlarni o'qiydi. Qaytaradi: (natijalar ro'yxati, belgilangan rasm)."""
     h, w = img_bgr.shape[:2]
     scale = 1.0
@@ -233,11 +219,6 @@ def scan_image(img_bgr, with_solutions: bool = False):
         r = read_strip(gray, full)
         r.journal_no = journal_no
         r.corners = len(pts)
-        if with_solutions:
-            try:
-                r.solution = crop_solution(gray, full)
-            except Exception:
-                r.solution = None
         # chiziqning tashqi chegarasini chizish uchun burchak markazlarini biroz kengaytiramiz
         quad = np.float32([full[k] for k in range(4)])
         r.quad = quad.tolist()

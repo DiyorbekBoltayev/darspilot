@@ -113,8 +113,6 @@ export const api = {
   confirmResponse: (did: number, sid: number) => request<{ ok: boolean }>(`/api/diagnostics/${did}/responses/${sid}/confirm`, json('POST')),
   grade: (id: number) => request<{ graded: number; feedback_source: string; summary_source: string }>(`/api/diagnostics/${id}/grade`, json('POST')),
   results: (id: number) => request<Results>(`/api/diagnostics/${id}/results`),
-  setOpenScore: (did: number, sid: number, ball: number, comment?: string) =>
-    request<Results>(`/api/diagnostics/${did}/results/${sid}/open`, json('PUT', { ball, comment })),
   rateFeedback: (did: number, sid: number, body: { rating?: number; text?: string }) =>
     request<Results>(`/api/diagnostics/${did}/results/${sid}/feedback`, json('PUT', body)),
   // uy vazifasi: mashq daftari sahifasi surati → AI tekshiruvi

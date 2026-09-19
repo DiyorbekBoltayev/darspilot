@@ -61,16 +61,14 @@ def grade(spec: dict, marks: dict) -> dict:
     }
 
 
-def total_ratio(correct: int, total: int, open_score=None, open_max=None) -> float:
-    """Yopiq javoblar + qo'lda yozilgan yechim bahosining umumiy ulushi (0–1)."""
-    if open_score is not None and open_max:
-        return (correct + float(open_score)) / (total + int(open_max))
+def total_ratio(correct: int, total: int) -> float:
+    """To'g'ri javoblar ulushi (0–1) — javoblar kod bilan o'qiladi."""
     return correct / total if total else 0.0
 
 
-def formative_points(correct: int, total: int, open_score=None, open_max=None) -> int:
+def formative_points(correct: int, total: int) -> int:
     """100 ballik tizimdagi formativ baholash (0–10) uchun taklif."""
-    return round(10 * total_ratio(correct, total, open_score, open_max))
+    return round(10 * total_ratio(correct, total))
 
 
 def update_skills(old: dict, result: dict, level: str) -> dict:

@@ -74,27 +74,7 @@ def _dates(schedule: list, a: date, b: date) -> list:
     return out
 
 
-# profil → qo'lda yozilgan yechim uchun mock AI bahosi (demo: GPT kalitisiz ham ko'rinadi)
-OPEN_BY_PROFILE = {
-    "kuchli": ([2, 2, 2], "Ifodani to'g'ri tuzgansan va javobni birligi bilan yozgansan."),
-    "model": ([0, 1, 2], "Amallar tartibi buzilgan: qavsni yozmagansan, shuning uchun javob xato chiqdi."),
-    "model_yonalish": ([0, 1, 1], "Ifoda noto'g'ri tuzilgan — avval qavs ichini hisobla."),
-    "hisoblash": ([2, 0, 2], "Ifoda to'g'ri, lekin hisobda xato bor — ko'paytirishni qayta tekshir."),
-    "tushunish": ([0, 0, 1], "Yechim bosqichlari yozilmagan, faqat javob bor."),
-    "tayanch": ([0, 0, 1], "Bosqichlarni yozib bormagansan; avval qaysi amal kerakligini yoz."),
-    "talqin_vaqt": ([1, 1, 1], "Bosqichlar qisman yozilgan, javob birligi tushib qolgan."),
-}
-
-
-def _mock_open(profile, rng):
-    from . import llm
-
-    balls, izoh = OPEN_BY_PROFILE.get(profile, OPEN_BY_PROFILE["hisoblash"])
-    mezonlar = [{"key": c["key"], "nom": c["nom"], "max": c["max"], "ball": b,
-                 "izoh": ""} for c, b in zip(llm.RUBRIC, balls)]
-    return {"mezonlar": mezonlar, "ball": sum(balls), "max": llm.OPEN_MAX, "bosh": sum(balls) == 0, "izoh": izoh}
-
-
+# demo uy vazifasi yozuvlari (to'g'ri va xato variantlar)
 HOMEWORK_OK = ["24 + 6 * 3 = 42", "(120 - 45) : 5 = 15", "36 : 4 + 18 = 27", "7 * 8 - 14 = 42", "150 - 60 : 6 = 140"]
 HOMEWORK_BAD = [("24 + 6 * 3 = 90", "amallar tartibi"), ("(120 - 45) : 5 = 105", "amallar tartibi"),
                 ("36 : 4 + 18 = 25", "hisob xatosi"), ("7 * 8 - 14 = 44", "hisob xatosi"),
@@ -243,12 +223,9 @@ def seed():
         if not lid:
             continue
         did = service.create_diagnostic(lesson_id=lid, use_llm=False)
-        profiles, cards, solutions = {}, [], {}
         with db.session() as s:
             d, specs, assign = service._load(s, did)
             smap = service.skill_map(s, cid)
-            all_cards = {c["journal_no"]: c for c in service.diagnostic_cards(s, did)}
-            title, dstr, class_name = d.title, service.fmt_date(d.date), s.get(SchoolClass, cid).name
             for st in service.class_students(s, cid):
                 sk = smap.get(st.id, {})
                 if sk.get("tayanch", 1) < 0.4:
@@ -258,40 +235,16 @@ def seed():
                 else:
                     profile = rng.choice(simulate.PROFILES)
                 marks = simulate.simulate_answers(specs[assign[st.id]], profile, rng)
-                profiles[st.id] = profile
                 conf = rng.choice([1.0, 1.0, 1.0, 1.0, 0.86, 0.71])
                 flags = {"q3": "xira belgi"} if conf < 0.9 else {}
                 s.add(Response(diagnostic_id=did, student_id=st.id, marks=marks, flags=flags, source="skaner",
-                               auto_marks=dict(marks), confidence=conf, corrected=0,
-                               solution_key=f"solutions/{did}/{st.id}.jpg"))
-                cards.append(all_cards[st.journal_no])
-                solutions[st.journal_no] = simulate.solution_lines(specs[assign[st.id]], marks, profile)
+                               auto_marks=dict(marks), confidence=conf, corrected=0))
             d.status = "skanerlandi"
-        # yechim maydonlarining "surati" (demo uchun render qilinadi)
-        try:
-            crops = simulate.solution_crops(cards, solutions, dstr, title, class_name, seed=did)
-            with db.session() as s:
-                for st in service.class_students(s, cid):
-                    img = crops.get(st.journal_no)
-                    if img is None:
-                        continue
-                    ok, buf = simulate.cv2.imencode(".jpg", img, [simulate.cv2.IMWRITE_JPEG_QUALITY, 86])
-                    storage.put(f"solutions/{did}/{st.id}.jpg", buf.tobytes(), "image/jpeg")
-        except Exception:
-            pass
         service.grade_diagnostic(did, use_llm=False)
-        # AI rubrikasi (mock), o'qituvchi tasdiqlashi va feedback reytingi
+        # feedback reytingi va o'qituvchi tahriri (demo statistikasi uchun)
         with db.session() as s:
             results = s.scalars(select(Result).where(Result.diagnostic_id == did)).all()
             for i, r in enumerate(results):
-                got = _mock_open(profiles.get(r.student_id, "hisoblash"), rng)
-                r.open_score, r.open_max = float(got["ball"]), got["max"]
-                r.open_criteria = {"mezonlar": got["mezonlar"], "bosh": got["bosh"]}
-                r.open_comment, r.open_source = got["izoh"], "ai"
-                r.open_confirmed = i % 3 == 0
-                if i % 11 == 5:                                   # o'qituvchi bahoni tuzatgan holat
-                    r.open_score = min(float(got["max"]), float(got["ball"]) + 1)
-                    r.open_source, r.open_confirmed = "o'qituvchi", True
                 if i % 4 == 0:
                     r.feedback_rating = 1
                 elif i % 9 == 7:

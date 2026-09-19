@@ -73,11 +73,6 @@ class ChatBody(BaseModel):
     history: Optional[List[dict]] = None
 
 
-class OpenScore(BaseModel):
-    ball: float
-    comment: Optional[str] = None
-
-
 class FeedbackRate(BaseModel):
     rating: Optional[int] = None
     text: Optional[str] = None
@@ -505,12 +500,6 @@ def diagnostic_confirm(did: int, sid: int):
     return {"ok": True}
 
 
-@app.put("/api/diagnostics/{did}/results/{sid}/open")
-def diagnostic_open_score(did: int, sid: int, body: OpenScore):
-    """O'qituvchi AI qo'ygan yechim balini tasdiqlaydi yoki tuzatadi."""
-    return _wrap(service.set_open_score, did, sid, body.ball, body.comment)
-
-
 @app.put("/api/diagnostics/{did}/results/{sid}/feedback")
 def diagnostic_feedback_rate(did: int, sid: int, body: FeedbackRate):
     """Feedback sifati: 👍/👎 yoki o'qituvchi tahriri."""
@@ -569,7 +558,7 @@ def impact(class_id: Optional[int] = None):
 
 @app.get("/api/files/{key:path}")
 def file(key: str):
-    if not key.startswith(("scans/", "pdf/", "solutions/", "homework/")) or ".." in key:
+    if not key.startswith(("scans/", "pdf/", "homework/")) or ".." in key:
         raise HTTPException(404)
     try:
         data = storage.get(key)

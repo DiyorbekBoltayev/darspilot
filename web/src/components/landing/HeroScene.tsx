@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils'
 const PHASES = [
   { key: 'chop', icon: Printer, title: 'Chop etish', text: '1 A4 = 4 kartochka, ikkala tomoni ishlatiladi' },
   { key: 'surat', icon: Camera, title: 'Bitta surat', text: 'ArUco markerlar 10 tagacha ishni ajratadi' },
-  { key: 'baho', icon: Sparkles, title: 'AI baho va feedback', text: 'Yopiq javob + qo\'lda yozilgan yechim' },
+  { key: 'baho', icon: Sparkles, title: 'Baho va feedback', text: 'Javobni kod o\'qiydi, AI matn yozadi' },
 ] as const
 
 const NAMES = ['Aziza K.', 'Bekzod T.', 'Dilshod R.', 'Farangiz U.']
@@ -118,9 +118,9 @@ function Scan() {
               ))}
             </div>
           </div>
-          {/* yechim maydoni */}
-          <div className="mt-2 rounded-lg bg-white px-2 py-1.5 ring-1 ring-dashed ring-line-strong">
-            <div className="text-[5.5px] font-semibold text-indigo-700">YECHIM (5-savol)</div>
+          {/* javob paneli izohi */}
+          <div className="mt-2 rounded-lg bg-white px-2 py-1.5 ring-1 ring-line">
+            <div className="text-[5.5px] font-semibold text-indigo-700">JAVOB BLOKI — KOD O'QIYDI</div>
             <div className="mt-1 space-y-[3px]">
               <motion.div initial={{ width: 0 }} animate={{ width: '70%' }} transition={{ delay: 0.7, duration: 0.5 }} className="h-[3px] rounded bg-ink/40" />
               <motion.div initial={{ width: 0 }} animate={{ width: '45%' }} transition={{ delay: 0.9, duration: 0.5 }} className="h-[3px] rounded bg-ink/40" />
@@ -138,12 +138,12 @@ function Scan() {
   )
 }
 
-/** 3-bosqich: rubrika bo'yicha baho va uch xil feedback. */
+/** 3-bosqich: kod tekshirgan javoblar va uch xil AI feedback. */
 function Grade() {
-  const rubric = [
-    { name: 'Amal/ifoda', ball: 2 },
-    { name: 'Hisob-kitob', ball: 2 },
-    { name: 'Javob birligi', ball: 1 },
+  const steps = [
+    { name: 'Muammoni aniqlash', ok: true },
+    { name: 'Modellashtirish', ok: true },
+    { name: 'Hisoblash', ok: false },
   ]
   const feedback = [
     { who: "O'quvchiga", text: 'Javobing to‘g‘ri — endi bosqichlarni ham yozib bor.', tone: 'bg-firuza-50 text-firuza-700' },
@@ -154,15 +154,15 @@ function Grade() {
     <motion.div {...fade} className="absolute inset-0 flex flex-col justify-center gap-3">
       <div className="rounded-xl bg-sunken p-3 ring-1 ring-line">
         <div className="flex items-center justify-between text-[11px] font-semibold text-indigo-600">
-          <span>Qo'lda yozilgan yechim · AI rubrika</span><span className="num text-ink">5/6</span>
+          <span>Javoblarni kod tekshirdi · bosqichli tashxis</span><span className="num text-ink">6/7</span>
         </div>
         <div className="mt-2 space-y-1.5">
-          {rubric.map((r, i) => (
+          {steps.map((r, i) => (
             <motion.div key={r.name} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 + i * 0.12 }}
               className="flex items-center gap-2 rounded-lg bg-white px-2.5 py-1.5 ring-1 ring-line">
               <span className="flex-1 text-[11.5px] text-ink-2">{r.name}</span>
-              {[0, 1].map((b) => <span key={b} className={cn('size-2 rotate-45 rounded-[2px]', b < r.ball ? 'bg-firuza-500' : 'bg-line-strong')} />)}
-              <span className="num w-7 text-right text-[11px] font-semibold text-ink">{r.ball}/2</span>
+              <span className={cn('rounded px-1.5 py-0.5 text-[10px] font-semibold',
+                r.ok ? 'bg-firuza-50 text-firuza-700' : 'bg-terra-50 text-terra-600')}>{r.ok ? "to'g'ri" : 'xato'}</span>
             </motion.div>
           ))}
         </div>

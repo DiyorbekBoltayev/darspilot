@@ -92,7 +92,7 @@ export default function Results() {
         <CardHeader icon={MessageSquareText} title="O'quvchilar, yechim bahosi va shaxsiy feedback" hint="Qatorni oching: bosqichli tashxis, qo'lda yozilgan yechim va uch xil feedback"
           action={<Tabs<Filter> value={filter} onChange={setFilter} tabs={[{ key: 'hammasi', label: 'Hammasi' }, { key: 'xato', label: 'Xatosi borlar' }, { key: 'toliq', label: "To'liq" }]} />} />
         <div className="space-y-2 p-4">
-          {students.map((s) => <StudentResult key={s.id} did={id} s={s} openMax={data.open_max} open={open === s.id} onToggle={() => setOpen(open === s.id ? null : s.id)} />)}
+          {students.map((s) => <StudentResult key={s.id} did={id} s={s} open={open === s.id} onToggle={() => setOpen(open === s.id ? null : s.id)} />)}
         </div>
       </Card>
     </div>
@@ -103,7 +103,7 @@ function QualityPanel({ q }: { q: ScanQuality }) {
   const cells = [
     { label: 'Avtomatik o\'qildi', value: q.auto_pct == null ? '—' : `${q.auto_pct}%`, hint: `${q.cells} katakdan ${q.cells - q.unsure} tasi shubhasiz` },
     { label: 'O\'qituvchi tuzatdi', value: `${q.corrected}`, hint: q.accuracy_pct == null ? 'katak' : `katak · aniqlik ${q.accuracy_pct}%` },
-    { label: 'AI yechim bahosi', value: `${q.open_graded}`, hint: `${q.open_confirmed} tasi tasdiqlangan · ${q.open_changed} tasi tuzatilgan` },
+    { label: "Suratdan o'qildi", value: `${q.scanned}`, hint: `${q.manual} ta ish qo'lda kiritilgan` },
     { label: 'Feedback o\'zgarishsiz', value: q.feedback_kept_pct == null ? '—' : `${q.feedback_kept_pct}%`, hint: `${q.feedback_total} ta matn · 👍 ${q.feedback_up} · 👎 ${q.feedback_down}` },
   ]
   return (
@@ -133,7 +133,7 @@ function List({ title, items, accent }: { title: string; items: string[]; accent
   )
 }
 
-function StudentResult({ did, s, openMax, open, onToggle }: { did: number; s: ResultStudent; openMax: number; open: boolean; onToggle: () => void }) {
+function StudentResult({ did, s, open, onToggle }: { did: number; s: ResultStudent; open: boolean; onToggle: () => void }) {
   const pct = Math.round((100 * s.correct) / s.total)
   return (
     <div className={cn('overflow-hidden rounded-xl ring-1 transition-colors', open ? 'bg-surface ring-firuza-200' : 'ring-line hover:ring-line-strong')}>
@@ -143,11 +143,6 @@ function StudentResult({ did, s, openMax, open, onToggle }: { did: number; s: Re
           <div className="flex flex-wrap items-center gap-2">
             <Link to={`/oquvchi/${s.id}`} onClick={(e) => e.stopPropagation()} className="font-medium text-ink hover:text-firuza-600">{s.name}</Link>
             <span className="text-xs text-faint">{s.code} · {s.level}</span>
-            {s.open?.score != null && (
-              <Badge className={cn(s.open.confirmed ? 'bg-firuza-50 text-firuza-700 ring-firuza-100' : 'bg-indigo-50 text-indigo-600 ring-indigo-100')}>
-                Yechim {s.open.score}/{s.open.max ?? openMax}{s.open.confirmed ? ' ✓' : ''}
-              </Badge>
-            )}
             {s.gap >= 5 && <Badge className="bg-terra-50 text-terra-600 ring-terra-100">{s.gap} dars e'tiborsiz</Badge>}
           </div>
           <div className="mt-0.5 truncate text-[13px] text-mute">{s.primary_error ? s.primary_text : "Barcha bosqichlar to'g'ri"}</div>
@@ -175,7 +170,6 @@ function StudentResult({ did, s, openMax, open, onToggle }: { did: number; s: Re
                 ))}
               </div>
               {s.root_cause_note && <div className="mt-3 rounded-lg bg-oltin-50 px-3 py-2 text-[13px] text-oltin-600 ring-1 ring-oltin-100">{s.root_cause_note}</div>}
-              {s.open && <OpenAnswerBlock did={did} s={s} openMax={openMax} />}
               <div className="mt-4 grid grid-cols-1 gap-3 lg:grid-cols-3">
                 <StudentFeedback did={did} s={s} />
                 <Feedback icon={Heart} title="Ota-onaga" text={s.feedback.parent} />
@@ -185,70 +179,6 @@ function StudentResult({ did, s, openMax, open, onToggle }: { did: number; s: Re
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
-  )
-}
-
-/** Qo'lda yozilgan yechim: AI rubrika bo'yicha baholaydi, o'qituvchi tasdiqlaydi yoki tuzatadi. */
-function OpenAnswerBlock({ did, s, openMax }: { did: number; s: ResultStudent; openMax: number }) {
-  const o = s.open!
-  const max = o.max ?? openMax
-  const [ball, setBall] = useState(String(o.score ?? ''))
-  const ai = useAi()
-  const qc = useQueryClient()
-  const save = useMutation({
-    mutationFn: () => api.setOpenScore(did, s.id, Number(ball.replace(',', '.') || 0)),
-    onSuccess: (r) => { qc.setQueryData(['results', did], r); ai.toast('Yechim bahosi tasdiqlandi') },
-    onError: (e) => ai.toast(e.message, 'bad'),
-  })
-  const changed = String(o.score ?? '') !== ball
-
-  return (
-    <div className="mt-4 rounded-xl bg-sunken p-3.5 ring-1 ring-line">
-      <div className="mb-3 flex flex-wrap items-center gap-2">
-        <PenLine className="size-3.5 text-firuza-600" />
-        <span className="text-xs font-semibold text-indigo-600">Qo'lda yozilgan yechim</span>
-        <Badge className={cn(o.source === 'ai' ? 'bg-indigo-50 text-indigo-600 ring-indigo-100' : 'bg-firuza-50 text-firuza-700 ring-firuza-100')}>
-          {o.source === 'ai' ? 'AI baholadi' : o.source === "o'qituvchi" ? "O'qituvchi tuzatdi" : 'Baholanmagan'}
-        </Badge>
-        {o.empty && <Badge className="bg-terra-50 text-terra-600 ring-terra-100">Maydon bo'sh</Badge>}
-        <span className="num ml-auto text-sm font-semibold text-ink">{o.score ?? '—'}/{max}</span>
-      </div>
-      <div className="grid grid-cols-1 gap-3 lg:grid-cols-5">
-        <div className="lg:col-span-2">
-          {o.image ? (
-            <a href={o.image} target="_blank" rel="noreferrer" title="Kattalashtirish">
-              <img src={o.image} alt="Yechim maydoni" className="w-full rounded-lg bg-white ring-1 ring-line" />
-            </a>
-          ) : <div className="rounded-lg bg-white p-4 text-[13px] text-faint ring-1 ring-line">Yechim surati yo'q</div>}
-          <p className="mt-1.5 text-[11.5px] text-faint">Kartochkaning orqa tomonidan markerlar bo'yicha kesib olingan</p>
-        </div>
-        <div className="min-w-0 lg:col-span-3">
-          <div className="space-y-1.5">
-            {o.criteria.map((c) => (
-              <div key={c.key} className="flex items-center gap-2 rounded-lg bg-white px-3 py-2 ring-1 ring-line">
-                <span className="min-w-0 flex-1 truncate text-[13px] text-ink-2">{c.nom}</span>
-                <div className="flex gap-1">
-                  {Array.from({ length: c.max }).map((_, i) => (
-                    <span key={i} className={cn('size-2.5 rotate-45 rounded-[2px]', i < c.ball ? 'bg-firuza-500' : 'bg-line-strong')} />
-                  ))}
-                </div>
-                <span className="num w-8 text-right text-[13px] font-semibold text-ink">{c.ball}/{c.max}</span>
-              </div>
-            ))}
-          </div>
-          {o.comment && <p className="mt-2.5 text-[13.5px] leading-relaxed text-ink">{o.comment}</p>}
-          <div className="mt-3 flex flex-wrap items-center gap-2">
-            <label className="text-xs text-mute">O'qituvchi bahosi:</label>
-            <input value={ball} onChange={(e) => setBall(e.target.value.replace(/[^\d.,]/g, ''))} inputMode="decimal"
-              className="num h-8 w-14 rounded-lg bg-white px-2 text-center text-sm text-ink ring-1 ring-line outline-none focus:ring-firuza-400" />
-            <span className="num text-xs text-faint">/ {max}</span>
-            <Button variant={changed ? 'primary' : 'ghost'} icon={Check} loading={save.isPending} onClick={() => save.mutate()}>
-              {o.confirmed && !changed ? 'Tasdiqlangan' : 'Tasdiqlash'}
-            </Button>
-          </div>
-        </div>
-      </div>
     </div>
   )
 }

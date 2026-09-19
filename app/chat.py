@@ -18,16 +18,17 @@ ISH TARTIBI — "dars konveyeri". Har bir dars 5 qadamdan o'tadi:
 5) Keyingi dars — natijalarga qarab keyingi ssenariy tayyorlanadi.
 
 QOG'OZ FORMATI. Bitta A4 varaq 4 ta kartochkaga bo'linadi, ikkala tomoni ishlatiladi. Old tomonda o'quvchining
-ismi, masala va 1-4-savollar hamda o'tgan ishdan shaxsiy feedback bosiladi. Orqa tomonda 5-7-savollar,
-qo'lda yechim yoziladigan maydon va 4 burchagida ArUco markerli javob bloki (A4 ning taxminan 1/8 qismi).
+ismi, masala va 1-4-savollar hamda o'tgan ishdan shaxsiy feedback bosiladi. Orqa tomonda 5-7-savollar va
+4 burchagida ArUco markerli javob bloki (A4 ning taxminan 1/8 qismi). O'quvchi javobni faqat doirachalarni
+bo'yash va son panjarasini belgilash orqali beradi — qo'lda yozma javob yo'q.
 O'quvchi hech narsani yirtmaydi — kartochka butunligicha yig'ib olinadi, o'qituvchi orqa tomonini telefonda
 suratga oladi; bitta suratda 10 tagacha kartochka o'qiladi. 31 o'quvchilik sinf uchun bitta diagnostika = 8 varaq.
 
-BAHOLASH IKKI QATLAMLI. (1) Yopiq javoblar (7 savol) kompyuter ko'rish bilan o'qiladi, har katak uchun ishonch
-darajasi hisoblanadi, shubhali belgilar o'qituvchiga tasdiqlashga chiqadi. (2) Qo'lda yozilgan yechim xuddi shu
-markerlar yordamida kesib olinadi va vizual AI model uni rubrika bo'yicha baholaydi: amal/ifoda to'g'ri tuzilgan,
-hisob-kitob to'g'ri, javob birligi bilan yozilgan — har biriga 0-2 ball. Har bahoni o'qituvchi bir bosishda
-tasdiqlaydi yoki tuzatadi, tuzatishlar o'lchanadi.
+JAVOBNI KOD TEKSHIRADI, AI EMAS. Barcha 7 ta javob kompyuter ko'rish bilan o'qiladi va kod bilan
+tekshiriladi — har katak uchun ishonch darajasi hisoblanadi, shubhali belgilar o'qituvchiga tasdiqlashga
+chiqadi. Ball AI ning fikri emas: u takrorlanadigan va tekshiriladigan. AI boshqa joyda ishlaydi: har
+o'quvchiga darajasiga mos masalani individual yozadi, xato turini talqin qiladi, o'quvchi/ota-ona/o'qituvchi
+uchun feedback va sinf bo'yicha xulosa tayyorlaydi. Oxirgi so'z har doim o'qituvchida.
 
 UY VAZIFASI. Mashq daftari sahifasini suratga olsangiz, AI har mashqni raqami bo'yicha tekshiradi:
 to'g'ri/xato va xato turi (amallar tartibi, hisob xatosi va h.k.). Natija keyingi dars ssenariysidagi
@@ -73,7 +74,7 @@ SYSTEM = (
 SUGGESTIONS = [
     "DarsPilot qanday ishlaydi?",
     "Qog'ozli test qanday o'qiladi?",
-    "Qo'lda yozilgan yechimni ham baholaydimi?",
+    "Javobni AI tekshiradimi yoki kod?",
     "O'quvchi ma'lumotlari maxfiymi?",
     "Maktabga qanday qurilma kerak?",
 ]
@@ -83,10 +84,11 @@ FALLBACK = [
      "Bitta A4 varaq 4 ta kartochkaga bo'linadi va ikkala tomoni ishlatiladi. O'quvchi hech narsani yirtmaydi — "
      "o'qituvchi kartochkalarni yig'ib, orqa tomonini telefonda suratga oladi. Bitta suratda 10 tagacha kartochka "
      "o'qiladi: 4 burchakdagi ArUco markerlar har bir ishni o'quvchi raqamiga bog'laydi."),
-    (("yechim", "qo'lda", "qolda", "rubrika", "yozma"),
-     "Ha. Kartochkaning orqa tomonida yechim yoziladigan maydon bor. Xuddi shu markerlar yordamida u kesib olinadi "
-     "va AI rubrika bo'yicha baholaydi: amal/ifoda, hisob-kitob va javob birligi — har biriga 0-2 ball. "
-     "Oxirgi so'z o'qituvchida: u bahoni bir bosishda tasdiqlaydi yoki tuzatadi."),
+    (("yechim", "qo'lda", "qolda", "rubrika", "yozma", "kim tekshiradi", "ishonch"),
+     "Javobni AI emas, kod tekshiradi. O'quvchi doirachani bo'yaydi va son panjarasiga javobni yozadi; "
+     "kompyuter ko'rish uni o'qiydi, to'g'ri-noto'g'risini esa oddiy kod solishtiradi — natija takrorlanadigan. "
+     "AI masalani har o'quvchiga individual yozadi, xato turini talqin qiladi va feedback tayyorlaydi. "
+     "Oxirgi so'z o'qituvchida."),
     (("uy vazifa", "daftar", "mashq"),
      "Mashq daftari sahifasini suratga olsangiz, AI har mashqni raqami bo'yicha tekshiradi — to'g'ri yoki xato, "
      "xato bo'lsa turi bilan (masalan, amallar tartibi). Natija keyingi dars ssenariysidagi takrorlashga tushadi."),

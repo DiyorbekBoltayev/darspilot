@@ -139,7 +139,6 @@ class Response(Base):
     auto_marks: Mapped[dict | None] = mapped_column(JsonType)
     confidence: Mapped[float | None] = mapped_column(Float)
     corrected: Mapped[int] = mapped_column(Integer, default=0)   # o'qituvchi o'zgartirgan kataklar soni
-    solution_key: Mapped[str | None] = mapped_column(String(300))  # yechim maydonining kesib olingan surati
     updated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
 
 
@@ -155,13 +154,6 @@ class Result(Base):
     feedback_parent: Mapped[str | None] = mapped_column(Text)
     feedback_teacher: Mapped[str | None] = mapped_column(Text)
     feedback_source: Mapped[str | None] = mapped_column(String(20))
-    # ochiq yechim (AI rubrika bo'yicha baholaydi, o'qituvchi tasdiqlaydi)
-    open_score: Mapped[float | None] = mapped_column(Float)
-    open_max: Mapped[int | None] = mapped_column(Integer)
-    open_criteria: Mapped[dict | None] = mapped_column(JsonType)
-    open_comment: Mapped[str | None] = mapped_column(Text)
-    open_source: Mapped[str | None] = mapped_column(String(20))    # ai | o'qituvchi | yo'q
-    open_confirmed: Mapped[bool] = mapped_column(Boolean, default=False)
     # feedback sifati: +1 foydali, -1 foydasiz; matn tahrirlangan bo'lsa edited=True
     feedback_rating: Mapped[int | None] = mapped_column(Integer)
     feedback_edited: Mapped[bool] = mapped_column(Boolean, default=False)

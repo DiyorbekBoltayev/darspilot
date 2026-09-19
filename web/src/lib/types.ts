@@ -158,7 +158,6 @@ export interface DiagnosticRow {
   source: string | null
   confidence: number | null
   corrected: number
-  solution: string | null
   graded: boolean
 }
 
@@ -205,26 +204,11 @@ export interface ScanQuality {
   auto_pct: number | null
   accuracy_pct: number | null
   confidence_pct: number | null
-  open_graded: number
-  open_confirmed: number
-  open_changed: number
-  open_ai: number
   feedback_total: number
   feedback_edited: number
   feedback_up: number
   feedback_down: number
   feedback_kept_pct: number | null
-}
-
-export interface OpenAnswer {
-  score: number | null
-  max: number | null
-  comment: string | null
-  source: string | null
-  confirmed: boolean
-  criteria: { key: string; nom: string; ball: number; max: number; izoh: string }[]
-  empty: boolean
-  image: string | null
 }
 
 export interface ResultStudent {
@@ -244,7 +228,6 @@ export interface ResultStudent {
   feedback_source: string
   feedback_rating: number | null
   feedback_edited: boolean
-  open: OpenAnswer | null
 }
 
 export interface Results {
@@ -263,8 +246,6 @@ export interface Results {
   errors: { name: string; count: number }[]
   students: ResultStudent[]
   quality: ScanQuality
-  open_max: number
-  rubric: { key: string; nom: string; max: number }[]
   kind: string
   max_points: number
 }
@@ -312,7 +293,6 @@ export interface ImpactStats {
   since: string
   graded_works: number
   homework_checked: number
-  open_graded: number
   cells_read: number
   cells_corrected: number
   accuracy_pct: number | null

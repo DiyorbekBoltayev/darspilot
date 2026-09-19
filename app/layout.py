@@ -68,18 +68,6 @@ def grid_bubble(ci: int, ri: int):
     return GRID_COL_X0 + ci * GRID_COL_STEP, GRID_ROW_Y0 + ri * GRID_ROW_STEP
 
 
-# Yechim maydoni: javob blokining ustida, xuddi shu ArUco markerlar yordamida kesib olinadi.
-# Koordinatalar blok koordinatasida: y manfiy — blokdan yuqorida.
-SOLUTION_GAP = 2.5
-SOLUTION_H = 24.0
-SOLUTION_W = BLOCK_W
-
-
-def solution_box_mm():
-    """(x, y_top, w, h) — blok koordinatasida (y_top manfiy)."""
-    return 0.0, -(SOLUTION_GAP + SOLUTION_H), SOLUTION_W, SOLUTION_H
-
-
 # Skanerda blokni tekislash masshtabi
 PX_PER_MM = 12
 

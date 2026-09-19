@@ -77,50 +77,19 @@ def _render_blocks(cards, date, title, class_name, dpi=260):
             pages[sheet] = cv2.cvtColor(page_img, cv2.COLOR_RGB2BGR)
         img = pages[sheet]
         cx, cy = pdfgen.card_origin(slot, back=True)
-        top = L.BLOCK_Y - L.SOLUTION_GAP - L.SOLUTION_H            # yechim maydoni ham kesimga kiradi
-        x0, y0 = int((cx + L.BLOCK_X - 1.5) * px_mm), int((cy + top - 1.5) * px_mm)
+        x0, y0 = int((cx + L.BLOCK_X - 1.5) * px_mm), int((cy + L.BLOCK_Y - 1.5) * px_mm)
         x1, y1 = int((cx + L.BLOCK_X + L.BLOCK_W + 1.5) * px_mm), int((cy + L.BLOCK_Y + L.BLOCK_H + 1.5) * px_mm)
         crops.append(img[y0:y1, x0:x1].copy())
     doc.close()
     return crops, px_mm
 
 
-TOP_MM = L.SOLUTION_GAP + L.SOLUTION_H + 1.5      # kesim yuqorisidan blok yuqorisigacha
+TOP_MM = 1.5                                      # kesim yuqorisidan blok yuqorisigacha
 
 
-def solution_lines(spec: dict, marks: dict, profile: str) -> list:
-    """Demo uchun o'quvchi yozgan yechim: profilga qarab to'g'ri yoki xato bosqichlar."""
-    from .problems import reference_solution
-
-    ref = reference_solution(spec)
-    expr, ans, unit = ref["ifoda"] or "", ref["javob"] or "", ref["birlik"]
-    got = marks.get("q5") or ans
-    if profile in ("tayanch", "tushunish"):
-        return [f"Javob: {got} {unit}"]
-    if profile in ("model", "model_yonalish"):
-        broken = expr.replace("(", "").replace(")", "")
-        return [broken, f"= {got}", f"Javob: {got} {unit}"]
-    if profile == "hisoblash":
-        return [expr, f"= {got}", f"Javob: {got} {unit}"]
-    return [expr, f"= {ans}", f"Javob: {ans} {unit}"]
-
-
-def _write_solution(img, lines, px_mm, rng, P):
-    """Qo'lyozmaga o'xshash yozuv (demo suratida yechim maydonini to'ldirish uchun)."""
-    ink = (rng.randint(30, 70),) * 3
-    x_mm, y_mm, w_mm, h_mm = L.solution_box_mm()
-    for i, line in enumerate(lines[:3]):
-        x, y = P(x_mm + 5 + rng.uniform(-1, 1), y_mm + 10.5 + i * 5.2 + rng.uniform(-0.6, 0.6))
-        cv2.putText(img, line[:34], (x, y), cv2.FONT_HERSHEY_SCRIPT_SIMPLEX, px_mm * 0.115,
-                    ink, max(2, int(px_mm * 0.09)), cv2.LINE_AA)
-
-
-def _fill(img, marks, px_mm, rng, solution=None):
+def _fill(img, marks, px_mm, rng):
     def P(x_mm, y_mm):
         return int((x_mm + 1.5) * px_mm), int((y_mm + TOP_MM) * px_mm)
-
-    if solution:
-        _write_solution(img, solution, px_mm, rng, P)
 
     ink = (rng.randint(15, 45),) * 3
     for qi, q in enumerate(L.TEST_QUESTIONS):
@@ -143,7 +112,7 @@ def _fill(img, marks, px_mm, rng, solution=None):
         cv2.putText(img, ch, (bx, by), cv2.FONT_HERSHEY_SIMPLEX, px_mm * 0.16, ink, max(2, int(px_mm * 0.22)), cv2.LINE_AA)
 
 
-def make_photo(cards, answers, date="", title="", class_name="", seed=0, solutions=None):
+def make_photo(cards, answers, date="", title="", class_name="", seed=0):
     """cards: [{journal_no, code, name, level, spec}], answers: {journal_no: marks}. Qaytaradi: BGR rasm."""
     rng = random.Random(seed)
     crops, px_mm = _render_blocks(cards, date, title, class_name)
@@ -156,7 +125,7 @@ def make_photo(cards, answers, date="", title="", class_name="", seed=0, solutio
     rows = max(1, -(-n // cols))
     cell_w, cell_h = W // cols, H // rows
     for i, (st, crop) in enumerate(zip(cards, crops)):
-        _fill(crop, answers.get(st["journal_no"], {}), px_mm, rng, (solutions or {}).get(st["journal_no"]))
+        _fill(crop, answers.get(st["journal_no"], {}), px_mm, rng)
         col, row = i % cols, i // cols
         s = min(cell_w * rng.uniform(0.86, 0.93) / crop.shape[1], cell_h * rng.uniform(0.8, 0.88) / crop.shape[0])
         ang = rng.uniform(-6, 6)
@@ -180,23 +149,6 @@ def make_photo(cards, answers, date="", title="", class_name="", seed=0, solutio
     canvas = cv2.GaussianBlur(canvas, (5, 5), 0)
     ok, buf = cv2.imencode(".jpg", canvas, [cv2.IMWRITE_JPEG_QUALITY, 82])
     return cv2.imdecode(buf, cv2.IMREAD_COLOR)
-
-
-def solution_crops(cards, solutions, date="", title="", class_name="", seed=0):
-    """Har kartochkaning yechim maydoni (to'ldirilgan) — demo ma'lumotlari uchun tayyor kesimlar."""
-    rng = random.Random(seed)
-    crops, px_mm = _render_blocks(cards, date, title, class_name, dpi=200)
-    out = {}
-    for card, crop in zip(cards, crops):
-        lines = solutions.get(card["journal_no"])
-        if lines:
-            _fill(crop, {}, px_mm, rng, lines)
-        _, _, w_mm, h_mm = L.solution_box_mm()
-        y0 = int((TOP_MM - L.SOLUTION_H - L.SOLUTION_GAP) * px_mm)   # = 1.5 mm chekka
-        img = crop[max(y0, 0):int((TOP_MM - L.SOLUTION_GAP) * px_mm), int(1.5 * px_mm):int((1.5 + w_mm) * px_mm)]
-        _ = h_mm
-        out[card["journal_no"]] = img.copy()
-    return out
 
 
 NOTEBOOK_LINES = 14

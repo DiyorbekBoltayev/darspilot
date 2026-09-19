@@ -333,7 +333,6 @@ def diagnostic_detail(did):
                  "source": resp[st.id].source if st.id in resp else None,
                  "confidence": resp[st.id].confidence if st.id in resp else None,
                  "corrected": resp[st.id].corrected if st.id in resp else 0,
-                 "solution": storage_url(resp[st.id].solution_key) if st.id in resp and resp[st.id].solution_key else None,
                  "graded": st.id in res} for st in sts]
         return {
             "id": d.id, "title": d.title, "template": d.template, "date": fmt_date(d.date), "status": d.status,
@@ -403,7 +402,7 @@ def process_photo(did: int, data: bytes, filename: str, scan_id: int | None = No
     img = cv2.imdecode(np.frombuffer(data, np.uint8), cv2.IMREAD_COLOR)
     if img is None:
         return {"error": f"{filename}: rasmni o'qib bo'lmadi"}
-    reads, annotated = omr.scan_image(img, with_solutions=True)
+    reads, annotated = omr.scan_image(img)
     stamp = time.strftime("%Y%m%d-%H%M%S") + f"-{random.randint(100, 999)}"
     orig_key, ann_key = f"scans/{did}/{stamp}-asl.jpg", f"scans/{did}/{stamp}-belgilangan.jpg"
     ok, buf = cv2.imencode(".jpg", img, [cv2.IMWRITE_JPEG_QUALITY, 85])
@@ -422,20 +421,13 @@ def process_photo(did: int, data: bytes, filename: str, scan_id: int | None = No
             if not st or st.id not in assign:
                 unknown.append(r.journal_no)
                 continue
-            sol_key = None
-            if getattr(r, "solution", None) is not None:
-                ok, sbuf = cv2.imencode(".jpg", r.solution, [cv2.IMWRITE_JPEG_QUALITY, 88])
-                sol_key = f"solutions/{did}/{st.id}.jpg"
-                storage.put(sol_key, sbuf.tobytes(), "image/jpeg")
             row = s.get(Response, (did, st.id))
             if row:
                 row.marks, row.flags, row.source = r.marks, r.flags, "skaner"
                 row.auto_marks, row.confidence, row.corrected = dict(r.marks), r.confidence, 0
-                if sol_key:
-                    row.solution_key = sol_key
             else:
                 s.add(Response(diagnostic_id=did, student_id=st.id, marks=r.marks, flags=r.flags, source="skaner",
-                               auto_marks=dict(r.marks), confidence=r.confidence, corrected=0, solution_key=sol_key))
+                               auto_marks=dict(r.marks), confidence=r.confidence, corrected=0))
             matched += 1
             flagged += bool(r.flags)
         nos = sorted(r.journal_no for r in reads)
@@ -495,7 +487,7 @@ def demo_photo(did: int, count: int = 10) -> dict:
     if not pending:
         return {"error": "Barcha o'quvchilar javobi allaqachon kiritilgan."}
     rng = random.Random(did * 31 + len(done))
-    cards, answers, solutions = [], {}, {}
+    cards, answers = [], {}
     for sid, jno in pending:
         sk = smap.get(sid, {})
         if sk.get("tayanch", 1) < 0.4:
@@ -506,8 +498,7 @@ def demo_photo(did: int, count: int = 10) -> dict:
             profile = rng.choice(simulate.PROFILES)
         cards.append(all_cards[jno])
         answers[jno] = simulate.simulate_answers(specs[assign[sid]], profile, rng)
-        solutions[jno] = simulate.solution_lines(specs[assign[sid]], answers[jno], profile)
-    img = simulate.make_photo(cards, answers, dstr, title, class_name, seed=rng.randint(0, 10 ** 6), solutions=solutions)
+    img = simulate.make_photo(cards, answers, dstr, title, class_name, seed=rng.randint(0, 10 ** 6))
     ok, buf = cv2.imencode(".jpg", img, [cv2.IMWRITE_JPEG_QUALITY, 88])
     return process_photo(did, buf.tobytes(), "demo.jpg")
 
@@ -521,8 +512,6 @@ def grade_diagnostic(did: int, use_llm: bool = True) -> dict:
         smap = skill_map(s, d.class_id)
         gaps = attention_gaps(s, d.class_id)
         responses = [(r.student_id, r.marks) for r in s.scalars(select(Response).where(Response.diagnostic_id == did))]
-        sol_keys = {r.student_id: r.solution_key for r in s.scalars(select(Response).where(Response.diagnostic_id == did))
-                    if r.solution_key}
         title, kind, max_points = d.title, d.kind, d.max_points
 
     graded, items = {}, []
@@ -538,14 +527,6 @@ def grade_diagnostic(did: int, use_llm: bool = True) -> dict:
     if not graded:
         return {"graded": 0, "feedback_source": "shablon", "summary_source": "shablon"}
 
-    # --- qo'lda yozilgan yechimni AI rubrika bo'yicha baholaydi (suratdan)
-    open_map, open_source = grade_open_answers(did, graded, specs, assign, codes, sol_keys) if use_llm else ({}, "yo'q")
-    for it in items:
-        got = open_map.get(it["code"])
-        if got:
-            it["yechim"] = {"ball": f"{got['ball']}/{got['max']}", "izoh": got["izoh"],
-                            "mezonlar": {m["nom"]: m["ball"] for m in got["mezonlar"]}}
-
     if use_llm:
         feedback, fb_source = llm.student_feedback(title, items)
     else:
@@ -555,14 +536,9 @@ def grade_diagnostic(did: int, use_llm: bool = True) -> dict:
         s.execute(delete(Result).where(Result.diagnostic_id == did))
         for sid, (level, res) in graded.items():
             fb = feedback[codes[sid]]
-            got = open_map.get(codes[sid])
             s.add(Result(diagnostic_id=did, student_id=sid, correct=res["correct"], total=res["total"],
                          primary_error=res["primary_error"], details=res, feedback_student=fb["oquvchiga"],
-                         feedback_parent=fb["ota_onaga"], feedback_teacher=fb["oqituvchiga"], feedback_source=fb_source,
-                         open_score=(got["ball"] if got else None), open_max=(got["max"] if got else None),
-                         open_criteria=({"mezonlar": got["mezonlar"], "bosh": got["bosh"]} if got else None),
-                         open_comment=(got["izoh"] if got else None),
-                         open_source=("ai" if got else "yo'q"), open_confirmed=False))
+                         feedback_parent=fb["ota_onaga"], feedback_teacher=fb["oqituvchiga"], feedback_source=fb_source))
             for skill, score in grading.update_skills(smap.get(sid, {}), res, level).items():
                 row = s.get(SkillScore, (sid, skill))
                 if row:
@@ -586,45 +562,7 @@ def grade_diagnostic(did: int, use_llm: bool = True) -> dict:
             row.summary, row.source = payload, s_source
         else:
             s.add(DiagSummary(diagnostic_id=did, summary=payload, source=s_source))
-    return {"graded": len(graded), "feedback_source": fb_source, "summary_source": s_source,
-            "open_graded": len(open_map), "open_source": open_source}
-
-
-# ------------------------------------------------------------------ ochiq yechim (AI baholaydi, o'qituvchi tasdiqlaydi)
-def grade_open_answers(did, graded, specs, assign, codes, sol_keys):
-    """Yechim maydoni suratlarini vizual model rubrika bo'yicha baholaydi."""
-    items = []
-    for sid in graded:
-        key = sol_keys.get(sid)
-        if not key or not storage.exists(key):
-            continue
-        spec = specs[assign[sid]]
-        ref = problems.reference_solution(spec)
-        items.append({"code": codes[sid], "image": storage.get(key),
-                      "problem": {"shart": spec["story"], "savol": spec["ask"], "etalon_ifoda": ref["ifoda"],
-                                  "togri_javob": ref["javob"], "birlik": ref["birlik"]}})
-    if not items:
-        return {}, "yo'q"
-    return llm.grade_solutions(items)
-
-
-def set_open_score(did: int, sid: int, ball: float, comment: str | None = None):
-    """O'qituvchi AI qo'ygan yechim balini tasdiqlaydi yoki tuzatadi."""
-    with db.session() as s:
-        row = s.get(Result, (did, sid))
-        if not row:
-            raise NotFound
-        top = row.open_max or llm.OPEN_MAX
-        new = max(0.0, min(float(ball), float(top)))
-        changed = row.open_score is None or abs(new - float(row.open_score)) > 1e-6
-        row.open_score, row.open_max = new, top
-        row.open_confirmed = True
-        if changed:
-            row.open_source = "o'qituvchi"
-        if comment is not None:
-            row.open_comment = comment[:300]
-    grades_from_diagnostic(did)
-    return diagnostic_results(did)
+    return {"graded": len(graded), "feedback_source": fb_source, "summary_source": s_source}
 
 
 def rate_feedback(did: int, sid: int, rating: int | None = None, text: str | None = None):
@@ -650,7 +588,6 @@ def scan_quality(did: int) -> dict:
     unsure = sum(len([k for k in (r.flags or {}) if k != "chiziq"]) for r in rows)
     corrected = sum(r.corrected or 0 for r in rows)
     confs = [r.confidence for r in rows if r.confidence is not None]
-    open_ai = [r for r in results if r.open_source == "ai" or r.open_confirmed]
     return {
         "students": len(rows), "cells": cells,
         "scanned": sum(1 for r in rows if r.auto_marks), "manual": sum(1 for r in rows if not r.auto_marks),
@@ -658,10 +595,6 @@ def scan_quality(did: int) -> dict:
         "auto_pct": round(100 * (cells - unsure) / cells, 1) if cells else None,
         "accuracy_pct": round(100 * (cells - corrected) / cells, 1) if cells else None,
         "confidence_pct": round(100 * avg(confs)) if confs else None,
-        "open_graded": sum(1 for r in results if r.open_score is not None),
-        "open_confirmed": sum(1 for r in results if r.open_confirmed),
-        "open_changed": sum(1 for r in results if r.open_source == "o'qituvchi"),
-        "open_ai": len(open_ai),
         "feedback_total": len(results),
         "feedback_edited": sum(1 for r in results if r.feedback_edited),
         "feedback_up": sum(1 for r in results if (r.feedback_rating or 0) > 0),
@@ -717,7 +650,6 @@ def diagnostic_results(did):
         sts = {st.id: st for st in class_students(s, d.class_id)}
         gaps = attention_gaps(s, d.class_id)
         results = s.scalars(select(Result).where(Result.diagnostic_id == did)).all()
-        sol_keys = {r.student_id: r.solution_key for r in s.scalars(select(Response).where(Response.diagnostic_id == did))}
         summary = s.get(DiagSummary, did)
         items = []
         for r in sorted(results, key=lambda r: sts[r.student_id].journal_no):
@@ -729,13 +661,7 @@ def diagnostic_results(did):
                                      "error_text": ERRORS.get(x["error"]) if x["error"] else None} for x in r.details["steps"]],
                           "feedback": {"student": r.feedback_student, "parent": r.feedback_parent, "teacher": r.feedback_teacher},
                           "feedback_source": r.feedback_source, "feedback_rating": r.feedback_rating,
-                          "feedback_edited": r.feedback_edited,
-                          "open": ({"score": r.open_score, "max": r.open_max, "comment": r.open_comment,
-                                    "source": r.open_source, "confirmed": r.open_confirmed,
-                                    "criteria": (r.open_criteria or {}).get("mezonlar", []),
-                                    "empty": (r.open_criteria or {}).get("bosh", False),
-                                    "image": storage_url(sol_keys[r.student_id]) if sol_keys.get(r.student_id) else None}
-                                   if r.open_score is not None or sol_keys.get(r.student_id) else None)})
+                          "feedback_edited": r.feedback_edited})
         stats = summary.summary["stats"] if summary else None
         return {
             "id": d.id, "title": d.title, "date": fmt_date(d.date), "lesson_id": d.lesson_id, "class_id": d.class_id,
@@ -743,7 +669,6 @@ def diagnostic_results(did):
             "avg_pct": round(100 * avg(i["correct"] / i["total"] for i in items)) if items else None,
             "minutes_saved": round(len(items) * MINUTES_SAVED_PER_STUDENT),
             "quality": scan_quality(did),
-            "open_max": llm.OPEN_MAX, "rubric": llm.RUBRIC,
             "kind": d.kind, "max_points": d.max_points,
             "summary": summary.summary["summary"] if summary else None,
             "summary_source": summary.source if summary else None,
@@ -973,10 +898,10 @@ def grades_from_diagnostic(did: int):
         results = s.scalars(select(Result).where(Result.diagnostic_id == did)).all()
         kind, top, lid = d.kind, d.max_points, d.lesson_id
         if kind == "formativ":
-            marks = {r.student_id: grading.formative_points(r.correct, r.total, r.open_score, r.open_max)
+            marks = {r.student_id: grading.formative_points(r.correct, r.total)
                      for r in results}
         else:
-            marks = {r.student_id: round(top * grading.total_ratio(r.correct, r.total, r.open_score, r.open_max), 1)
+            marks = {r.student_id: round(top * grading.total_ratio(r.correct, r.total), 1)
                      for r in results}
     if marks:
         save_grades(lid, marks, kind=kind, source="diagnostika")
@@ -1185,7 +1110,6 @@ def impact_stats(class_id=None):
     return {
         "since": paper["since"],
         "graded_works": len(results), "homework_checked": len(hw),
-        "open_graded": sum(1 for r in results if r.open_score is not None),
         "cells_read": cells, "cells_corrected": corrected,
         "accuracy_pct": round(100 * (cells - corrected) / cells, 1) if cells else None,
         "minutes_saved": minutes, "hours_saved": round(minutes / 60, 1),

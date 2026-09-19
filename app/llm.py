@@ -48,7 +48,7 @@ def call_json(system: str, user: dict, purpose: str, model: str = None):
 
 
 def call_json_vision(system: str, user: dict, images: list, purpose: str, model: str = None):
-    """Suratli (vizual) JSON chaqiruv: qo'lyozma yechim yoki mashq daftari sahifasi."""
+    """Suratli (vizual) JSON chaqiruv: mashq daftari sahifasi."""
     content = [{"type": "text", "text": json.dumps(user, ensure_ascii=False)}]
     for img in images:
         b64 = base64.b64encode(img).decode()
@@ -546,79 +546,6 @@ def lesson_debrief(text: str, context: dict) -> tuple:
         "keyingi_dars": _list("keyingi_dars", 3),
         "uy_vazifasi": str(uy).strip()[:200] if isinstance(uy, str) and uy.strip() else None,
     }, "gpt"
-
-
-# ------------------------------------------------------------------ 8. Vizual baholash: qo'lyozma yechim (rubrika)
-
-RUBRIC = [
-    {"key": "model", "nom": "Amal/ifoda to'g'ri tuzilgan", "max": 2},
-    {"key": "hisob", "nom": "Hisob-kitob to'g'ri bajarilgan", "max": 2},
-    {"key": "javob", "nom": "Javob aniq va birligi bilan yozilgan", "max": 2},
-]
-OPEN_MAX = sum(c["max"] for c in RUBRIC)
-
-SOLUTION_SYSTEM = (
-    "Sen 5-sinf matematika o'qituvchisisan va o'quvchining QO'LDA yozgan yechimini rubrika bo'yicha baholaysan. "
-    "Suratda o'quvchining yechim maydoni berilgan. Faqat suratda ko'ringan narsaga tayan - o'zingdan qo'shma. "
-    "Agar maydon bo'sh bo'lsa, barcha mezonlarga 0 ball qo'y va 'bosh' ni true qil. "
-    "Har mezonga 0, 1 yoki 2 ball. Izohlar o'zbek tilida (lotin), qisqa. Javobni faqat JSON qaytar."
-)
-
-
-def _valid_open(data) -> dict | None:
-    if not isinstance(data, dict) or not isinstance(data.get("mezonlar"), list):
-        return None
-    by_key = {}
-    for m in data["mezonlar"]:
-        if not isinstance(m, dict):
-            continue
-        key = str(m.get("key", "")).strip()
-        rub = next((c for c in RUBRIC if c["key"] == key), None)
-        if not rub:
-            continue
-        try:
-            ball = int(round(float(m.get("ball", 0))))
-        except (TypeError, ValueError):
-            return None
-        by_key[key] = {"key": key, "nom": rub["nom"], "ball": max(0, min(ball, rub["max"])), "max": rub["max"],
-                       "izoh": str(m.get("izoh", ""))[:160]}
-    if len(by_key) != len(RUBRIC):
-        return None
-    mezonlar = [by_key[c["key"]] for c in RUBRIC]
-    return {"mezonlar": mezonlar, "ball": sum(m["ball"] for m in mezonlar), "max": OPEN_MAX,
-            "bosh": bool(data.get("bosh")), "izoh": str(data.get("izoh", ""))[:300]}
-
-
-def grade_solution(problem: dict, image: bytes) -> dict | None:
-    """Bitta o'quvchining yechim surati. problem: {shart, savol, etalon_ifoda, togri_javob, birlik}."""
-    user = {
-        "masala": problem,
-        "rubrika": RUBRIC,
-        "qoidalar": [
-            "Har mezonga 0-2 ball: 2 - to'liq, 1 - qisman, 0 - yo'q yoki xato.",
-            "Etalon ifodadan farq qilsa ham, matematik jihatdan to'g'ri yo'l bo'lsa 'model' ga to'liq ball ber.",
-            "izoh: o'quvchiga 1 gap - nimani to'g'ri qilgani va keyingi qadam.",
-            "Yozuvni o'qib bo'lmasa, 'izoh' da shuni ayt.",
-        ],
-        "javob_formati": {"mezonlar": [{"key": "model", "ball": 2, "izoh": "..."}], "bosh": False, "izoh": "..."},
-    }
-    return _valid_open(call_json_vision(SOLUTION_SYSTEM, user, [image], "yechim_baho"))
-
-
-def grade_solutions(items: list) -> tuple:
-    """items: [{code, problem, image}]. Qaytaradi: ({code: natija}, manba)."""
-    out = {}
-    if not enabled() or not items:
-        return out, "yo'q"
-
-    def run(it):
-        return it["code"], grade_solution(it["problem"], it["image"])
-
-    with ThreadPoolExecutor(max_workers=6) as ex:
-        for code, res in ex.map(run, items):
-            if res:
-                out[code] = res
-    return out, ("gpt" if out else "yo'q")
 
 
 # ------------------------------------------------------------------ 9. Vizual baholash: uy vazifasi (mashq daftari)

@@ -47,8 +47,8 @@ export default function Landing() {
             </h1>
             <p className="mt-5 max-w-xl text-[16.5px] leading-relaxed text-mute">
               DarsPilot — 5–6-sinf matematika o'qituvchisi uchun AI yordamchi. Dars ssenariysini tuzadi, qog'ozli ishni
-              telefon suratidan avtomatik tekshiradi (yopiq javoblarni kompyuter ko'rish, qo'lda yozilgan yechimni AI
-              rubrikasi bilan) va har bir o'quvchiga shaxsiy feedback yozadi.
+              telefon suratidan avtomatik tekshiradi — javoblarni kompyuter ko'rish o'qiydi (AI emas),
+              AI esa har bir o'quvchiga shaxsiy feedback va sinf bo'yicha xulosa yozadi.
             </p>
             <div className="mt-7 flex flex-wrap items-center gap-3">
               <Link to={home} className="inline-flex h-12 items-center gap-2 rounded-xl bg-firuza-600 px-5 text-[15px] font-medium text-white transition-colors hover:bg-firuza-700">
@@ -72,7 +72,7 @@ export default function Landing() {
             <Metric icon={ScanLine} value={d ? `${d.accuracy_pct ?? 0}%` : '—'} label="Avtomatik o'qish aniqligi" hint="markerlar bo'yicha tekislangan javob bloki" />
             <Metric icon={Clock} value={d ? `${d.hours_saved} soat` : '—'} label="Chorakda tejalgan vaqt" hint={d ? `${d.graded_works} ta ish + ${d.homework_checked} ta uy vazifasi` : 'tekshirish va izoh yozish'} />
             <Metric icon={Leaf} value={d ? `${d.sheets_used} varaq` : '—'} label="Ishlatilgan qog'oz" hint={d ? `har darsda test bo'lsa ${d.sheets_if_every_lesson} varaq ketardi` : "qog'ozsiz tezkor tekshiruv bilan"} />
-            <Metric icon={Timer} value="26 s" label="Bir sinfni baholash" hint="10 o'quvchi: javob + yechim + feedback" />
+            <Metric icon={Timer} value="26 s" label="Bir sinfni baholash" hint="10 o'quvchi: javob + feedback" />
           </div>
           <p className="mt-2 text-[12px] text-faint">Ko'rsatkichlar shu ilovadagi demo maktab ma'lumotlaridan real vaqtda olinadi.</p>
         </div>
@@ -115,11 +115,11 @@ export default function Landing() {
       </Section>
 
       {/* ------------------------------------------------ baholash */}
-      <Section id="baholash" eyebrow="Avtomatik baholash" title="Baholash ikki qatlamli"
-        text="Yopiq javobni mashina o'qiydi, qo'lda yozilgan yechimni AI rubrika bo'yicha baholaydi — oxirgi so'z o'qituvchida.">
+      <Section id="baholash" eyebrow="Avtomatik baholash" title="Javobni kod o'qiydi, AI xulosa yozadi"
+        text="Baho AI ning fikri emas: javoblar kompyuter ko'rish bilan o'qiladi va kod bilan tekshiriladi. AI faqat matn yozadi — oxirgi so'z o'qituvchida.">
         <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
           <Reveal>
-            <Layer icon={ScanLine} tone="firuza" step="1-qatlam" title="Kompyuter ko'rish — yopiq javoblar"
+            <Layer icon={ScanLine} tone="firuza" step="1-qatlam" title="Kompyuter ko'rish — javoblarni o'qiydi"
               points={[
                 'Kartochkaning 4 burchagidagi ArUco markerlar har bir ishni o\'quvchi raqamiga bog\'laydi.',
                 'Bitta suratda 10 tagacha kartochka o\'qiladi; qiyshiq va soyali surat tekislanadi.',
@@ -127,11 +127,11 @@ export default function Landing() {
               ]} />
           </Reveal>
           <Reveal delay={0.1}>
-            <Layer icon={Sparkles} tone="indigo" step="2-qatlam" title="AI rubrika — qo'lda yozilgan yechim"
+            <Layer icon={Sparkles} tone="indigo" step="2-qatlam" title="AI — masala, xulosa va feedback"
               points={[
-                'Yechim maydoni xuddi shu markerlar yordamida kesib olinadi va vizual modelga beriladi.',
-                'Rubrika: amal/ifoda to\'g\'ri tuzilganmi, hisob to\'g\'rimi, javob birligi bilan yozilganmi (har biriga 0–2 ball).',
-                'O\'qituvchi bir bosishda tasdiqlaydi yoki tuzatadi; tuzatishlar o\'lchanadi va ko\'rsatiladi.',
+                'Har bir o\'quvchiga darajasiga mos masala AI yordamida individual generatsiya qilinadi.',
+                'Noto\'g\'ri variantlar tasodifiy emas: har biri aniq tushuncha xatosiga bog\'langan — natija «5/7» emas, «amallar tartibini buzyapti».',
+                'AI baho qo\'ymaydi: u o\'quvchi, ota-ona va o\'qituvchiga matn yozadi — oxirgi so\'z o\'qituvchida.',
               ]} />
           </Reveal>
         </div>

@@ -24,45 +24,38 @@ def _graded_diagnostic(client):
     return next(d for d in client.get("/api/diagnostics").json() if d["status"] == "baholandi")
 
 
-# ------------------------------------------------------------------ 1. yechim maydoni: chizish va kesib olish
-def test_solution_area_is_cropped_from_the_same_markers():
+# ------------------------------------------------------------------ 1. javobni kod o'qiydi (AI emas)
+def test_answers_are_read_by_code_only():
+    """Kartochkada qo'lda yoziladigan maydon yo'q: javob faqat doirachalar va son panjarasidan o'qiladi."""
     spec = problems.generate("amallar_tartibi", "B2", 11)
     rng = random.Random(4)
     cards = [{"journal_no": i + 1, "code": f"5B-{i + 1:02d}", "name": "Sinov O'quvchi", "level": "B2", "spec": spec}
              for i in range(4)]
-    answers, solutions = {}, {}
+    answers = {}
     for card, profile in zip(cards, ["kuchli", "model", "hisoblash", "tayanch"]):
-        marks = simulate.simulate_answers(spec, profile, rng)
-        answers[card["journal_no"]] = marks
-        solutions[card["journal_no"]] = simulate.solution_lines(spec, marks, profile)
+        answers[card["journal_no"]] = simulate.simulate_answers(spec, profile, rng)
 
-    img = simulate.make_photo(cards, answers, "18.09.2026", "Amallar tartibi", "5-B", seed=9, solutions=solutions)
-    reads, _ = omr.scan_image(img, with_solutions=True)
+    img = simulate.make_photo(cards, answers, "18.09.2026", "Amallar tartibi", "5-B", seed=9)
+    reads, _ = omr.scan_image(img)
     assert len(reads) == 4
     for r in reads:
-        assert r.solution is not None
-        h, w = r.solution.shape[:2]
-        assert abs(w - L.SOLUTION_W * L.PX_PER_MM) <= 2
-        assert abs(h - L.SOLUTION_H * L.PX_PER_MM) <= 2
-        assert r.solution.mean() < 250          # maydon bo'sh emas: yozuv bor
+        assert not hasattr(r, "solution")                 # qo'lyozma tahlili umuman yo'q
+        assert r.marks.get("q1") and r.marks.get("q5")     # javoblar o'qildi
+    # geometriyada ham yechim maydoni qolmagan
+    assert not any(n.startswith("SOLUTION") for n in dir(L))
 
 
-# ------------------------------------------------------------------ 2. ochiq yechim bahosi jurnalga ta'sir qiladi
-def test_open_score_is_confirmed_and_changes_the_journal(client):
+# ------------------------------------------------------------------ 2. baho faqat kod hisobidan chiqadi
+def test_score_comes_from_code_not_ai(client):
     d = _graded_diagnostic(client)
     res = client.get(f"/api/diagnostics/{d['id']}/results").json()
-    assert res["open_max"] == llm.OPEN_MAX and len(res["rubric"]) == 3
-    student = next(s for s in res["students"] if s["open"] and s["open"]["score"] is not None)
-    assert student["open"]["criteria"] and student["open"]["source"] in ("ai", "o'qituvchi")
-
-    before = _journal_points(client, res["lesson_id"], student["id"])
-    new_ball = 0.0 if student["open"]["score"] > 0 else float(llm.OPEN_MAX)
-    after_res = client.put(f"/api/diagnostics/{d['id']}/results/{student['id']}/open",
-                           json={"ball": new_ball}).json()
-    got = next(s for s in after_res["students"] if s["id"] == student["id"])
-    assert got["open"]["score"] == new_ball
-    assert got["open"]["confirmed"] and got["open"]["source"] == "o'qituvchi"
-    assert _journal_points(client, res["lesson_id"], student["id"]) != before
+    assert "open_max" not in res and "rubric" not in res
+    student = res["students"][0]
+    assert "open" not in student
+    assert student["correct"] <= student["total"] and student["total"] == 7
+    # jurnalga tushgan ball to'g'ri javoblar ulushidan kelib chiqadi
+    points = _journal_points(client, res["lesson_id"], student["id"])
+    assert points == round(10 * student["correct"] / student["total"])
 
 
 def _journal_points(client, lesson_id, sid):
@@ -83,7 +76,7 @@ def test_scan_quality_and_feedback_rating(client):
     q = client.get(f"/api/diagnostics/{d['id']}/quality").json()
     assert q["cells"] == 7 * q["students"]
     assert 0 <= q["auto_pct"] <= 100 and 0 <= q["accuracy_pct"] <= 100
-    assert q["open_graded"] > 0 and q["feedback_total"] > 0
+    assert q["scanned"] > 0 and q["feedback_total"] > 0
 
     sid = client.get(f"/api/diagnostics/{d['id']}/results").json()["students"][0]["id"]
     rated = client.put(f"/api/diagnostics/{d['id']}/results/{sid}/feedback", json={"rating": -1}).json()
@@ -204,7 +197,7 @@ def _first_student(cid):
 # ------------------------------------------------------------------ 7. ta'sir hisobi
 def test_impact_stats(client):
     data = client.get("/api/impact").json()
-    for key in ("graded_works", "homework_checked", "open_graded", "cells_read", "minutes_saved",
+    for key in ("graded_works", "homework_checked", "cells_read", "minutes_saved",
                 "sheets_used", "sheets_if_every_lesson", "feedback_written"):
         assert key in data
     assert data["graded_works"] > 0 and data["minutes_saved"] > 0
@@ -225,10 +218,9 @@ def test_print_safety_margins():
     assert r["matn"] >= L.CUT_SAFE
     assert min(r["blok_chap"], r["blok_ong"]) >= L.CUT_SAFE
     assert min(r["marker_chap"], r["marker_ong"], r["marker_past"]) >= L.MARKER_SAFE
-    # blok va yechim maydoni kartochka ichiga sig'adi
+    # javob bloki kartochka ichiga sig'adi
     assert L.BLOCK_X + L.BLOCK_W <= L.CARD_W - L.CUT_SAFE
     assert L.BLOCK_Y + L.BLOCK_H <= L.CARD_H - L.CUT_SAFE
-    assert L.BLOCK_Y - L.SOLUTION_GAP - L.SOLUTION_H >= L.CUT_SAFE
     # blok ichidagi doirachalar markerlarga tegmaydi
     right_marker_x = L.BLOCK_W - 10.5
     assert L.GRID_COL_X0 + (L.GRID_COLS - 1) * L.GRID_COL_STEP + L.GRID_RADIUS < right_marker_x

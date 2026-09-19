@@ -75,7 +75,7 @@ export default function DiagnosticDetail() {
             { label: "Avtomatik o'qildi", value: data.quality.auto_pct == null ? '—' : `${data.quality.auto_pct}%`, hint: `${data.quality.cells} katakdan` },
             { label: 'Skaner ishonchi', value: data.quality.confidence_pct == null ? '—' : `${data.quality.confidence_pct}%`, hint: `${data.quality.unsure} ta shubhali belgi` },
             { label: "O'qituvchi tuzatdi", value: `${data.quality.corrected}`, hint: data.quality.accuracy_pct == null ? 'katak' : `aniqlik ${data.quality.accuracy_pct}%` },
-            { label: 'Yechim baholandi', value: `${data.quality.open_graded}`, hint: `${data.quality.open_confirmed} tasi tasdiqlangan` },
+            { label: "Qo'lda kiritildi", value: `${data.quality.manual}`, hint: `${data.quality.scanned} tasi suratdan o'qildi` },
           ].map((c) => (
             <div key={c.label} className="min-w-0 bg-surface p-3.5">
               <div className="text-xs text-mute">{c.label}</div>

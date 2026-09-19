@@ -36,8 +36,8 @@ export default function ImpactPanel({ classId, compact }: { classId?: number | n
             text="Mavzu oxirida yoki har N darsda — varaq faqat shu darslarga ketadi." />
           <Mini icon={Zap} title="Qog'ozsiz tezkor tekshiruv" value={data.quick_lessons} unit="ta dars"
             text="Svetofor, mini-doska yoki chiqish savoli — joyida, varaqsiz." />
-          <Mini icon={PenLine} title="AI baholagan qo'lyozma yechim" value={data.open_graded} unit="ta ish"
-            text="Ochiq masala yechimi rasmdan o'qilib, bosqichma-bosqich baholandi." />
+          <Mini icon={PenLine} title="Suratdan o'qilgan javob" value={data.cells_read} unit="ta katak"
+            text="Javoblarni kod o'qiydi — AI emas, shuning uchun natija takrorlanadigan va tekshiriladigan." />
         </div>
       )}
     </Card>

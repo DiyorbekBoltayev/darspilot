@@ -247,29 +247,6 @@ def _answer_block(c: canvas.Canvas, bx: float, by: float, card: dict, date: str)
     c.setFillColor(colors.black)
 
 
-def _solution_box(c: canvas.Canvas, x_mm: float, y_top_mm: float):
-    """5-savol yechimi yoziladigan maydon: markerlar yordamida kesib olinadi va AI rubrika bo'yicha baholaydi."""
-    w, h = L.SOLUTION_W, L.SOLUTION_H
-    c.setStrokeColor(colors.HexColor("#9FB4C7"))
-    c.setLineWidth(0.6)
-    c.setDash(1.6, 1.6)
-    c.roundRect(x_mm * mm, A4[1] - (y_top_mm + h) * mm, w * mm, h * mm, 2 * mm, stroke=1, fill=0)
-    c.setDash()
-    c.setFont(FONT_BOLD, 6.2)
-    c.setFillColor(NAVY)
-    c.drawString((x_mm + 3) * mm, A4[1] - (y_top_mm + 4.4) * mm, _txt("YECHIM (5-savol) — bosqichlarni yozing"))
-    c.setFont(FONT, 5.2)
-    c.setFillColor(MUTED)
-    c.drawRightString((x_mm + w - 3) * mm, A4[1] - (y_top_mm + h - 1.8) * mm,
-                      _txt("amal → hisob → javob (birligi bilan)"))
-    c.setStrokeColor(colors.HexColor("#DCE4EC"))
-    c.setLineWidth(0.3)
-    for i in range(1, 4):
-        y = y_top_mm + 5.0 + i * 4.6
-        c.line((x_mm + 3) * mm, A4[1] - y * mm, (x_mm + w - 3) * mm, A4[1] - y * mm)
-    c.setFillColor(colors.black)
-
-
 def _card_back(c: canvas.Canvas, slot: int, card: dict, date: str, title: str):
     x0, y0 = card_origin(slot, back=True)
     pad = L.CARD_PAD
@@ -284,9 +261,9 @@ def _card_back(c: canvas.Canvas, slot: int, card: dict, date: str, title: str):
             flow.append(Paragraph(_txt(f"Javobni pastdagi son panjarasiga chapdan boshlab yozing ({q.get('unit', '')})."), STYLES["note"]))
         else:
             flow += _question_flowables(q, w)
-    sol_top = y0 + L.BLOCK_Y - L.SOLUTION_GAP - L.SOLUTION_H
-    _frame(c, x0 + pad, y0 + pad, w, sol_top - (y0 + pad) - 1.5, flow)
-    _solution_box(c, x0 + L.BLOCK_X, sol_top)
+    # Javob blokigacha bo'lgan butun joy savollarga beriladi (qo'lda yozish maydoni yo'q —
+    # javob faqat son panjarasi va doirachalar orqali beriladi, ularni kod o'qiydi)
+    _frame(c, x0 + pad, y0 + pad, w, (y0 + L.BLOCK_Y) - (y0 + pad) - 2.5, flow)
     _answer_block(c, x0 + L.BLOCK_X, y0 + L.BLOCK_Y, card, date)
     c.setFillColor(colors.black)
 
