@@ -5,14 +5,16 @@
 <title>DarsPilot — Texnik mentor uchun (CP2)</title>
 <link rel="stylesheet" href="deck.css">
 <style>
-  .crit{position:absolute;top:44px;right:64px;display:flex;align-items:center;gap:9px;
-    background:var(--indigo);color:#fff;border-radius:999px;padding:7px 15px;font-size:12.5px;font-weight:600;
-    font-family:'Unbounded',sans-serif;letter-spacing:.02em}
+  .mezbar{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+  .mezbar .n{background:var(--indigo);color:#fff;border-radius:10px;padding:7px 15px;font-size:15px;font-weight:600;
+    font-family:'Unbounded',sans-serif;letter-spacing:.01em}
+  .mezbar .nm{font-family:'Unbounded',sans-serif;font-size:15px;font-weight:600;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--firuza)}
   .layer { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px 18px; }
   .layer .tag { font-size: 12.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--faint); }
   .layer h4 { font-family: 'Unbounded', sans-serif; font-size: 16px; margin-top: 6px; font-weight: 600; }
   .layer ul { list-style: none; margin-top: 10px; }
-  .layer li { font-size: 13.5px; color: var(--mute); line-height: 1.45; padding-left: 14px; position: relative; margin-bottom: 5px; }
+  .layer li { font-size: 14px; color: var(--mute); line-height: 1.45; padding-left: 14px; position: relative; margin-bottom: 6px; }
   .layer li::before { content: ''; position: absolute; left: 0; top: 7px; width: 6px; height: 6px; background: var(--firuza); border-radius: 50%; }
   .flow { display: flex; align-items: stretch; gap: 8px; margin-top: 18px; }
   .flow .f { flex: 1; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px 12px; }
@@ -31,19 +33,11 @@
   svg .box-gld { fill: #FDF4E0; stroke: #F0DFB4; }
   svg .line { stroke: #9FB0BE; stroke-width: 1.6; fill: none; }
   svg .line-d { stroke: #C4CCD4; stroke-width: 1.4; stroke-dasharray: 5 4; fill: none; }
-  .mez { margin-top: 18px; font-size: 15.5px; }
-  .mez table { margin-top: 0 }
-  .mez td:first-child { width: 230px; font-weight: 600 }
-  .mez td.ev { width: 330px; color: var(--indigo); font-family: 'Consolas', monospace; font-size: 13px }
-  .live { background: var(--firuza-50); border: 1px solid #CCE7E6; border-radius: 16px; padding: 18px 22px; margin-top: 20px;
-          display: flex; align-items: center; gap: 28px }
-  .live .url { font-family: 'Unbounded', sans-serif; font-size: 30px; color: var(--indigo); font-weight: 600 }
-  .live p { font-size: 15px; color: var(--mute); line-height: 1.45 }
-  .steps { counter-reset: s; margin-top: 18px }
-  .steps li { list-style: none; position: relative; padding-left: 44px; margin-bottom: 13px; font-size: 16.5px; line-height: 1.45 }
-  .steps li::before { counter-increment: s; content: counter(s); position: absolute; left: 0; top: -1px;
-    width: 30px; height: 30px; border-radius: 9px; background: var(--indigo); color: #fff; display: grid; place-items: center;
-    font-family: 'Unbounded', sans-serif; font-size: 14px; font-weight: 600 }
+  .live { background: var(--firuza-50); border: 1px solid #CCE7E6; border-radius: 16px; padding: 16px 22px; margin-top: 16px;
+          display: flex; align-items: center; gap: 26px }
+  .live .url { font-family: 'Unbounded', sans-serif; font-size: 28px; color: var(--indigo); font-weight: 600 }
+  .live p { font-size: 14.5px; color: var(--mute); line-height: 1.45 }
+  td.ev { color: var(--indigo); font-family: 'Consolas', monospace; font-size: 12.5px }
 </style>
 </head>
 <body>
@@ -52,7 +46,7 @@
   <div class="kicker">Umummilliy AI Xakaton · Xorazm · Ta'lim treki · 2-ustuvor mavzu</div>
   <h1>DarsPilot</h1>
   <div class="sub">O'qituvchi qog'ozli ishni telefonda suratga oladi — javobni kod o'qiydi va tekshiradi,
-    AI esa masala matnini, feedbackni va xulosani yozadi. Hammasi Docker'da, jonli serverda ishlayapti.</div>
+    AI esa masala matnini, feedbackni va xulosani yozadi. Jonli serverda ishlaydi.</div>
   <div class="meta">
     <div><b>Checkpoint 2</b>19-sentabr, 2026 · 14:20</div>
     <div><b>Texnik mentor</b>Yaxshimurodov Jaloladdin</div>
@@ -63,55 +57,31 @@
 </section>
 
 <section class="slide">
-  <div class="crit">Mezon 1 · muammo</div>
   <div class="eyebrow">Loyiha haqida</div>
-  <h1 class="sm">Tekshirish o'qituvchining haftasidan 3–5 soatni oladi</h1>
-  <p class="lead">5-sinf matematika o'qituvchisi kuniga 4–6 sinfga dars beradi — jami 150+ o'quvchi.
-    Har bir ishni ko'rib chiqishga ham, kim qayerda adashganini eslab qolishga ham ulgurmaydi.</p>
+  <h1 class="sm">Muammo: bola «5/7» degan raqam oladi — qayerda adashganini bilmaydi</h1>
+  <p class="lead">O'qituvchida 3 sinf, ~90 o'quvchi. Har darsdan keyin har bir ishni ko'rib, xatoni topib
+    izoh yozish jismonan imkonsiz — tekshiruvga haftasiga 3–5 soat ketadi.</p>
   <div class="grid g3">
-    <div class="card warn"><div class="tag" style="color:var(--terra)">Bugun qanday</div>
-      <h3>Qo'lda tekshirish</h3>
-      <p>30 ta ish × 2 daqiqa = 1 soat. Natijada faqat ball qoladi; xato turi hech qayerda yozilmaydi.</p></div>
-    <div class="card"><div class="tag">Asosiy to'siq</div>
-      <h3>Qurilma yo'q</h3>
-      <p>Tuman maktabida har o'quvchiga planshet yoki akkaunt berib bo'lmaydi — yechim qog'ozda ishlashi shart.</p></div>
-    <div class="card tint"><div class="tag">Bizning yondashuv</div>
-      <h3>Qog'oz + bitta telefon</h3>
-      <p>O'quvchi tomonida hech narsa o'zgarmaydi. O'qituvchining telefoni — yagona qurilma.</p></div>
+    <div class="card"><div class="tag">Cheklov</div><h3>Qurilma yo'q</h3>
+      <p>Tuman maktabida har o'quvchiga planshet ham, akkaunt ham berib bo'lmaydi — yechim qog'ozda ishlashi shart.</p></div>
+    <div class="card tint"><div class="tag">Yondashuv</div><h3>Qog'oz + bitta telefon</h3>
+      <p>O'quvchi tomonida hech narsa o'zgarmaydi: kartochkani oladi, doirachani bo'yaydi.
+        O'qituvchining telefoni — yagona qurilma.</p></div>
+    <div class="card ind"><div class="tag">Asosiy qoida</div><h3>Javobni kod o'qiydi</h3>
+      <p>Ball AI ning fikri emas: kompyuter ko'rish o'qiydi, kod solishtiradi. AI faqat matn yozadi —
+        masala sharti, feedback, xulosa.</p></div>
   </div>
-  <div class="grid g4" style="margin-top:16px">
-    <div class="card"><div class="big">~2 s</div><div class="cap">bitta suratdagi 10 ta ish o'qiladi</div></div>
-    <div class="card"><div class="big">26 s</div><div class="cap">10 o'quvchi baholanadi + feedback</div></div>
-    <div class="card"><div class="big">99,5%</div><div class="cap">kataklar avtomatik o'qildi (616 katak)</div></div>
-    <div class="card"><div class="big">47</div><div class="cap">test, tashqi servissiz o'tadi</div></div>
+  <div class="flow" style="margin-top:20px">
+    <div class="f"><div class="n">01</div><h5>Tayyorlash</h5><p>Reja → ssenariy → kartochkalar PDF</p></div>
+    <div class="f"><div class="n">02</div><h5>Darsda</h5><p>Bosqichlar bo'yicha yurish, ovozli e'tibor jurnali</p></div>
+    <div class="f"><div class="n">03</div><h5>Tekshirish</h5><p>Kartochkalar va mashq daftari suratdan</p></div>
+    <div class="f"><div class="n">04</div><h5>Tahlil</h5><p>Bosqichli tashxis, sinf xulosasi</p></div>
+    <div class="f"><div class="n">05</div><h5>Keyingi dars</h5><p>Natija keyingi ssenariyga o'tadi</p></div>
   </div>
-  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>2 / 14</span></div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>2 / 12</span></div>
 </section>
 
 <section class="slide">
-  <div class="crit">Mezon 1 · yechim</div>
-  <div class="eyebrow">Yechim bir qarashda</div>
-  <h1 class="sm">Dars konveyeri: 5 qadam, har biri keyingisiga ma'lumot beradi</h1>
-  <div class="flow">
-    <div class="f"><div class="n">01</div><h5>Tayyorlash</h5><p>Taqvim-mavzu rejadan mavzu → AI 8 bosqichli ssenariy yozadi → kartochkalar PDF chiqadi.</p></div>
-    <div class="f"><div class="n">02</div><h5>Darsda</h5><p>O'qituvchi bosqichlar bo'yicha yuradi; kim bilan ishlaganini ovoz bilan aytadi.</p></div>
-    <div class="f"><div class="n">03</div><h5>Tekshirish</h5><p>Kartochkalar suratga olinadi; uy vazifasi — mashq daftari betlari suratdan.</p></div>
-    <div class="f"><div class="n">04</div><h5>Tahlil</h5><p>Bosqichli tashxis va sinf xulosasi; o'qituvchi 20 soniya gapirib o'z tahlilini qoldiradi.</p></div>
-    <div class="f"><div class="n">05</div><h5>Keyingi dars</h5><p>Natijalar keyingi ssenariyga o'tadi: kim bilan ishlash, nimani takrorlash.</p></div>
-  </div>
-  <div class="grid g2" style="margin-top:22px">
-    <div class="card ind"><h3>Nega «konveyer»?</h3>
-      <p>Har qadamning chiqishi keyingisining kirishi. Shuning uchun bu «test tekshirgich» emas:
-        bir dars natijasi keyingi darsning ssenariysini o'zgartiradi — ma'lumot sikli yopiq.</p></div>
-    <div class="card tint"><h3>O'quvchi tomonida nima o'zgaradi?</h3>
-      <p>Hech narsa: kartochkani oladi, doirachani bo'yaydi, son panjarasiga javobini yozadi.
-        Akkaunt ham, qurilma ham, internet ham talab qilinmaydi.</p></div>
-  </div>
-  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>3 / 14</span></div>
-</section>
-
-<section class="slide">
-  <div class="crit">Mezon 1 &amp; 5 · arxitektura</div>
   <div class="eyebrow">Arxitektura</div>
   <h1 class="sm">Bitta <code style="font-size:26px">docker compose up</code> — butun tizim</h1>
   <svg viewBox="0 0 1136 400" style="width:100%;height:402px;margin-top:10px">
@@ -197,13 +167,12 @@
     <text class="s" x="224" y="344">Testlarda: PostgreSQL o'rniga SQLite, ombor o'rniga lokal papka — hech qanday servis kerak emas (47 test, AI o'chiq)</text>
     <text class="s" x="224" y="368">Sxema o'zgarsa: SCHEMA_VERSION bilan demo qayta yaratiladi; yangi ustunlar ALTER bilan qo'shiladi (ma'lumot yo'qolmaydi)</text>
   </svg>
-  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>4 / 14</span></div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>3 / 12</span></div>
 </section>
 
 <section class="slide">
-  <div class="crit">Mezon 1 · uchidan-uchiga</div>
   <div class="eyebrow">Ma'lumot oqimi</div>
-  <h1 class="sm">Qog'ozdan bahogacha: qaysi qadamni kim bajaradi</h1>
+  <h1 class="sm">Qog'ozdan bahogacha: qaysi qadamni kod, qaysi qadamni AI bajaradi</h1>
   <svg viewBox="0 0 1136 372" style="width:100%;height:374px;margin-top:6px">
     <defs>
       <marker id="b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
@@ -285,12 +254,38 @@
     <text class="s" x="4" y="340">10 o'quvchilik sinf:</text>
     <text class="t" x="4" y="362">26 sekundda to'liq</text>
   </svg>
-  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>5 / 14</span></div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>4 / 12</span></div>
 </section>
 
 <section class="slide">
-  <div class="crit">Mezon 1 &amp; 3 · CV</div>
-  <div class="eyebrow">Kompyuter ko'rish</div>
+  <div class="mezbar"><span class="n">1-mezon</span><span class="nm">Texnik amalga oshirish</span></div>
+  <h1 class="sm">Zanjir uchidan-uchiga ishlaydi va jonli serverda turibdi</h1>
+  <div class="live">
+    <div><div class="url">darspilot.com</div><p style="margin-top:2px">demo@darspilot.uz / demo1234</p></div>
+    <p style="border-left:1px solid #CCE7E6;padding-left:24px">
+      Cloudflare Registrar domeni · O'zbekistondagi VPS · Docker Compose (db + api + web)<br>
+      Let's Encrypt HTTPS, HTTP→HTTPS, sertifikat cron bilan avtomatik yangilanadi<br>
+      Konfiguratsiya repoda: <code>deploy/nginx-ssl.conf</code>, <code>deploy/docker-compose.prod.yml</code></p>
+  </div>
+  <div class="grid g4" style="margin-top:18px">
+    <div class="card"><div class="big">~2 s</div><div class="cap">bitta suratdagi 10 ta ish o'qiladi</div></div>
+    <div class="card"><div class="big">26 s</div><div class="cap">10 o'quvchi baholanadi + feedback yoziladi</div></div>
+    <div class="card"><div class="big">99,5%</div><div class="cap">kataklar avtomatik o'qildi (616 katak)</div></div>
+    <div class="card"><div class="big">81</div><div class="cap">API endpoint · <code>/api/docs</code></div></div>
+  </div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card tint"><h3>Zanjirda 13 qadam bor — 9 tasi sof kod</h3>
+      <p>Reja → variant generatsiyasi → PDF → surat → OMR → baho → jurnal → keyingi ssenariy.
+        AI 4 joyda: masala matni, feedback, daftar tekshiruvi, ovozli tahlil.</p></div>
+    <div class="card ind"><h3>Ikkinchi kanal: uy vazifasi</h3>
+      <p>Mashq daftarining shu darsga berilgan betlari tizimda ko'rinadi; bir vazifa bir necha betdan
+        iborat bo'lsa, hammasi birga tahlilga yuboriladi.</p></div>
+  </div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>5 / 12</span></div>
+</section>
+
+<section class="slide">
+  <div class="mezbar"><span class="n">1-mezon</span><span class="nm">Texnik amalga oshirish · kompyuter ko'rish</span></div>
   <h1 class="sm">Qiyshiq telefon suratidan aniq javobgacha</h1>
   <svg viewBox="0 0 1136 330" style="width:100%;height:332px;margin-top:8px">
     <defs>
@@ -379,223 +374,148 @@
     <text class="s" x="876" y="284">bosma siljishi va qirqish xatosiga</text>
     <text class="s" x="876" y="304">chidamli (8 mm xavfsiz chekka)</text>
   </svg>
-  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>6 / 14</span></div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>6 / 12</span></div>
 </section>
 
 <section class="slide">
-  <div class="crit">Mezon 1 &amp; 5 · ishga tushirish</div>
-  <div class="eyebrow">Ishlab chiqarish</div>
-  <h1 class="sm">Prototip emas — jonli ishlaydigan xizmat</h1>
-  <div class="live">
-    <div>
-      <div class="url">darspilot.com</div>
-      <p style="margin-top:4px">demo@darspilot.uz / demo1234 — hozir ochib ko'rsangiz bo'ladi</p>
-    </div>
-    <p style="border-left:1px solid #CCE7E6;padding-left:26px">
-      Domen <b>Cloudflare Registrar</b> orqali olindi, DNS A-yozuvlari sozlandi.<br>
-      Server — <b>O'zbekistondagi VPS</b>, Docker Compose: db + api + web (nginx).<br>
-      HTTPS — Let's Encrypt, HTTP→HTTPS yo'naltirish, sertifikat cron bilan avtomatik yangilanadi.
-    </p>
-  </div>
-  <div class="grid g3" style="margin-top:20px">
-    <div class="card warn"><div class="tag" style="color:var(--terra)">Chiqqan muammo</div>
-      <h3>Serverning protsessori eski</h3>
-      <p>QEMU virtual CPU, <code>x86-64-v1</code>: sse4.2 va popcnt yo'q. Standart <code>numpy</code>
-        «X86_V2 baseline» xatosi bilan, MinIO esa glibc xatosi bilan ishga tushmadi.</p></div>
-    <div class="card tint"><div class="tag">Yechim</div>
-      <h3>Ikkita yig'ish varianti</h3>
-      <p><code>Dockerfile</code> ga <code>ARG PY</code> va <code>ARG REQ</code> qo'shildi;
-        <code>requirements-oldcpu.txt</code> — Python 3.12 + numpy 1.26.4 + opencv-headless 4.10.
-        Ombor esa MinIO o'rniga lokal papkaga o'tdi — <code>app/storage.py</code> da bitta interfeys.</p></div>
-    <div class="card ind"><div class="tag">Natija</div>
-      <h3>Kod o'zgarmadi</h3>
-      <p>Bir xil kod: lokalda MinIO + Python 3.13, serverda lokal ombor + Python 3.12,
-        testlarda SQLite + lokal papka. Muhitga bog'liqlik konfiguratsiyada, mantiqda emas.</p></div>
-  </div>
-  <div class="flow" style="margin-top:16px">
-    <div class="f"><div class="n">01</div><h5>Manba</h5><p>GitHub, o'zbekcha commitlar</p></div>
-    <div class="f"><div class="n">02</div><h5>Yig'ish</h5><p><code>docker compose build</code> — api va web obrazlari</p></div>
-    <div class="f"><div class="n">03</div><h5>Migratsiya</h5><p>Ishga tushganda yangi ustunlar ALTER bilan qo'shiladi</p></div>
-    <div class="f"><div class="n">04</div><h5>Sog'liq</h5><p><code>/api/health</code> 200 bo'lguncha kutiladi</p></div>
-    <div class="f"><div class="n">05</div><h5>Jonli</h5><p>nginx 443 · sertifikat cron bilan yangilanadi</p></div>
-  </div>
-  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>7 / 14</span></div>
-</section>
-
-<section class="slide">
-  <div class="crit">Mezon 3 · AI dizayni</div>
-  <div class="eyebrow">AI dizayni</div>
-  <h1 class="sm">Modelni qayerda ishlatamiz — va qayerda ataylab ishlatmaymiz</h1>
-  <div class="grid g2">
-    <div class="card tint"><div class="tag">Kod hal qiladi (deterministik)</div>
-      <h3>Sonlar, javob, ball</h3>
-      <p>Masala sonlari va to'g'ri javob generatorda hisoblanadi (<code>problems.py</code>).
-        Doirachalarni OpenCV o'qiydi (<code>omr.py</code>), javobni kod solishtiradi (<code>grading.py</code>).
-        Baho — takrorlanadigan va tekshiriladigan: bir xil surat har doim bir xil natija beradi.</p></div>
-    <div class="card gold"><div class="tag">AI yozadi (matn)</div>
-      <h3>Shart, feedback, xulosa</h3>
-      <p>Masala matnini hayotiy qilib yozish, xato turini talqin qilish, o'quvchi/ota-ona/o'qituvchi uchun
-        feedback, sinf xulosasi, dars ssenariysi. Vizual model — mashq daftari betlarini tekshiradi,
-        transkripsiya modeli — o'qituvchining ovozini matnga aylantiradi.</p></div>
-  </div>
-  <div class="grid g3" style="margin-top:18px">
-    <div class="card"><div class="tag">Ishonchlilik</div><h3>Har javob validatsiyadan o'tadi</h3>
-      <p>JSON tuzilishi, sonlar, ismlar tekshiriladi. Mos kelmasa — shablon matn ishlatiladi,
-        jarayon to'xtamaydi.</p></div>
-    <div class="card"><div class="tag">Kalitsiz rejim</div><h3>Internet yo'q bo'lsa ham ishlaydi</h3>
-      <p><code>llm.enabled()</code> false bo'lsa, tizim shablon matnlar bilan to'liq ishlaydi.
-        47 ta test aynan shu rejimda o'tadi.</p></div>
-    <div class="card"><div class="tag">Shaffoflik</div><h3>Har chaqiruv jurnalda</h3>
-      <p>Maqsad, model, soniya, tokenlar va xato <code>llm_calls</code> jadvaliga yoziladi va
-        <code>/ai</code> sahifasida ko'rinadi.</p></div>
-  </div>
-  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>8 / 14</span></div>
-</section>
-
-<section class="slide">
-  <div class="crit">Mezon 5 · texnologiyalar</div>
-  <div class="eyebrow">Texnologiyalar to'plami</div>
-  <h1 class="sm">Har bir tanlov uchun sabab — va «nega muqobil emas»</h1>
-  <table>
-    <tr><th style="width:190px">Vosita</th><th>Vazifasi</th><th style="width:420px">Nega shu, nega muqobil emas</th></tr>
-    <tr><td><b>Python + FastAPI</b></td><td>Backend, API, fon navbati</td>
-      <td>Kompyuter ko'rish, AI SDK va PDF — uchalasi ham Python ekosistemasida eng kuchli. Node.js da OMR uchun alohida Python xizmati kerak bo'lardi: ikkita tizim, ikki barobar deploy.</td></tr>
-    <tr><td><b>OpenCV + ArUco</b></td><td>Markerlarni topish, tekislash, doirachalarni o'qish</td>
-      <td>ArUco id = jurnal raqami, kam joy egallaydi, oflayn va tekin. QR kod kartochkada ko'p joy oladi va perspektivani tuzatish uchun 4 nuqta bermaydi.</td></tr>
-    <tr><td><b>ReportLab</b></td><td>Kartochka PDF, millimetrli aniqlik</td>
-      <td>OMR geometriyasi bilan bitta manbadan ishlashi kerak. HTML→PDF da brauzer masshtabi markerlar joyini siljitadi.</td></tr>
-    <tr><td><b>PostgreSQL + SQLAlchemy</b></td><td>Ma'lumotlar, JSONB ustunlar</td>
-      <td>AI javoblari o'zgaruvchan tuzilmali — JSONB da saqlanadi, hisobot uchun SQL qoladi. Testlarda xuddi shu kod SQLite bilan ishlaydi.</td></tr>
-    <tr><td><b>React 19 + TS strict</b></td><td>Interfeys, server holati keshi</td>
-      <td>Backend javobi tuzilishi <code>types.ts</code> da qat'iy yozilgan: API o'zgarsa kompilyatsiya xato beradi. Arxitektura API-first — frontend qaytariladigan qaror.</td></tr>
-    <tr><td><b>Docker Compose</b></td><td>Bir xil muhit: lokal, server, test</td>
-      <td>Maktab serveriga ham, bulutga ham bir xil usulda qo'yiladi. Kubernetes bu miqyosda ortiqcha murakkablik.</td></tr>
-  </table>
-  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>9 / 14</span></div>
-</section>
-
-<section class="slide">
-  <div class="crit">Mezon 2 · kod tayyorligi</div>
-  <div class="eyebrow">Kod tayyorligi</div>
+  <div class="mezbar"><span class="n">2-mezon</span><span class="nm">Kod tayyorligi</span></div>
   <h1 class="sm">Boshqa dasturchi davom ettira oladigan holatda</h1>
   <div class="grid g2">
-    <div class="layer"><div class="tag">Testlar</div><h4>47 ta test, tashqi servissiz</h4>
+    <div class="layer"><div class="tag">Testlar</div><h4>47 ta test, tashqi servissiz o'tadi</h4>
       <ul>
         <li>PostgreSQL o'rniga SQLite, ombor o'rniga lokal papka, AI o'chiq — <code>pytest -q</code> yetarli</li>
         <li>Generator: har shablon × har daraja uchun javob va chalg'ituvchilar tekshiriladi</li>
         <li>Skaner: sintetik «telefon surati» yasalib, 10 ta kartochka o'qiladi</li>
         <li>Bosma xavfsizlik: matn va markerlar qirqish chizig'idan uzoqligi test bilan qo'riqlanadi</li>
       </ul></div>
-    <div class="layer"><div class="tag">Struktura</div><h4>Qatlamlar aralashmaydi</h4>
+    <div class="layer"><div class="tag">Struktura va tiplar</div><h4>Qatlamlar aralashmaydi</h4>
       <ul>
         <li><code>main.py</code> — faqat endpointlar: validatsiya va xatoni HTTP kodga aylantirish</li>
-        <li><code>service.py</code> / <code>conveyor.py</code> — biznes mantiq</li>
-        <li><code>omr.py</code>, <code>llm.py</code>, <code>pdfgen.py</code> — mustaqil modullar</li>
-        <li>TypeScript <b>strict</b>, <code>npm run check</code> bitta buyruqda tsc + oxlint</li>
+        <li><code>service.py</code> / <code>conveyor.py</code> — biznes mantiq; CV, AI va PDF alohida modul</li>
+        <li>TypeScript <b>strict</b>: API javobi tuzilishi <code>types.ts</code> da qat'iy yozilgan</li>
+        <li><code>npm run check</code> — bitta buyruqda tsc + oxlint, 0 xato</li>
       </ul></div>
   </div>
   <div class="grid g2" style="margin-top:16px">
     <div class="card ind"><h3>Geometriyaning yagona manbasi</h3>
       <p><code>app/layout.py</code> — kartochka o'lchamlari faqat shu yerda. PDF chizish, skaner va sinov
-        generatori uchalasi shundan o'qiydi, shuning uchun ular hech qachon bir-biridan ajralib qolmaydi.
-        <code>safety_report()</code> chekkalarni qaytaradi, test uni tekshiradi.</p></div>
+        generatori uchalasi shundan o'qiydi, shuning uchun ular hech qachon ajralib qolmaydi.</p></div>
     <div class="card tint"><h3>Ma'lumotni yo'qotmaydigan migratsiya</h3>
       <p>Yangi ustun <code>db.py:NEW_COLUMNS</code> ga yoziladi va ishga tushganda <code>ALTER TABLE</code>
-        bilan qo'shiladi. Shu tufayli serverdagi demo bazasi yangilanishlarda qayta yaratilmaydi.</p></div>
+        bilan qo'shiladi — serverdagi baza yangilanishlarda qayta yaratilmaydi.</p></div>
   </div>
-  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>10 / 14</span></div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>7 / 12</span></div>
 </section>
 
 <section class="slide">
-  <div class="crit">Mezon 2 &amp; 4 · muhandislik</div>
-  <div class="eyebrow">Amalda chiqqan muammolar</div>
-  <h1 class="sm">Qanday muammoni kodda qanday yechdik</h1>
+  <div class="mezbar"><span class="n">3-mezon</span><span class="nm">Yechimning innovatsionligi</span></div>
+  <h1 class="sm">Texnik jihatdan nimasi yangi</h1>
+  <div class="grid g2">
+    <div class="card tint"><div class="tag">01</div><h3>Chalg'ituvchi javoblar tasodifiy emas</h3>
+      <p>Har bir noto'g'ri variant aniq tushuncha xatosiga bog'langan (amallar tartibi, birlikni almashtirish,
+        model tuzish). Shuning uchun natija «5/7» emas, <b>«amallar tartibini buzyapti»</b> —
+        keyingi dars ssenariysi shundan tuziladi.</p></div>
+    <div class="card ind"><div class="tag">02</div><h3>Baho — deterministik, AI emas</h3>
+      <p>Bir xil surat har doim bir xil natija beradi: doirachani OpenCV o'qiydi, javobni kod solishtiradi.
+        AI ning noaniqligi bahoga umuman ta'sir qilmaydi.</p></div>
+    <div class="card"><div class="tag">03</div><h3>Feedback qog'ozga qaytadi</h3>
+      <p>AI yozgan izoh keyingi kartochkaning old tomoniga bosiladi. O'quvchida qurilma, akkaunt yoki
+        internet talab qilinmaydi — sikl yopiq.</p></div>
+    <div class="card gold"><div class="tag">04</div><h3>Ovozdan tuzilgan xulosa</h3>
+      <p>O'qituvchi 20 soniya erkin gapiradi: ovoz matnga, matn tartibli xulosaga aylanadi.
+        Aytilgan ismlar sinf ro'yxatiga <b>AI siz</b>, <code>difflib</code> bilan bog'lanadi.</p></div>
+  </div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>8 / 12</span></div>
+</section>
+
+<section class="slide">
+  <div class="mezbar"><span class="n">4-mezon</span><span class="nm">Jamoaning bilim darajasi</span></div>
+  <h1 class="sm">Har qaror uchun sabab — va muqobilning kamchiligi</h1>
   <table>
-    <tr><th style="width:300px">Muammo</th><th>Yechim</th><th style="width:230px">Qayerda</th></tr>
-    <tr><td><b>Bitta ArUco marker ko'rinmadi</b> — qo'l bilan yopilgan yoki soyada</td>
-      <td>Qolgan 3 burchakdan 4-chisi hisoblanadi; blok shakli tekshiriladi</td><td><code>omr.py:_from_three</code></td></tr>
-    <tr><td><b>Qat'iy siyoh chegarasi ishlamadi</b> — yorug'lik va ruchka rangi har xil</td>
-      <td>Har surat uchun chegara o'zi hisoblanadi: bo'sh doiracha mediani va eng qora belgi orasida</td><td><code>omr.py:_choose</code></td></tr>
-    <tr><td><b>Chop etishda blok siljidi</b> — javoblar noto'g'ri o'qildi</td>
-      <td>Doiracha atrofida ±0,9 mm oynada qidiriladi; xavfsiz chekkalar test bilan qo'riqlanadi</td><td><code>omr.py:_bubble_ink</code>, <code>layout.py</code></td></tr>
-    <tr><td><b>O'qituvchi har surat uchun kutib turardi</b></td>
-      <td>Uy vazifasi tahlili fon navbatiga chiqarildi; interfeys holatni o'zi yangilaydi</td><td><code>service.py:_BG</code></td></tr>
-    <tr><td><b>Kartochka surati uy vazifasi deb qabul qilindi</b></td>
-      <td>Avval ArUco qidiriladi — topilsa darhol rad etiladi; so'ng AI sahifa turini aniqlaydi</td><td><code>service.py:analyze_homework</code></td></tr>
-    <tr><td><b>Serverning protsessori eski</b> — numpy va MinIO ishga tushmadi</td>
-      <td>Ikkinchi yig'ish varianti (<code>requirements-oldcpu.txt</code>) va lokal fayl ombori</td><td><code>Dockerfile</code>, <code>storage.py</code></td></tr>
+    <tr><th style="width:230px">Qaror</th><th>Nega shunday</th><th style="width:330px">Nega muqobil emas</th></tr>
+    <tr><td><b>ArUco markerlar</b></td><td>Marker id = jurnal raqami; 4 burchak perspektivani tuzatish uchun yetarli</td>
+      <td>QR kod kartochkada ko'p joy oladi va tekislash uchun 4 nuqta bermaydi</td></tr>
+    <tr><td><b>ReportLab</b></td><td>Millimetrli aniqlik; OMR bilan bitta geometriya manbasidan ishlaydi</td>
+      <td>HTML→PDF da brauzer masshtabi markerlar joyini siljitadi</td></tr>
+    <tr><td><b>Monolit + modullar</b></td><td>Bu miqyosda kamroq nosozlik nuqtasi; OMR, PDF, AI allaqachon alohida</td>
+      <td>Mikroservislar 3 kishilik jamoada deploy va kuzatuvni murakkablashtiradi</td></tr>
+    <tr><td><b>JSONB ustunlar</b></td><td>AI javoblari o'zgaruvchan tuzilmali — sxemani buzmasdan saqlanadi</td>
+      <td>Har maydon uchun jadval — migratsiya qimmat, hisobot uchun foydasi yo'q</td></tr>
+    <tr><td><b>Moslashuvchan yig'ish</b></td><td><code>Dockerfile</code> da <code>ARG PY</code>/<code>ARG REQ</code>:
+      bir xil kod turli muhitda ishlaydi</td>
+      <td>Muhitga qattiq bog'langan obraz — serverni almashtirsang qayta yozish kerak</td></tr>
+    <tr><td><b>Fon navbati</b></td><td>Uy vazifasi tahlili fonda: o'qituvchi keyingi o'quvchiga o'tadi</td>
+      <td>So'rovni bloklash — 30 ta daftarda o'qituvchi kutib o'tiradi</td></tr>
   </table>
-  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>11 / 14</span></div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>9 / 12</span></div>
 </section>
 
 <section class="slide">
-  <div class="crit">Mezon 2 &amp; 3 · maxfiylik</div>
-  <div class="eyebrow">Maxfiylik va xavfsizlik</div>
-  <h1 class="sm">Bolalar ma'lumoti bilan ishlayapmiz — shunga mos qurilgan</h1>
-  <div class="grid g3">
-    <div class="card tint"><div class="tag">AI ga nima ketadi</div><h3>Ism emas, kod</h3>
-      <p>Modelga <code>5B-17</code> kabi kod va agregat statistika yuboriladi. Ism, familiya va sinf ro'yxati
-        serverdan chiqmaydi. Ovoz matnga aylantiriladi va saqlanmaydi.</p></div>
-    <div class="card"><div class="tag">Kirish</div><h3>PBKDF2-SHA256, 200 000 iteratsiya</h3>
-      <p>Parol hech qachon ochiq saqlanmaydi. Token HMAC bilan imzolanadi.
-        Bazani tozalaydigan amallar kirishni talab qiladi — sayt ochiq internetda turibdi.</p></div>
-    <div class="card"><div class="tag">Ota-ona</div><h3>Faqat o'z farzandi</h3>
-      <p>Ota-ona portali maxsus token bilan ochiladi, boshqa o'quvchilar ko'rinmaydi.
-        Direktor paneli ham ismsiz — sinf kesimida ishlaydi.</p></div>
-  </div>
-  <div class="card ind" style="margin-top:18px"><h3>Nega bu texnik qaror ham</h3>
-    <p>AI ga ism yubormaslik — bu faqat siyosat emas, arxitektura: kodlar <code>service.py</code> da
-      almashtiriladi, promptlarda ism maydoni umuman yo'q. Shuning uchun keyinchalik model almashtirilsa ham
-      maxfiylik buzilmaydi.</p></div>
-  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>12 / 14</span></div>
+  <div class="mezbar"><span class="n">5-mezon</span><span class="nm">Texnologiyalar to'plami</span></div>
+  <h1 class="sm">Har bir vosita nima vazifa bajaradi</h1>
+  <table>
+    <tr><th style="width:210px">Vosita</th><th>Vazifasi</th><th style="width:380px">Nega aynan shu</th></tr>
+    <tr><td><b>Python 3.13 + FastAPI</b></td><td>API, biznes mantiq, fon navbati</td>
+      <td>CV, AI SDK va PDF — uchalasi Python ekosistemasida; async I/O AI chaqiruvida serverni bloklamaydi</td></tr>
+    <tr><td><b>OpenCV + ArUco</b></td><td>Markerlar, perspektivani tekislash, doirachalarni o'qish</td>
+      <td>Oflayn, tekin, sekundlarda ishlaydi; har surat uchun chegara o'zi hisoblanadi</td></tr>
+    <tr><td><b>ReportLab + pymupdf</b></td><td>Kartochka PDF, mashq daftari betlarini rasm qilish</td>
+      <td>Millimetr aniqligi va PDF ni rasterlash bitta stackda</td></tr>
+    <tr><td><b>PostgreSQL + SQLAlchemy 2</b></td><td>Ma'lumotlar, JSONB, yengil migratsiya</td>
+      <td>Testlarda xuddi shu kod SQLite bilan ishlaydi — servis kerak emas</td></tr>
+    <tr><td><b>React 19 + Vite + TS</b></td><td>Interfeys, server holati keshi</td>
+      <td>Boshlang'ich yuk ~176 KB gzip; three.js alohida chunk (145 KB) — faqat kerak bo'lganda</td></tr>
+    <tr><td><b>OpenAI API</b></td><td>Matn, vizual tekshiruv, transkripsiya</td>
+      <td>Yagona tashqi xizmat; kalit bo'lmasa tizim shablon matnlar bilan to'liq ishlaydi</td></tr>
+    <tr><td><b>Docker Compose</b></td><td>Lokal, server va CI uchun bir xil muhit</td>
+      <td>Maktab serveriga ham, bulutga ham bir xil usulda qo'yiladi</td></tr>
+  </table>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>10 / 12</span></div>
 </section>
 
 <section class="slide">
-  <div class="crit">Barcha 5 mezon</div>
-  <div class="eyebrow">Baholash mezonlari bo'yicha</div>
+  <div class="eyebrow">Xulosa</div>
   <h1 class="sm">Har bir mezonga bitta jumlalik javob va dalil</h1>
-  <div class="mez">
   <table>
-    <tr><th style="width:230px">Mezon</th><th>Bizning javobimiz</th><th style="width:300px">Dalil</th></tr>
-    <tr><td>1. Texnik amalga oshirish</td>
-      <td>Zanjir uchidan-uchiga ishlaydi va jonli serverda turibdi: reja → variant → PDF → surat → baho → feedback → jurnal → keyingi ssenariy</td>
-      <td class="ev">darspilot.com · 13 qadamdan 9 tasi kod</td></tr>
-    <tr><td>2. Kod tayyorligi</td>
-      <td>47 test tashqi servissiz o'tadi, TypeScript strict 0 xato, geometriya yagona manbada, migratsiya ma'lumotni yo'qotmaydi</td>
+    <tr><th style="width:250px">Mezon</th><th>Javobimiz</th><th style="width:290px">Dalil</th></tr>
+    <tr><td><b>1. Texnik amalga oshirish</b></td>
+      <td>Zanjir uchidan-uchiga ishlaydi va jonli serverda turibdi; 13 qadamdan 9 tasi sof kod</td>
+      <td class="ev">darspilot.com · /api/docs</td></tr>
+    <tr><td><b>2. Kod tayyorligi</b></td>
+      <td>47 test tashqi servissiz o'tadi, TS strict 0 xato, geometriya yagona manbada</td>
       <td class="ev">pytest -q · npm run check · layout.py</td></tr>
-    <tr><td>3. Yechimning innovatsionligi</td>
-      <td>Qog'oz + bitta telefon bilan yopiq ma'lumot sikli; chalg'ituvchi javoblar tushuncha xatosiga bog'langan — natija «5/7» emas, «amallar tartibini buzyapti»</td>
+    <tr><td><b>3. Innovatsionlik</b></td>
+      <td>Xato turini nomlaydigan generator, deterministik baho, qog'ozga qaytadigan feedback</td>
       <td class="ev">problems.py · grading.py</td></tr>
-    <tr><td>4. Jamoaning bilim darajasi</td>
-      <td>Har qaror uchun sabab va muqobilning kamchiligi tayyor; amalda chiqqan 6 ta muammo va ularning yechimi ko'rsatiladi</td>
-      <td class="ev">11-slayd</td></tr>
-    <tr><td>5. Texnologiyalar to'plami</td>
-      <td>Bitta tashqi xizmat (OpenAI), kalitsiz ham ishlaydi; hammasi Docker'da; eski protsessorli serverga moslashtirildi</td>
-      <td class="ev">Dockerfile · requirements-oldcpu.txt</td></tr>
+    <tr><td><b>4. Jamoaning bilim darajasi</b></td>
+      <td>Har qaror uchun sabab va muqobilning kamchiligi; muhitga bog'liqlik konfiguratsiyada</td>
+      <td class="ev">9-slayd · deploy/</td></tr>
+    <tr><td><b>5. Texnologiyalar to'plami</b></td>
+      <td>Bitta tashqi xizmat, kalitsiz ham ishlaydi, hammasi Docker'da</td>
+      <td class="ev">docker compose up</td></tr>
   </table>
-  </div>
-  <p class="lead" style="margin-top:14px">Ustuvor mavzu: <b>Ta'lim treki, 2-mavzu — AI yordamida avtomatik baholash va feedback</b>.
-    Bu qo'shimcha funksiya emas, mahsulotning o'zagi.</p>
-  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>13 / 14</span></div>
+  <p class="lead" style="margin-top:16px">Ustuvor mavzu: <b>Ta'lim treki, 2-mavzu — AI yordamida avtomatik
+    baholash va feedback</b>. Bu qo'shimcha funksiya emas, mahsulotning o'zagi.</p>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>11 / 12</span></div>
 </section>
 
 <section class="slide">
-  <div class="crit">Jonli ko'rsatish</div>
   <div class="eyebrow">Demo</div>
   <h1 class="sm">3 daqiqada nimani jonli ko'rsatamiz</h1>
-  <ol class="steps">
-    <li><b>Bugungi dars</b> — konveyerning qaysi qadamida ekani, ssenariy va kartochkalar PDF si (chop etilgan nusxa qo'lda).</li>
-    <li><b>Surat → baho</b> — 10 ta kartochka bitta suratda, ~2 soniyada o'qiladi; shubhali katak bo'lsa o'qituvchiga chiqadi.</li>
-    <li><b>Uy vazifasi</b> — mashq daftarining shu darsga berilgan betlari ko'rinadi; bir necha bet suratga olinib, birga tahlilga yuboriladi.</li>
-    <li><b>Ovozli dars tahlili</b> — 20 soniya gapiramiz, tizim tuzilgan xulosa qaytaradi va ismlarni sinf ro'yxatiga bog'laydi.</li>
-    <li><b>AI jurnali</b> — har chaqiruv: maqsad, model, necha soniya turgani.</li>
-  </ol>
-  <div class="live" style="margin-top:22px">
-    <div><div class="url">darspilot.com</div><p style="margin-top:4px">demo@darspilot.uz / demo1234</p></div>
-    <p style="border-left:1px solid #CCE7E6;padding-left:26px">Kod: <b>github.com/DiyorbekBoltayev/darspilot</b><br>
+  <div class="flow" style="margin-top:22px">
+    <div class="f"><div class="n">01</div><h5>Bugungi dars</h5><p>Konveyerning qaysi qadamida ekani, ssenariy va kartochkalar PDF si — chop etilgan nusxa qo'lda</p></div>
+    <div class="f"><div class="n">02</div><h5>Surat → baho</h5><p>10 ta kartochka bitta suratda, ~2 soniyada o'qiladi; shubhali katak o'qituvchiga chiqadi</p></div>
+    <div class="f"><div class="n">03</div><h5>Uy vazifasi</h5><p>Mashq daftarining berilgan betlari ko'rinadi; bir necha bet birga tahlilga yuboriladi</p></div>
+    <div class="f"><div class="n">04</div><h5>Ovozli tahlil</h5><p>20 soniya gapiramiz — tizim tartibli xulosa qaytaradi va ismlarni ro'yxatga bog'laydi</p></div>
+    <div class="f"><div class="n">05</div><h5>AI jurnali</h5><p>Har chaqiruv: maqsad, model, necha soniya turgani</p></div>
+  </div>
+  <div class="live" style="margin-top:26px">
+    <div><div class="url">darspilot.com</div><p style="margin-top:2px">demo@darspilot.uz / demo1234</p></div>
+    <p style="border-left:1px solid #CCE7E6;padding-left:24px">
+      Kod: <b>github.com/DiyorbekBoltayev/darspilot</b><br>
       Internet uzilsa — tizim kalitsiz rejimda, shablon matnlar bilan to'liq ishlaydi.</p>
   </div>
-  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>14 / 14</span></div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>12 / 12</span></div>
 </section>
 
 <script src="present.js"></script>
