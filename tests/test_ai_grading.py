@@ -283,3 +283,17 @@ def test_homework_rejects_diagnostic_card_photo(client):
     assert "kartochka" in hw["comment"].lower()
     assert hw["total"] == 0
     assert view["pending"] >= 0
+
+
+def test_demo_homework_creates_page(client):
+    """Daftar bo'lmaganda: sun'iy sahifa yaratiladi, surat saqlanadi va odatdagi tekshiruv yo'liga tushadi."""
+    from sqlalchemy import select as sql_select
+
+    with db.session() as s:
+        lesson = s.scalars(sql_select(Lesson).where(Lesson.conducted_at.is_(None))).first()
+        lid = lesson.id
+    view = client.post(f"/api/lessons/{lid}/homework/demo").json()
+    sid = view["demo_student_id"]
+    row = next(x for x in view["students"] if x["id"] == sid)
+    assert row["homework"]["image"]                      # surat chindan yaratildi va saqlandi
+    assert row["homework"]["status"] in ("navbatda", "tayyor", "xato")

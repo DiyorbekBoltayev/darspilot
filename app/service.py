@@ -1057,6 +1057,48 @@ def check_homework(lesson_id: int, student_id: int, data: bytes, filename: str =
     return homework_view(lesson_id)
 
 
+DEMO_HOMEWORK_OK = ["24 + 6 * 3 = 42", "(120 - 45) : 5 = 15", "36 : 4 + 18 = 27", "7 * 8 - 14 = 42"]
+DEMO_HOMEWORK_BAD = ["24 + 6 * 3 = 90", "(120 - 45) : 5 = 105", "36 : 4 + 18 = 25", "150 - 60 : 6 = 15"]
+
+
+def demo_homework(lesson_id: int, student_id: int | None = None) -> dict:
+    """Daftar bo'lmaganda: sun'iy mashq daftari sahifasi va uni haqiqiy AI tekshiruvidan o'tkazish.
+
+    Surat chindan ham generatsiya qilinadi va oddiy uy vazifasi kabi yo'lga qo'yiladi —
+    demoda mentor AI ning suratni o'qishini to'liq ko'radi.
+    """
+    from . import simulate
+
+    with db.session() as s:
+        lesson = s.get(Lesson, lesson_id)
+        if not lesson:
+            raise NotFound
+        students = class_students(s, lesson.class_id)
+        have = {h.student_id for h in s.scalars(select(Homework).where(Homework.lesson_id == lesson_id))}
+        if student_id:
+            st = next((x for x in students if x.id == student_id), None)
+            if st is None:
+                raise ValueError("Bu o'quvchi shu sinfda emas")
+        else:
+            st = next((x for x in students if x.id not in have), None)
+            if st is None:
+                return {"error": "Sinfdagi barcha o'quvchilarning vazifasi allaqachon yuklangan."}
+        sid, jno = st.id, st.journal_no
+        skills = skill_map(s, lesson.class_id).get(sid, {})
+
+    rng = random.Random(lesson_id * 97 + sid)
+    strong = avg(skills.values()) > 0.75 if skills else rng.random() < 0.5
+    wrong = 0 if strong else rng.randint(1, 2)          # kuchli o'quvchida xato yo'q, boshqasida 1–2 ta
+    picks = rng.sample(range(len(DEMO_HOMEWORK_OK)), 3)
+    tasks = []
+    for k, i in enumerate(picks):
+        bad = k < wrong
+        tasks.append({"nom": str(112 + i * 2), "yozuv": (DEMO_HOMEWORK_BAD if bad else DEMO_HOMEWORK_OK)[i]})
+    jpg = simulate.make_homework_page(tasks, seed=lesson_id * 10 + sid)
+    out = check_homework(lesson_id, sid, jpg, f"demo-daftar-{jno}.jpg")
+    return {**out, "demo_student_id": sid}
+
+
 def analyze_homework(lesson_id: int, student_id: int, jpg: bytes):
     """Fon ishi: surat turini tekshiradi, so'ng AI mashqlarni baholaydi."""
     try:

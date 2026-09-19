@@ -119,6 +119,9 @@ export const api = {
     request<Results>(`/api/diagnostics/${did}/results/${sid}/feedback`, json('PUT', body)),
   // uy vazifasi: mashq daftari sahifasi surati → AI tekshiruvi
   homework: (lessonId: number) => request<HomeworkView>(`/api/lessons/${lessonId}/homework`),
+  demoHomework: (lessonId: number, studentId?: number) =>
+    request<HomeworkView & { demo_student_id?: number; error?: string }>(
+      `/api/lessons/${lessonId}/homework/demo${studentId ? `?student_id=${studentId}` : ''}`, json('POST')),
   checkHomework: (lessonId: number, studentId: number, file: File) => {
     const fd = new FormData()
     fd.append('student_id', String(studentId))

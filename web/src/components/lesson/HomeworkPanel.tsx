@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { BookOpenCheck, Camera, Check, Loader2, NotebookPen, RefreshCw, TriangleAlert } from 'lucide-react'
+import { BookOpenCheck, Camera, Check, Loader2, NotebookPen, RefreshCw, TriangleAlert, WandSparkles } from 'lucide-react'
 import { api } from '@/lib/api'
 import type { HomeworkStudent, HomeworkView } from '@/lib/types'
 import { cn } from '@/lib/utils'
@@ -16,6 +16,18 @@ export default function HomeworkPanel({ lessonId }: { lessonId: number }) {
     refetchInterval: (q) => ((q.state.data?.pending ?? 0) > 0 ? 2500 : false),
   })
   const [active, setActive] = useState<number | null>(null)
+  const ai = useAi()
+  const qc = useQueryClient()
+  // Daftar yo'q bo'lsa: sun'iy sahifa yaratiladi va haqiqiy AI tekshiruvidan o'tadi
+  const demo = useMutation({
+    mutationFn: () => api.demoHomework(lessonId),
+    onSuccess: (d) => {
+      if (d.error) { ai.toast(d.error, 'bad'); return }
+      qc.setQueryData(['homework', lessonId], d)
+      ai.toast('Demo daftar surati yuborildi — AI tekshirmoqda')
+    },
+    onError: (e) => ai.toast(e.message, 'bad'),
+  })
 
   if (isLoading || !data) return <div className="skeleton h-40" />
   const checked = data.students.filter((s) => s.homework)
@@ -75,6 +87,17 @@ export default function HomeworkPanel({ lessonId }: { lessonId: number }) {
             </div>
           </div>
         )}
+
+        <div className="mt-4 flex flex-col gap-2 rounded-xl bg-sunken p-3.5 ring-1 ring-line sm:flex-row sm:items-center">
+          <WandSparkles className="size-5 shrink-0 text-indigo-600" />
+          <p className="min-w-0 flex-1 text-[13px] text-mute">
+            <b className="font-semibold text-ink">Daftar yo'qmi? Demo sahifa.</b> Mashq daftari sahifasi yaratiladi va
+            haqiqiy suratdek AI tekshiruvidan o'tadi — jarayonni printersiz ko'rsatish uchun.
+          </p>
+          <Button icon={NotebookPen} loading={demo.isPending} disabled={pending.length === 0} onClick={() => demo.mutate()}>
+            {pending.length === 0 ? 'Hammasi tekshirilgan' : 'Demo daftar surati'}
+          </Button>
+        </div>
       </div>
     </Card>
   )

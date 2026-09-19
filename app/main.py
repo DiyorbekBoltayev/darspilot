@@ -3,7 +3,7 @@ import mimetypes
 from contextlib import asynccontextmanager
 from typing import List, Optional
 
-from fastapi import FastAPI, File, Form, Header, HTTPException, UploadFile
+from fastapi import Depends, FastAPI, File, Form, Header, HTTPException, UploadFile
 from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import FileResponse, Response
 from pydantic import BaseModel
@@ -187,6 +187,17 @@ def auth_login(body: LoginBody):
         return auth.login(body.email, body.password)
     except auth.AuthError as e:
         raise HTTPException(400, str(e))
+
+
+def require_user(authorization: Optional[str] = Header(None)) -> dict:
+    """Ma'lumotni yo'q qiladigan amallar faqat tizimga kirgan o'qituvchi uchun.
+
+    Sayt ochiq internetda turgani uchun demo bazasini istalgan odam o'chirib yuborishining oldi olinadi.
+    """
+    user = auth.me((authorization or "").removeprefix("Bearer ").strip())
+    if not user:
+        raise HTTPException(401, "Bu amal uchun tizimga kirish kerak")
+    return user
 
 
 @app.get("/api/auth/me")
@@ -539,6 +550,12 @@ async def homework_check(lid: int, student_id: int = Form(...), file: UploadFile
     return await _run(service.check_homework, lid, student_id, await file.read(), file.filename)
 
 
+@app.post("/api/lessons/{lid}/homework/demo")
+async def homework_demo(lid: int, student_id: int | None = None):
+    """Daftar yo'q bo'lsa: sun'iy mashq daftari sahifasi yaratiladi va haqiqiy AI tekshiruvidan o'tadi."""
+    return await _run(service.demo_homework, lid, student_id)
+
+
 @app.put("/api/lessons/{lid}/homework/{sid}")
 def homework_confirm(lid: int, sid: int, body: HomeworkTasks):
     return _wrap(service.confirm_homework, lid, sid, body.tasks, body.confirmed)
@@ -595,7 +612,7 @@ def curriculum_confirm(body: CurriculumConfirm, class_id: Optional[int] = None):
 
 
 @app.post("/api/curriculum/reset")
-def curriculum_reset(class_id: Optional[int] = None):
+def curriculum_reset(class_id: Optional[int] = None, user: dict = Depends(require_user)):
     return _wrap(curriculum_plan.reset_default, class_id)
 
 
@@ -637,9 +654,10 @@ def ai_log():
 
 
 @app.post("/api/demo/reset")
-async def demo_reset():
+async def demo_reset(user: dict = Depends(require_user)):
+    """Demo bazasini boshidan tiklaydi — barcha jadvallar tozalanadi, shuning uchun kirish talab qilinadi."""
     await run_in_threadpool(service.demo_reset)
-    return {"ok": True}
+    return {"ok": True, "by": user["email"]}
 
 
 # Docker'siz ishga tushirishda React build'ni FastAPI o'zi beradi (docker'da buni nginx qiladi)

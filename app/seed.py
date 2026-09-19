@@ -101,6 +101,23 @@ HOMEWORK_BAD = [("24 + 6 * 3 = 90", "amallar tartibi"), ("(120 - 45) : 5 = 105",
                 ("150 - 60 : 6 = 15", "amallar tartibi")]
 
 
+def _demo_day_shift(today_index: int) -> int:
+    """Demo kuni BSB/ChSB ga tushmasligi uchun ketma-ketlikni necha darsga surish kerakligi.
+
+    Reja haqiqiy (AHA! 170 darslik TMR), sanalar ham haqiqiy — faqat sinf rejada bir-ikki dars
+    "orqada" bo'ladi. Shunda demo kuni doim oddiy, shabloni bor dars bo'ladi.
+    """
+    from . import curriculum_plan
+
+    slots = [r for r in curriculum_plan.default_rows() for _ in range(max(1, r["hours"]))]
+    for want_template in (True, False):
+        for shift in range(0, 6):
+            i = today_index - shift
+            if 0 <= i < len(slots) and slots[i]["kind"] == "dars" and (slots[i]["template"] or not want_template):
+                return shift
+    return 0
+
+
 def _gap_choice(rng):
     return rng.choices([0, 1, 2, 3, 4], weights=[1, 4, 4, 3, 2])[0]
 
@@ -130,7 +147,11 @@ def seed():
             s.flush()
 
             # darslar: o'quv yili boshidan bugungacha + kelgusi 6 ta
-            rows = _dates(cls.schedule, start, today) + conveyor.schedule_dates(cls.schedule, today, 6)
+            past = _dates(cls.schedule, start, today)
+            rows = past + conveyor.schedule_dates(cls.schedule, today, 6)
+            # demo kuni baholash kuniga (BSB/ChSB) tushib qolmasin: boshidagi bir nechta darsni tashlab,
+            # butun ketma-ketlikni suramiz — sanalar haqiqiy, faqat sinf rejada shuncha dars "orqada" bo'ladi
+            rows = rows[_demo_day_shift(len(past) - 1):]
             for seq, (d, h) in enumerate(rows):
                 s.add(Lesson(class_id=cls.id, date=d, hour=h, seq=seq,
                              conducted_at=datetime.combine(d, dtime(8 + h, 0)) if d < today else None))

@@ -18,6 +18,12 @@ def _cid(client, name):
     return next(c["id"] for c in client.get("/api/classes").json() if c["name"] == name)
 
 
+def _auth(client):
+    """Ma'lumotni yo'q qiladigan amallar (reset) faqat kirgan o'qituvchiga ochiq."""
+    token = client.post("/api/auth/login", json={"email": "demo@darspilot.uz", "password": "demo1234"}).json()["token"]
+    return {"Authorization": f"Bearer {token}"}
+
+
 def test_plan_edit_export_and_attention(client):
     lesson = next(x for x in client.get("/api/today").json()["lessons"] if x["class_name"] == "5-A")
     pid = client.post(f"/api/lessons/{lesson['id']}/plan", json={}).json()["plan_id"]
@@ -107,11 +113,13 @@ def test_methods_reports_and_curriculum(client):
     confirmed = client.post("/api/curriculum/confirm", params={"class_id": cid}, json={"topics": preview["topics"]}).json()
     assert [t["source"] for t in confirmed["topics"]] == ["yuklangan", "yuklangan"]
     assert len(client.get("/api/curriculum", params={"class_id": _cid(client, "5-A")}).json()["topics"]) == 106
-    assert len(client.post("/api/curriculum/reset", params={"class_id": cid}).json()["topics"]) == 106
+    assert client.post("/api/curriculum/reset", params={"class_id": cid}).status_code == 401   # kirishsiz mumkin emas
+    assert len(client.post("/api/curriculum/reset", params={"class_id": cid}, headers=_auth(client)).json()["topics"]) == 106
 
 
 def test_demo_reset(client):
-    assert client.post("/api/demo/reset").status_code == 200
+    assert client.post("/api/demo/reset").status_code == 401                 # ochiq internetda himoyalangan
+    assert client.post("/api/demo/reset", headers=_auth(client)).status_code == 200
     classes = client.get("/api/classes").json()
     assert [c["students"] for c in classes] == [29, 31, 28]
     ov = client.get("/api/overview", params={"class_id": classes[1]["id"]}).json()
