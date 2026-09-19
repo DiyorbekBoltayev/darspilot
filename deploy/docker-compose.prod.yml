@@ -1,0 +1,35 @@
+# VPS uchun: 443 port, mavjud Let's Encrypt sertifikati va MinIO o'rniga lokal fayl ombori.
+services:
+  web:
+    ports:
+      - "443:443"
+    volumes:
+      - certbot_conf:/etc/letsencrypt:ro
+      - certbot_www:/var/www/certbot:ro
+      - ./deploy/nginx-ssl.conf:/etc/nginx/conf.d/default.conf:ro
+    restart: unless-stopped
+  api:
+    build:
+      context: .
+      args:
+        PY: "3.12"
+        REQ: requirements-oldcpu.txt
+    environment:
+      MINIO_ENDPOINT: ""              # bo'sh => lokal papka ishlatiladi (serverning CPU si MinIO ni ko'tarmaydi)
+      LOCAL_STORAGE_DIR: /srv/files
+      WORKBOOK_PDF: /srv/mashq_daftari.pdf
+    volumes:
+      - files:/srv/files
+      - ./mashq_daftari.pdf:/srv/mashq_daftari.pdf:ro
+    restart: unless-stopped
+  db:
+    restart: unless-stopped
+
+volumes:
+  files:
+  certbot_conf:
+    external: true
+    name: qarzdaftar_certbot_conf
+  certbot_www:
+    external: true
+    name: qarzdaftar_certbot_www
