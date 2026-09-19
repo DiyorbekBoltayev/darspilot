@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<title>DarsPilot — Soha mentori uchun (CP2)</title>
+<link rel="stylesheet" href="deck.css">
+<style>
+  .mezbar{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+  .mezbar .n{background:var(--indigo);color:#fff;border-radius:10px;padding:7px 15px;font-size:15px;font-weight:600;
+    font-family:'Unbounded',sans-serif;letter-spacing:.01em}
+  .mezbar .nm{font-family:'Unbounded',sans-serif;font-size:15px;font-weight:600;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--firuza)}
+  .flow { display: flex; align-items: stretch; gap: 8px; margin-top: 18px; }
+  .flow .f { flex: 1; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px 12px; }
+  .flow .f .n { font-family: 'Unbounded', sans-serif; font-size: 12px; color: var(--firuza); font-weight: 600; }
+  .flow .f h5 { font-size: 14.5px; font-weight: 600; margin-top: 5px; line-height: 1.25; }
+  .flow .f p { font-size: 12.5px; color: var(--mute); margin-top: 6px; line-height: 1.4; }
+  .stage { display: flex; gap: 8px; margin-top: 18px; }
+  .stage div { flex: 1; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 10px; text-align: center; }
+  .stage div b { display: block; font-family: 'Unbounded', sans-serif; font-size: 13.5px; }
+  .stage div span { font-size: 12px; color: var(--mute); display: block; margin-top: 4px; line-height: 1.35; }
+  code { font-family: 'Consolas', monospace; font-size: 13.5px; background: #F0F3F5; padding: 2px 6px; border-radius: 5px; color: var(--indigo); }
+  td.ev { color: var(--indigo); font-family: 'Consolas', monospace; font-size: 12.5px }
+  /* bloklar slaydni to'liq egallasin — matn kam, shuning uchun kartochka ichida markazda turadi */
+  .slide { padding-bottom: 96px; }          /* pastki kolontitulgacha bo'sh joy */
+  .fill { flex: 1; align-content: stretch; }
+  .stage.fill div, .flow.fill .f { display: flex; flex-direction: column; justify-content: center; }
+  .split.fill { align-items: stretch; }
+  .fill .card { display: flex; flex-direction: column; justify-content: center; }
+  .fill .card .big { font-size: 46px; }
+  .fill .card h3 { font-size: 20px; }
+  .fill .card p { font-size: 16px; }
+  .fill .card .cap { font-size: 14.5px; }
+  .fill.less { flex: .78; }
+  table.airy td, table.airy th { padding-top: 16px; padding-bottom: 16px; }
+  table.airy td { font-size: 16.5px; }
+</style>
+</head>
+<body>
+
+<!-- 1. MUQOVA -->
+<section class="slide cover">
+  <div class="kicker">Umummilliy AI Xakaton · Xorazm · Ta'lim treki · 2-ustuvor mavzu</div>
+  <h1>DarsPilot</h1>
+  <div class="sub">O'qituvchining tekshiruvga ketadigan vaqtini qaytaramiz: qog'oz kartochka telefonda
+    suratga olinadi, javobni kod o'qiydi, AI esa xato turini nomlab feedback yozadi.</div>
+  <div class="meta">
+    <div><b>Checkpoint 2</b>19-sentabr, 2026 · 14:50</div>
+    <div><b>Soha mentori</b>Jumanazarov Azizbek · Ta'lim</div>
+    <div><b>Jamoa</b>Fractal · 3 a'zo</div>
+    <div><b>Jonli</b>darspilot.com</div>
+  </div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>Soha mentori · CP2</span></div>
+</section>
+
+<!-- 2. LOYIHA HAQIDA -->
+<section class="slide">
+  <div class="eyebrow">Loyiha haqida</div>
+  <h1 class="sm">Muammo bitta emas — uchta qatlamda</h1>
+  <div class="grid g3 fill" style="margin-top:20px">
+    <div class="card warn"><div class="tag" style="color:var(--terra)">01 · vaqt</div>
+      <h3>Haftasiga 3 soatdan ko'p</h3>
+      <p>36 o'qituvchidan <b>21 tasi</b> — faqat tekshiruvga.</p></div>
+    <div class="card warn"><div class="tag" style="color:var(--terra)">02 · sifat</div>
+      <h3>Natija — «5/7» degan raqam</h3>
+      <p>Bola qaysi qadamda adashganini bilmaydi.</p></div>
+    <div class="card warn"><div class="tag" style="color:var(--terra)">03 · qamrov</div>
+      <h3>Kim chetda qolgani yozilmaydi</h3>
+      <p>«Oxirgi 2 haftada kim bilan ishlamadim» — faqat <b>15/36</b> aniq biladi.</p></div>
+  </div>
+  <div class="grid g2 fill less" style="margin-top:20px">
+    <div class="card tint"><h3>Yechim — butun dars konveyeri</h3>
+      <p>Tizim mavzuni, kim bilan ishlanganini va oldingi xatolarni biladi.</p></div>
+    <div class="card ind"><h3>O'quvchida qurilma yo'q</h3>
+      <p>Qog'oz qoladi; o'qituvchining telefoni — yagona qurilma.</p></div>
+  </div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>2 / 11</span></div>
+</section>
+
+<!-- 3. DARS KONVEYERI -->
+<section class="slide">
+  <div class="eyebrow">Yechim</div>
+  <h1 class="sm">Dars konveyeri: 5 qadam, har biri keyingisiga ma'lumot beradi</h1>
+  <div class="flow fill less" style="margin-top:26px">
+    <div class="f"><div class="n">01</div><h5>Tayyorlash</h5><p>Rejadan mavzu — ssenariy tayyor</p></div>
+    <div class="f"><div class="n">02</div><h5>Darsda</h5><p>Kim bilan ishlandi — qayd etiladi</p></div>
+    <div class="f"><div class="n">03</div><h5>Tekshirish</h5><p>Bitta surat — 10 ta ish</p></div>
+    <div class="f"><div class="n">04</div><h5>Tahlil</h5><p>Xato turi nomlanadi</p></div>
+    <div class="f"><div class="n">05</div><h5>Keyingi dars</h5><p>Natija ssenariyga o'tadi</p></div>
+  </div>
+  <div class="grid g3 fill" style="margin-top:26px">
+    <div class="card"><div class="big fz-fir">5 daq</div><div class="cap">darsga tayyorgarlik</div></div>
+    <div class="card"><div class="big fz-ind">~2 s</div><div class="cap">bitta suratdagi 10 ta ish o'qiladi</div></div>
+    <div class="card"><div class="big fz-ter">0</div><div class="cap">o'quvchida qurilma va akkaunt</div></div>
+  </div>
+  <p class="lead" style="font-size:16px;margin-top:22px">Sikl yopiq: feedback qog'oz orqali bolaga qaytadi.</p>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>3 / 11</span></div>
+</section>
+
+<!-- 4. 1-MEZON: DOLZARBLIK -->
+<section class="slide">
+  <div class="mezbar"><span class="n">1-mezon</span><span class="nm">Muammoning dolzarbligi</span></div>
+  <h1 class="sm">Taxmin emas — 36 o'qituvchining javobi</h1>
+  <div class="grid g4 fill" style="margin-top:20px">
+    <div class="card"><div class="big fz-ter">21/36</div><div class="cap">tekshiruvga haftasiga 3 soatdan ko'p</div></div>
+    <div class="card"><div class="big fz-ter">23/36</div><div class="cap">uy vazifasida har bir daftarni ko'radi</div></div>
+    <div class="card"><div class="big fz-ind">15/36</div><div class="cap">kim bilan ishlamaganini aniq biladi</div></div>
+    <div class="card"><div class="big fz-fir">29/36</div><div class="cap">har darsda yoki haftada 2–3 marta ishlatardi</div></div>
+  </div>
+  <div class="grid g2 fill less" style="margin-top:20px">
+    <div class="card tint"><div class="tag">34/36 — 94%</div>
+      <h3 style="margin-top:6px">«AI taklif qilsin, ballni o'qituvchi qo'yadi»</h3>
+      <p>Bizning dizaynimiz aynan shunday qurilgan.</p></div>
+    <div class="card ind"><div class="tag" style="color:var(--indigo)">15/36 pilotga tayyor</div>
+      <h3 style="margin-top:6px">10 tasi shu chorakda</h3>
+      <p>34 javob Xorazmdan; sinfda o'rtacha 26–30 o'quvchi.</p></div>
+  </div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>4 / 11</span></div>
+</section>
+
+<!-- 5. 2-MEZON: SOHANI CHUQUR TUSHUNISH -->
+<section class="slide">
+  <div class="mezbar"><span class="n">2-mezon</span><span class="nm">Sohani chuqur tushunish</span></div>
+  <h1 class="sm">Har savol — bitta ko'nikma</h1>
+  <div class="stage fill less">
+    <div><b>1–2</b><span>Muammoni aniqlash</span></div>
+    <div><b>3</b><span>Modellashtirish</span></div>
+    <div><b>4–5</b><span>Yechish</span></div>
+    <div><b>6</b><span>Talqin</span></div>
+    <div><b>7</b><span>Tayanch bilim</span></div>
+  </div>
+  <div class="grid g3 fill" style="margin-top:22px">
+    <div class="card ind"><div class="tag" style="color:var(--indigo)">Reja</div>
+      <h3>170 darslik TMR</h3>
+      <p>AHA! darsligi, mashq daftari betlari, chorak va ta'til sanalari.</p></div>
+    <div class="card tint"><div class="tag">Format</div>
+      <h3>PISA mantiqi</h3>
+      <p>Hayotiy kontekst, ma'lumotni ajratish, model tuzish va javobni talqin qilish.</p></div>
+    <div class="card gold"><div class="tag" style="color:#9a7212">Metodika</div>
+      <h3>Singapur yondashuvi</h3>
+      <p>Aniq → tasviriy → abstrakt: darslik qaysi yo'ldan borsa, savol ham shu yo'ldan.</p></div>
+  </div>
+  <p class="lead" style="font-size:16px;margin-top:20px">Jamoada ikki amaldagi matematika o'qituvchisi bor — talablar sinfdan chiqqan.</p>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>5 / 11</span></div>
+</section>
+
+<!-- 6. 3-MEZON: AMALIY QO'LLANISH -->
+<section class="slide">
+  <div class="mezbar"><span class="n">3-mezon</span><span class="nm">Amaliy qo'llanish</span></div>
+  <h1 class="sm">O'qituvchi ish tartibini o'zgartirmaydi</h1>
+  <div class="grid g3 fill" style="margin-top:20px">
+    <div class="card tint"><h3>Qog'oz qoladi</h3>
+      <p>O'quvchida qurilma, akkaunt va internet talab qilinmaydi.</p></div>
+    <div class="card ind"><h3>5 daqiqada tayyorgarlik</h3>
+      <p>Rejadan mavzu tanlanadi — ssenariy va kartochkalar chiqadi.</p></div>
+    <div class="card gold"><h3>37 metod kartotekasi</h3>
+      <p>O'qituvchi o'z metodini qo'shadi — ssenariy shunga moslanadi.</p></div>
+  </div>
+  <div class="grid g2 fill less" style="margin-top:20px">
+    <div class="card warn"><div class="tag" style="color:var(--terra)">«Bo'lmasa ishlatmagan bo'lardim»</div>
+      <h3 style="margin-top:6px">Dars ssenariysi — 12 ta ovoz</h3>
+      <p>So'rovnomada eng ko'p tanlangan zaruriy imkoniyat.</p></div>
+    <div class="card"><div class="tag">5 ballik baholash</div>
+      <h3 style="margin-top:6px">Direktor paneli 4,14 · BSB 4,11</h3>
+      <p>Keyin: baholar jurnali 4,03 · ssenariy va feedback 3,97.</p></div>
+  </div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>6 / 11</span></div>
+</section>
+
+<!-- 7. 4-MEZON: QONUNCHILIK -->
+<section class="slide">
+  <div class="mezbar"><span class="n">4-mezon</span><span class="nm">Qonunchilikka muvofiqlik</span></div>
+  <h1 class="sm">Amaldagi tartib saqlanadi, ma'lumot chiqmaydi</h1>
+  <div class="grid g2 fill" style="margin-top:20px">
+    <div class="card"><div class="tag">Baholash</div>
+      <h3 style="margin-top:6px">Formativ 0–10, BSB va ChSB</h3>
+      <p>Ballar amaldagi tartib bo'yicha; yakuniy qaror — o'qituvchida.</p></div>
+    <div class="card"><div class="tag">Hujjat</div>
+      <h3 style="margin-top:6px">Jurnal va Excel eksport</h3>
+      <p>O'qituvchi bir ishni ikki marta yozmaydi.</p></div>
+    <div class="card ind"><div class="tag" style="color:var(--indigo)">Shaxsiy ma'lumot</div>
+      <h3 style="margin-top:6px">AI ga ism yuborilmaydi</h3>
+      <p>Tashqi xizmatga faqat kod ketadi: <code>5B-17</code>.</p></div>
+    <div class="card tint"><div class="tag">Kim nimani ko'radi</div>
+      <h3 style="margin-top:6px">Ota-ona — faqat o'z farzandini</h3>
+      <p>Shaxsiy token bilan kiradi; direktor paneli ismsiz.</p></div>
+  </div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>7 / 11</span></div>
+</section>
+
+<!-- 8. 5-MEZON: TA'SIR KO'LAMI -->
+<section class="slide">
+  <div class="mezbar"><span class="n">5-mezon</span><span class="nm">Ta'sir ko'lami</span></div>
+  <h1 class="sm">Bitta o'qituvchidan viloyatgacha</h1>
+  <div class="grid g3 fill" style="margin-top:20px">
+    <div class="card"><div class="big fz-fir">150+</div><div class="cap">bitta o'qituvchining o'quvchilari</div></div>
+    <div class="card"><div class="big fz-ind">3</div><div class="cap">natija yetadigan odam: o'quvchi, ota-ona, direktor</div></div>
+    <div class="card"><div class="big fz-ter">34</div><div class="cap">so'rovnoma javobi Xorazmdan — boshlanish shu yerda</div></div>
+  </div>
+  <div class="grid g2 fill less" style="margin-top:22px">
+    <div class="card tint"><h3>Avval Xorazm, keyin viloyatlar</h3>
+      <p>15 o'qituvchi pilotga tayyor, 10 tasi shu chorakda.</p></div>
+    <div class="card ind"><h3>Dvigatel fanga bog'lanmagan</h3>
+      <p>Reja va masalalar banki almashsa — fizika, kimyo, ona tili.</p></div>
+  </div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>8 / 11</span></div>
+</section>
+
+<!-- 9. BAHOLASH VA FEEDBACK -->
+<section class="slide">
+  <div class="eyebrow">Baholash va feedback</div>
+  <h1 class="sm">Natija — raqam emas, tashxis</h1>
+  <div class="grid g2 fill" style="margin-top:20px">
+    <div class="card warn"><div class="tag" style="color:var(--terra)">Hozir</div>
+      <div class="big fz-ter" style="margin-top:8px">«5 / 7»</div>
+      <div class="cap">bola qaysi qadamda adashgani noma'lum</div></div>
+    <div class="card tint"><div class="tag">DarsPilot</div>
+      <h3 style="margin-top:10px;font-size:22px">«Amallar tartibini buzyapti»</h3>
+      <div class="cap">har noto'g'ri variant aniq xato turiga bog'langan</div></div>
+  </div>
+  <div class="grid g3 fill" style="margin-top:20px">
+    <div class="card"><div class="tag">O'quvchiga</div><h3 style="margin-top:6px">Keyingi kartochkasiga bosiladi</h3>
+      <p>Qurilma kerak emas — feedback qog'oz bilan qaytadi.</p></div>
+    <div class="card"><div class="tag">Ota-onaga</div><h3 style="margin-top:6px">Uyda 5 daqiqalik aniq ish</h3>
+      <p>«Yaxshi o'qisin» emas, nimani mashq qilish kerakligi.</p></div>
+    <div class="card"><div class="tag">O'qituvchiga</div><h3 style="margin-top:6px">Keyingi darsda kim bilan</h3>
+      <p>Takrorlash bosqichi va guruhlar shundan tuziladi.</p></div>
+  </div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>9 / 11</span></div>
+</section>
+
+<!-- 10. USTUVOR MAVZU -->
+<section class="slide">
+  <div class="eyebrow">Ta'lim treki · 2-ustuvor mavzu</div>
+  <h1 class="sm">Ustuvor 2-mavzu — va uni qanday hal qildik</h1>
+  <div class="split rev fill" style="margin-top:20px">
+    <div class="card ind">
+      <div class="tag" style="color:var(--indigo)">Rasmiy ro'yxat · 2-muammo</div>
+      <p class="quote" style="margin-top:10px;border-color:var(--indigo)">O'qituvchilar ko'p vaqtini
+        tekshirish va hujjatlarga sarflaydi.</p>
+      <div class="tag" style="color:var(--indigo);margin-top:20px">Kutilgan yechim</div>
+      <p class="quote" style="margin-top:10px;border-color:var(--indigo)">AI yordamida avtomatik baholash
+        va feedback tizimi.</p>
+    </div>
+    <div class="grid g2" style="margin-top:0">
+      <div class="card"><div class="tag">01 · tekshirish vaqti</div>
+        <h3 style="margin-top:6px">Bitta surat — 10 ta ish</h3>
+        <p>~2 soniyada; uy vazifasi mashq daftari betidan.</p></div>
+      <div class="card"><div class="tag">02 · avtomatik baholash</div>
+        <h3 style="margin-top:6px">Javobni kod o'qiydi</h3>
+        <p>Bosqichli tashxis: «5/7» emas, xato turi.</p></div>
+      <div class="card"><div class="tag">03 · feedback</div>
+        <h3 style="margin-top:6px">Har o'quvchiga 3 xil matn</h3>
+        <p>Keyingi kartochkaga bosiladi.</p></div>
+      <div class="card"><div class="tag">04 · hujjat</div>
+        <h3 style="margin-top:6px">Jurnal, BSB, Excel</h3>
+        <p>Bir ish ikki marta yozilmaydi.</p></div>
+    </div>
+  </div>
+  <p class="lead" style="font-size:16px;margin-top:18px">Bu qo'shimcha funksiya emas — mahsulotning o'zagi.
+    Ustuvor mavzu tanlangani uchun qo'shimcha ball ham shu yerda.</p>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>10 / 11</span></div>
+</section>
+
+<!-- 11. XULOSA -->
+<section class="slide">
+  <div class="eyebrow">Xulosa · Ta'lim treki · 2-ustuvor mavzu</div>
+  <h1 class="sm">Har bir mezonga bitta jumlalik javob va dalil</h1>
+  <table class="airy">
+    <tr><th style="width:250px">Mezon</th><th>Javobimiz</th><th style="width:300px">Dalil</th></tr>
+    <tr><td><b>1. Muammoning dolzarbligi</b></td>
+      <td>Vaqt, sifat va qamrov — uchalasi ham muammo, o'qituvchilarning o'zi tasdiqladi</td>
+      <td class="ev">21/36 · 15/36 · 29/36</td></tr>
+    <tr><td><b>2. Sohani chuqur tushunish</b></td>
+      <td>AHA! darsligi, 170 darslik reja va mashq daftari tizim ichida; savol PISA mantiqida</td>
+      <td class="ev">TMR · 5 ko'nikma</td></tr>
+    <tr><td><b>3. Amaliy qo'llanish</b></td>
+      <td>Ish tartibi o'zgarmaydi: qog'oz qoladi, tayyorgarlik 5 daqiqa</td>
+      <td class="ev">37 metod · 12 ovoz</td></tr>
+    <tr><td><b>4. Qonunchilikka muvofiqlik</b></td>
+      <td>Formativ 0–10 va BSB/ChSB; AI ga ism emas, kod ketadi</td>
+      <td class="ev">kod 5B-17 · token</td></tr>
+    <tr><td><b>5. Ta'sir ko'lami</b></td>
+      <td>Bitta o'qituvchi 150+ o'quvchi; Xorazmdan boshlab boshqa fanlarga</td>
+      <td class="ev">15 pilot · 10 shu chorakda</td></tr>
+  </table>
+  <p class="lead" style="margin-top:18px">34/36 o'qituvchi: <b>«AI taklif qilsin, ballni o'qituvchi qo'yadi»</b>.
+    Mahsulot aynan shunday qurilgan — jonli: darspilot.com</p>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>11 / 11</span></div>
+</section>
+
+<script src="present.js"></script>
+</body>
+</html>
