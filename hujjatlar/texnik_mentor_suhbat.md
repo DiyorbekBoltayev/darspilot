@@ -3,17 +3,44 @@
 Ishchi hujjat: suhbat paytida ochiq turadi. Har bir raqam va `fayl:satr` koddan tekshirilgan (19-sentabr).
 Mentor: **Yaxshimurodov Jaloladdin**, **14:20**. Loyihani birinchi marta ko'radi. CP2 — yakuniy balning **60%** i.
 
-## Ochilish (30–40 soniya)
+## Loyiha haqida — muammo (shuni birinchi aytamiz)
+
+**Bitta jumlada:** *"O'qituvchi vaqtining katta qismi tekshirish va hujjatga ketadi — biz uni
+AI yordamida avtomatik baholash va feedbackka almashtiramiz."*
+
+Muammo uch qatlamdan iborat — uchalasini ham aytamiz, chunki faqat birinchisi aytilsa
+"bu shunchaki test tekshirgich" degan taassurot qoladi:
+
+| # | Qatlam | Bugun qanday |
+|---|---|---|
+| 1 | **Vaqt** | Bitta sinfning bir ishini ko'rish ~2 daqiqa. 3 sinf, ~90 o'quvchi — tekshiruvga **haftasiga 3–5 soat**, ustiga jurnal, hisobot, ota-onaga xabar |
+| 2 | **Sifat** | Natija — **«5/7» degan raqam**. Bola qaysi qadamda adashganini bilmaydi: shartni tushunmadimi, ifodani noto'g'ri tuzdimi, hisobda xato qildimi yoki javobni noto'g'ri talqin qildimi |
+| 3 | **Imkonsizlik** | 90 ta bolaga darajasiga mos alohida masala tuzish, har birining xatosini **nomlab** izoh yozish, kim **necha darsdan beri** e'tibordan chetda qolganini yodda tutish — bu bitta odam uchun jismonan imkonsiz |
+
+**Nega faqat "javobni tekshiradigan" tizim yetarli emas.** Feedback aniq bo'lishi uchun tizim faqat
+javobni emas, **dars qanday o'tganini** bilishi kerak: mavzu nima edi, kim bilan ishlandi, oldingi
+diagnostikada kim qayerda qoqilgan edi, uyga nima berildi. Shuning uchun biz alohida "tekshirgich" emas,
+**butun dars jarayonini tashkil qiladigan va tahlil qiladigan yordamchi** qildik.
+
+**Kim uchun:** hozircha **5–6-sinf matematika** o'qituvchilari. Dvigatel fanga bog'lanmagan —
+masala generatori va rubrika almashtirilsa, boshqa fanlarga kengayadi.
+
+## Ochilish (30–40 soniya) — aytiladigan matn
 
 > "Fractal, DarsPilot. Ta'lim treki, **2-ustuvor mavzu — avtomatik baholash va feedback**.
-> **Muammo:** 5-sinf matematika o'qituvchisida 3 sinf, ~90 o'quvchi. Har bolaning ishini ko'rib izoh yozish
-> jismonan imkonsiz — bola "5/7" oladi, **qaysi qadamda adashganini bilmaydi**.
-> **Yechim:** dars konveyeri. Tizim rejadan bugungi mavzuni oladi, har o'quvchiga o'z darajasida masala
-> generatsiya qiladi, A4 da 4 ta kartochka bosadi. O'qituvchi ishlarni **bitta telefon surati** bilan oladi,
-> tizim javoblarni o'qiydi, xatoni **nomlab** beradi va keyingi kartochkaga bosiladigan izoh yozadi. Uy
-> vazifasi — mashq daftari beti suratdan tekshiriladi.
-> **Chegarani birinchi aytaman:** javobni **kod** o'qiydi, AI emas — baho `app/grading.py` dan chiqadi,
-> AI faqat matn yozadi. Sayt jonli: **https://darspilot.com**, hoziroq ko'rsataman."
+>
+> **Muammo:** o'qituvchida 3 sinf, ~90 o'quvchi. Har bir bolaning ishini ko'rib, xatosini topib izoh
+> yozish jismonan imkonsiz — bola **«5/7» degan raqam oladi va qayerda adashganini bilmaydi**.
+> Tekshiruvning o'ziga haftasiga 3–5 soat ketadi.
+>
+> **Yechim:** dars konveyeri. Tizim rejadan bugungi mavzuni oladi, har o'quvchiga **o'z darajasida**
+> masala generatsiya qiladi, A4 da 4 ta kartochka bosadi. O'qituvchi ishlarni **bitta telefon surati**
+> bilan yig'adi, tizim javoblarni o'qiydi, xatoni **nomlab** beradi — «5/7» emas, «amallar tartibini
+> buzyapti» — va keyingi kartochkaga bosiladigan izohni yozadi. Uy vazifasi mashq daftari betidan
+> shu yo'l bilan tekshiriladi.
+>
+> **Chegarani birinchi o'zim aytaman:** javobni **kod** o'qiydi, AI emas — baho `app/grading.py` dan
+> chiqadi, AI faqat matn yozadi. Sayt jonli: **https://darspilot.com**, hoziroq ko'rsataman."
 
 ## 10 daqiqalik reja
 
