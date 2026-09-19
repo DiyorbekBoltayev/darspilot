@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<title>DarsPilot — Pitch deck</title>
+<link rel="stylesheet" href="deck.css">
+<style>
+  /* qo'llanma: 2-3 rang, bitta urg'u (firuza), sarlavha katta, matn kam */
+  .stag{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .stag .k{background:var(--indigo);color:#fff;border-radius:9px;padding:6px 13px;font-size:13px;font-weight:600;
+    font-family:'Unbounded',sans-serif;letter-spacing:.04em}
+  .stag .v{font-family:'Unbounded',sans-serif;font-size:14px;font-weight:600;letter-spacing:.09em;
+    text-transform:uppercase;color:var(--firuza)}
+  h1.xl{font-size:56px;line-height:1.06}
+  .hero-num{font-family:'Unbounded',sans-serif;font-weight:600;letter-spacing:-.03em;line-height:.92;color:var(--indigo)}
+  .n-xxl{font-size:130px}
+  .n-xl{font-size:92px}
+  .n-l{font-size:62px}
+  .sub2{font-size:19px;color:var(--mute);line-height:1.5;max-width:900px}
+  .shot{border-radius:16px;border:1px solid var(--line);overflow:hidden;background:#fff;height:340px;
+    display:grid;place-items:center;padding:10px;box-shadow:0 10px 30px rgba(19,32,43,.08)}
+  .shot img{display:block;max-width:100%;max-height:100%;width:auto;height:auto;border-radius:8px}
+  .cap2{font-size:13.5px;color:var(--faint);margin-top:9px;line-height:1.35}
+  .flow{display:flex;gap:10px;margin-top:22px}
+  .flow .f{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 15px}
+  .flow .f .n{font-family:'Unbounded',sans-serif;font-size:12px;color:var(--firuza);font-weight:600}
+  .flow .f h5{font-size:16px;font-weight:600;margin-top:6px;line-height:1.25}
+  .flow .f p{font-size:13px;color:var(--mute);margin-top:6px;line-height:1.4}
+  .bar{display:flex;align-items:flex-end;gap:18px;margin-top:26px;height:210px}
+  .bar .b{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:10px}
+  .bar .box{width:100%;border-radius:14px 14px 0 0;background:var(--firuza-50);border:1px solid #CCE7E6;
+    display:grid;place-items:center;font-family:'Unbounded',sans-serif;font-weight:600;color:var(--indigo)}
+  .bar .box.acc{background:var(--indigo);border-color:var(--indigo);color:#fff}
+  .bar .lbl{font-size:14px;color:var(--mute);text-align:center;line-height:1.35}
+  .ask{display:flex;gap:16px;margin-top:26px}
+  .ask > div{flex:1;border-radius:18px;padding:22px;border:1px solid var(--line);background:var(--surface)}
+  .ask .t{font-family:'Unbounded',sans-serif;font-size:19px;font-weight:600}
+  .ask p{font-size:14.5px;color:var(--mute);margin-top:8px;line-height:1.45}
+  .final{display:flex;flex-direction:column;justify-content:center;height:100%}
+  .final h1{font-size:60px;line-height:1.08}
+  .contact{margin-top:34px;display:flex;gap:44px;font-size:17px}
+  .contact b{display:block;font-family:'Unbounded',sans-serif;font-size:21px;color:var(--indigo)}
+</style>
+</head>
+<body>
+
+<section class="slide cover">
+  <div class="kicker">Umummilliy AI Xakaton · Xorazm · Ta'lim treki</div>
+  <h1>DarsPilot</h1>
+  <div class="sub">Matematika o'qituvchisi uchun — qog'ozli ishni bitta telefon suratidan
+    avtomatik tekshirib, har bir o'quvchining <b>qaysi bosqichda adashganini</b> aytib beradigan tizim.</div>
+  <div class="meta">
+    <div><b>Jamoa</b>Fractal · 3 a'zo</div>
+    <div><b>Jonli</b>darspilot.com</div>
+    <div><b>Kod</b>github.com/DiyorbekBoltayev/darspilot</div>
+    <div><b>Aloqa</b>@fractal_team</div>
+  </div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>Pitch deck</span></div>
+</section>
+
+<section class="slide">
+  <div class="stag"><span class="k">02</span><span class="v">Problem</span></div>
+  <h1 class="xl">Tekshiruv o'qituvchining<br>haftasini yeydi</h1>
+  <div class="grid g3" style="margin-top:34px;align-items:end">
+    <div><div class="hero-num n-xxl">3–5</div><div class="cap2" style="font-size:16px">soat / hafta — faqat ishlarni tekshirishga</div></div>
+    <div><div class="hero-num n-xl">90+</div><div class="cap2" style="font-size:16px">o'quvchi bitta o'qituvchida, kuniga 4–6 dars</div></div>
+    <div><div class="hero-num n-xl">«5/7»</div><div class="cap2" style="font-size:16px">bola oladigan yagona natija — qayerda adashganini bilmaydi</div></div>
+  </div>
+  <div class="note" style="margin-top:34px;font-size:16px;color:var(--mute)">
+    Manba: o'zimiz o'tkazgan so'rovnoma — <b style="color:var(--ink)">36 ta matematika o'qituvchisi</b>,
+    ularning 21 tasi haftasiga 3 soatdan ko'p vaqt sarflashini yozgan.</div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>2 / 12</span></div>
+</section>
+
+<section class="slide">
+  <div class="stag"><span class="k">03</span><span class="v">Solution</span></div>
+  <h1 class="xl">Qog'oz qoladi — tekshiruv<br>bitta suratga aylanadi</h1>
+  <p class="sub2" style="margin-top:16px">O'qituvchi kartochkalarni yig'ib telefonda suratga oladi.
+    Tizim javoblarni o'zi o'qiydi, xatoni <b>nomlab</b> beradi va har bir o'quvchiga izoh yozadi.</p>
+  <div class="flow">
+    <div class="f"><div class="n">01</div><h5>Har o'quvchiga o'z masalasi</h5><p>4 daraja, sonlar ham, chalg'ituvchi javoblar ham alohida</p></div>
+    <div class="f"><div class="n">02</div><h5>Bitta suratda 10 ta ish</h5><p>~2 soniyada o'qiladi; shubhali katak o'qituvchiga chiqadi</p></div>
+    <div class="f"><div class="n">03</div><h5>Xato nomlanadi</h5><p>«5/7» emas — «amallar tartibini buzyapti»</p></div>
+    <div class="f"><div class="n">04</div><h5>Feedback qog'ozga qaytadi</h5><p>Keyingi kartochkaga bosiladi: o'quvchida qurilma kerak emas</p></div>
+  </div>
+  <div class="note" style="margin-top:26px;font-size:16px;color:var(--mute)">
+    <b style="color:var(--ink)">Javobni kod o'qiydi, AI emas.</b> AI masala matnini, izohni va sinf xulosasini yozadi.</div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>3 / 12</span></div>
+</section>
+
+<section class="slide">
+  <div class="stag"><span class="k">04</span><span class="v">Product</span></div>
+  <h1 class="sm">Bitta o'qituvchining kuni: uchta ekran</h1>
+  <div class="grid g3" style="margin-top:20px">
+    <div><div class="shot"><img src="img/hero.png" alt="DarsPilot"></div>
+      <div class="cap2"><b>1. Tizim</b> — jonli ishlaydi: darspilot.com, demo hisobi bilan hoziroq ochiladi</div></div>
+    <div><div class="shot"><img src="img/varaq.png" alt="Kartochka"></div>
+      <div class="cap2"><b>2. Kartochka</b> — A4 da 4 ta, har o'quvchiga boshqa variant; burchaklarda ArUco markerlar</div></div>
+    <div><div class="shot"><img src="img/daftar.jpg" alt="Mashq daftari"></div>
+      <div class="cap2"><b>3. Uy vazifasi</b> — mashq daftari beti suratdan tekshiriladi, xato turi aniqlanadi</div></div>
+  </div>
+  <div class="note" style="margin-top:22px;font-size:16px;color:var(--mute)">
+    Jonli demo: <b style="color:var(--ink)">darspilot.com</b> · demo@darspilot.uz / demo1234 — zaxira videosi tayyor.</div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>4 / 12</span></div>
+</section>
+
+<section class="slide">
+  <div class="stag"><span class="k">05</span><span class="v">Market</span></div>
+  <h1 class="sm">Birinchi yil maqsadi — bitta viloyat</h1>
+  <div class="bar">
+    <div class="b"><div class="box acc" style="height:56%;font-size:30px">≈ $1 mln</div>
+      <div class="lbl"><b>SOM</b> · 3-yil: 40 xususiy maktab, 400 markaz, 2 000 o'qituvchi</div></div>
+    <div class="b"><div class="box" style="height:76%;font-size:30px">52 mlrd so'm</div>
+      <div class="lbl"><b>SAM</b> · 551 xususiy maktabning 60% i va o'quv markazlari</div></div>
+    <div class="b"><div class="box" style="height:100%;font-size:30px">430 mlrd so'm</div>
+      <div class="lbl"><b>TAM</b> · 5–11-sinf matematikasi: ≈ 4,4 mln o'quvchi × 10 000 so'm × 9 oy</div></div>
+  </div>
+  <div class="note" style="margin-top:24px;font-size:16px;color:var(--mute)">
+    Hisob: o'quvchi soni × oylik narx × 9 oylik o'quv yili. Manba — Statistika agentligi va xususiy maktablar ro'yxati.</div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>5 / 12</span></div>
+</section>
+
+<section class="slide">
+  <div class="stag"><span class="k">06</span><span class="v">Business model</span></div>
+  <h1 class="sm">B2B obuna: to'lovchi — maktab, foydalanuvchi — o'qituvchi</h1>
+  <div class="grid g3" style="margin-top:24px">
+    <div class="card tint"><div class="tag">Asosiy segment</div><div class="big">15 000</div>
+      <div class="cap">so'm / o'quvchi / oy — xususiy maktab</div></div>
+    <div class="card"><div class="tag">Ikkinchi segment</div><div class="big">12 000</div>
+      <div class="cap">so'm / o'quvchi / oy — o'quv markazi</div></div>
+    <div class="card ind"><div class="tag">Kanal</div><div class="big">Bepul</div>
+      <div class="cap">o'qituvchi uchun — u sinab ko'radi va maktabiga taklif qiladi</div></div>
+  </div>
+  <div class="grid g4" style="margin-top:20px">
+    <div class="card"><div class="big">85%</div><div class="cap">yalpi marja</div></div>
+    <div class="card"><div class="big">13,8</div><div class="cap">LTV / CAC (xususiy maktab)</div></div>
+    <div class="card"><div class="big">1,5 oy</div><div class="cap">CAC qoplanishi</div></div>
+    <div class="card"><div class="big">4,5 mln</div><div class="cap">so'm — 300 o'quvchilik maktabdan oylik tushum</div></div>
+  </div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>6 / 12</span></div>
+</section>
+
+<section class="slide">
+  <div class="stag"><span class="k">07</span><span class="v">Traction</span></div>
+  <h1 class="sm">Bu g'oya emas — ishlaydigan mahsulot va o'lchangan talab</h1>
+  <div class="grid g4" style="margin-top:26px">
+    <div class="card tint"><div class="big">36</div><div class="cap">o'qituvchi so'rovnomada qatnashdi (34 tasi Xorazmdan)</div></div>
+    <div class="card"><div class="big">81%</div><div class="cap">«har darsda» yoki «haftada 2–3 marta» ishlatardim dedi</div></div>
+    <div class="card ind"><div class="big">15</div><div class="cap">o'qituvchi pilotga tayyor — 10 tasi shu chorakda</div></div>
+    <div class="card gold"><div class="big">19</div><div class="cap">tavsiya ehtimolini 9–10 ball qo'ydi</div></div>
+  </div>
+  <div class="grid g2" style="margin-top:22px">
+    <div class="card"><h3>Mahsulot jonli ishlaydi</h3>
+      <p>3 sinf, 88 o'quvchilik demo maktab; kartochkalar chop etilib, haqiqiy suratdan o'qildi.
+        Kod ochiq: 47 ta avtomatik test.</p></div>
+    <div class="card tint"><h3>Eng kuchli dalil</h3>
+      <p><b>94%</b> o'qituvchi «AI taklif qiladi, ballni o'qituvchi qo'yadi» tartibini tanladi —
+        mahsulot aynan shunday ishlaydi.</p></div>
+  </div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>7 / 12</span></div>
+</section>
+
+<section class="slide">
+  <div class="stag"><span class="k">08</span><span class="v">Competition</span></div>
+  <h1 class="sm">Eng katta raqib — odat: daftar, Excel va xotira</h1>
+  <table style="margin-top:18px">
+    <tr><th style="width:250px">Kim</th><th>Nima qiladi</th><th style="width:330px">Nega bizni almashtira olmaydi</th></tr>
+    <tr><td><b>Qo'lda tekshirish</b></td><td>Daftar, Excel, xotira</td>
+      <td>Vaqt ketadi, xato turi hech qayerda qolmaydi</td></tr>
+    <tr><td><b>Onlayn test platformalari</b></td><td>Testni tekshiradi</td>
+      <td>Har o'quvchida qurilma va internet talab qiladi</td></tr>
+    <tr><td><b>Umumiy AI chatlar</b></td><td>Matn yozadi</td>
+      <td>Rejaga, jurnalga va o'quvchi tarixiga ulanmagan</td></tr>
+    <tr><td><b>Maktab jurnali / ERP</b></td><td>Hujjat yuritadi</td>
+      <td>Baholash va feedback bilan ishlamaydi</td></tr>
+  </table>
+  <div class="note" style="margin-top:20px;font-size:16px;color:var(--mute)">
+    <b style="color:var(--ink)">Nega biz yutamiz:</b> qog'ozli ish oqimi + xato turini nomlaydigan masalalar banki +
+    o'quvchi tarixi. Uchalasi birga — sikl yopiq.</div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>8 / 12</span></div>
+</section>
+
+<section class="slide">
+  <div class="stag"><span class="k">09</span><span class="v">Team</span></div>
+  <h1 class="sm">Nega aynan biz</h1>
+  <div class="grid g3" style="margin-top:26px">
+    <div class="card"><div class="tag">Maktab ichidan</div><h3>Sultonboyev Bekzodbek</h3>
+      <p>Matematika o'qituvchisi · magistratura 2-kurs. 3 sinf, 90 o'quvchi — muammoni har kuni o'zi yashaydi.</p></div>
+    <div class="card"><div class="tag">Mahsulot va kod</div><h3>Boltayev Diyorbek</h3>
+      <p>Full-stack: FastAPI + React. 4 kunda ishlaydigan mahsulot va jonli deploy.</p></div>
+    <div class="card"><div class="tag">Tahlil va biznes</div><h3>Fractal · 3-a'zo</h3>
+      <p>Bozor tadqiqoti: 36 o'qituvchi so'rovnomasi, unit-ekonomika, pilot rejasi.</p></div>
+  </div>
+  <div class="note" style="margin-top:24px;font-size:16px;color:var(--mute)">
+    Biz shu bozorning ichidamiz: birinchi 15 pilot foydalanuvchi — o'z tanishlarimiz emas,
+    so'rovnomada <b style="color:var(--ink)">o'zi yozilgan o'qituvchilar</b>.</div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>9 / 12</span></div>
+</section>
+
+<section class="slide">
+  <div class="stag"><span class="k">10</span><span class="v">Roadmap</span></div>
+  <h1 class="sm">Keyingi 12 oy</h1>
+  <div class="flow" style="margin-top:26px">
+    <div class="f"><div class="n">Oktabr</div><h5>Pilot</h5><p>15 o'qituvchi, 4 hafta bepul. O'lchov: haqiqiy tejalgan vaqt</p></div>
+    <div class="f"><div class="n">Dekabr</div><h5>Birinchi to'lov</h5><p>2 xususiy maktab bilan pullik shartnoma</p></div>
+    <div class="f"><div class="n">Mart</div><h5>10 mijoz</h5><p>Xorazmda model isbotlanadi: konversiya ≥ 30%, ketish ≤ 5%</p></div>
+    <div class="f"><div class="n">Iyun</div><h5>Fizika, kimyo</h5><p>Dvigatel bir xil — masalalar banki va reja almashadi</p></div>
+    <div class="f"><div class="n">Sentabr</div><h5>Ikkinchi viloyat</h5><p>Tayyor o'quv yili boshida kirish</p></div>
+  </div>
+  <div class="note" style="margin-top:26px;font-size:16px;color:var(--mute)">
+    Har bosqichda bitta o'lchanadigan maqsad. Birinchisi — <b style="color:var(--ink)">pilotda tejalgan vaqtni
+    o'qituvchining o'zi tasdiqlashi.</b></div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>10 / 12</span></div>
+</section>
+
+<section class="slide">
+  <div class="stag"><span class="k">11</span><span class="v">Ask</span></div>
+  <h1 class="sm">Bizga nima kerak</h1>
+  <div class="ask">
+    <div><div class="t">Pilot hamkor</div>
+      <p>Xorazmdagi <b>2–3 xususiy maktab</b>: bir chorak davomida bepul, natijani birga o'lchaymiz.</p></div>
+    <div><div class="t">Mentorlik</div>
+      <p>Maktablarga B2B sotuv va pilot shartnomasini tuzish bo'yicha tajriba.</p></div>
+    <div><div class="t">Resurs</div>
+      <p>Bir yillik server va AI xarajati — <b>≈ 25 mln so'm</b>; printer va qog'oz pilot maktablarga.</p></div>
+  </div>
+  <div class="grid g3" style="margin-top:24px">
+    <div class="card"><div class="tag">Mablag' taqsimoti</div><div class="big">60%</div><div class="cap">mahsulot: boshqa fanlar va mobil ilova</div></div>
+    <div class="card"><div class="tag">&nbsp;</div><div class="big">25%</div><div class="cap">pilotlar va sotuv</div></div>
+    <div class="card"><div class="tag">&nbsp;</div><div class="big">15%</div><div class="cap">infratuzilma va AI</div></div>
+  </div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>11 / 12</span></div>
+</section>
+
+<section class="slide">
+  <div class="final">
+    <div class="stag"><span class="k">12</span><span class="v">Yakun</span></div>
+    <h1>O'qituvchining vaqtini darsga qaytaramiz —<br>bola esa qayerda adashganini biladi</h1>
+    <p class="sub2" style="margin-top:22px;font-size:21px">Qog'oz qoladi. Qurilma talab qilinmaydi.
+      Tizim bugun jonli ishlaydi.</p>
+    <div class="contact">
+      <div><b>darspilot.com</b>demo@darspilot.uz / demo1234</div>
+      <div><b>Fractal</b>Xorazm · Ta'lim treki</div>
+      <div><b>github.com/DiyorbekBoltayev/darspilot</b>ochiq kod · 47 test</div>
+    </div>
+    <p style="margin-top:30px;font-family:'Unbounded',sans-serif;font-size:24px;color:var(--indigo)">Rahmat! Savollar?</p>
+  </div>
+  <div class="foot"><span class="brand">Dars<span>Pilot</span></span><span>12 / 12</span></div>
+</section>
+
+<script src="present.js"></script>
+</body>
+</html>

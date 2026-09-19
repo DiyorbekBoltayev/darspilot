@@ -1,5 +1,9 @@
 # DarsPilot — AI yordamida avtomatik baholash va feedback
 
+> **📊 Pitch deck (PDF):** [DarsPilot_Pitch_Deck.pdf](DarsPilot_Pitch_Deck.pdf) — 12 slayd: muammo, yechim,
+> mahsulot, bozor, biznes modeli, traction, raqobat, jamoa, yo'l xaritasi va so'rovimiz.
+> **🌐 Jonli demo:** [darspilot.com](https://darspilot.com) — `demo@darspilot.uz` / `demo1234`
+
 **Muammo (xakaton ustuvor mavzusi №2):** o'qituvchilar ko'p vaqtini tekshirish va hujjatlarga sarflaydi.
 **Yechim — dars konveyeri.** O'qituvchining har bir darsi 5 qadamdan o'tadi:
 **Tayyorlash → Darsda → Tekshirish → Tahlil → Keyingi dars.** Har qadam keyingisiga ma'lumot beradi:
@@ -13,17 +17,18 @@ darslik va **mashq daftari** betlari esa kitoblarning o'z mundarijasidan olingan
 
 **Qog'oz formati.** Bitta A4 varaq 4 ta kartochkaga bo'linadi va ikkala tomoni ishlatiladi: old tomonda o'quvchining
 **ismi**, masala, 1–4-savollar va **o'tgan ishdan shaxsiy feedback** ("Senga — o'tgan ishingdan"); orqa tomonda
-5–7-savollar, **yechim maydoni** va ArUco markerli javob bloki (A4 ning ~1/8 qismi).
+5–7-savollar va ArUco markerli javob bloki (A4 ning ~1/8 qismi). Javob faqat doirachalar va son panjarasi
+orqali beriladi — ularni **kod o'qiydi**, shuning uchun natija takrorlanadigan.
 O'quvchi hech narsani yirtmaydi — kartochka butunligicha yig'ib olinadi va orqa tomoni suratga olinadi.
 31 o'quvchilik sinfga bitta diagnostika = **8 varaq**.
 
-## Baholash ikki qatlamli
+## Javobni kod o'qiydi, AI matn yozadi
 
 1. **Yopiq javoblar — kompyuter ko'rish.** ArUco markerlar bo'yicha tekislangan javob bloki o'qiladi (7 savol);
    har katak uchun ishonch darajasi hisoblanadi, shubhali belgilar o'qituvchiga chiqadi.
-2. **Qo'lda yozilgan yechim — AI rubrika bo'yicha.** Xuddi shu suratdan, xuddi shu markerlar yordamida yechim maydoni
-   kesib olinadi va vizual model uni 3 mezon bo'yicha baholaydi (amal/ifoda, hisob, javob birligi — har biriga 0–2 ball).
-   O'qituvchi har bahoni bir bosishda tasdiqlaydi yoki tuzatadi; tuzatishlar o'lchanadi.
+2. **Baho — deterministik.** Javoblar kod bilan solishtiriladi (`app/grading.py`): bir xil surat har doim bir xil
+   natija beradi. Har savol bitta bosqichga bog'langan, shuning uchun natija «5/7» emas — **qaysi bosqichda
+   oqsoqlik borligini** ko'rsatadi. AI bu yerda ishtirok etmaydi.
 
 **Uy vazifasi** (`mashq daftari`) ham suratdan tekshiriladi: har mashq raqami bo'yicha to'g'ri/xato va xato turi
 aniqlanadi, natija keyingi dars ssenariysidagi takrorlash bosqichiga tushadi.
@@ -31,7 +36,7 @@ aniqlanadi, natija keyingi dars ssenariysidagi takrorlash bosqichiga tushadi.
 **BSB/ChSB** ham shu dvigatel bilan: summativ kunda har o'quvchiga o'z varianti chiqadi, natija rejadagi maksimal
 ballga (15/20/25/40) nisbatan hisoblanib jurnalga tushadi.
 
-**Ishonchlilik va ta'sir o'lchanadi:** avtomatik o'qish foizi, o'qituvchi tuzatgan kataklar, AI baholagan yechimlar,
+**Ishonchlilik va ta'sir o'lchanadi:** avtomatik o'qish foizi, o'qituvchi tuzatgan kataklar,
 o'zgartirilmasdan yuborilgan feedback ulushi, tejalgan vaqt va qog'oz — `/api/impact` va har sahifadagi "AI ta'siri" paneli.
 
 ## Landing sahifasi, kirish va AI yordamchi
